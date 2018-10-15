@@ -1,0 +1,75 @@
+\input{praeambel.tex} % Importiere die Einstellungen aus der Präambel
+% hier beginnt der eigentliche Inhalt
+\begin{document}
+\pagenumbering{Roman} % Seitenummerierung mit großen römischen Zahlen 
+\pagestyle{empty} % keine Kopf- oder Fußzeilen auf den ersten Seiten
+
+% Titelseite
+\clearscrheadings\clearscrplain
+\begin{center}
+\begin{Huge}
+Entwicklung eines dreidimensionalen zyklischen Dungeon-Generators mit Unity3D\\
+\end{Huge}
+\begin{Large}
+mit Unity3D\\
+\end{Large}
+\vspace{8mm}
+Bachelorarbeit\\
+\vspace{0.4cm}
+\vspace{2 cm}
+Nils Gawlik \\
+Matrikel-Nummer 553449\\
+\vspace{8cm}
+\begin{tabular}{rl}
+{\bfseries Betreuer} & Prof. Lenz \\
+{\bfseries Erstprüfer}& Prof. Lenz\\
+{\bfseries Zweitprüfer}& Prof. Strippgen\\
+\end{tabular}
+
+\end{center}
+\clearpage
+
+
+\pagestyle{useheadings} % normale Kopf- und Fußzeilen für den Rest
+
+\tableofcontents % erstelle hier das Inhaltsverzeichnis
+\listoffigures % erstelle hier das Abbildungsverzeichnis
+
+% richtiger Inhalt
+\pagenumbering{arabic} % ab jetzt die normale arabische Nummerierung
+\chapter{Einleitung}
+
+\todo{Einleitung}
+
+\chapter{weiteres Kapitel}\label{c.weitereskapitel}
+
+test
+
+\bild{three_step_process}{16cm}{Test-Bild mit langer Bildunterschrift}{Test-Bild}
+
+\section{eine Sektion}\label{s.einesektion}
+
+test
+
+\subsection{jetzt geht es noch tiefer}\label{s.tiefer}
+
+test
+
+Komplexe Tabellen sind nicht sehr einfach:
+
+\chapter{Zusammenfassung}\label{c.zusammenfassung}
+
+test
+
+% Anhang
+\bibliographystyle{alphadin_martin}
+\bibliography{bibliographie}
+
+\chapter*{Erklärung}
+
+Hiermit versichere ich, dass ich die vorliegende Arbeit selbstständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel benutzt habe, dass alle Stellen der Arbeit, die wörtlich oder sinngemäß aus anderen Quellen übernommen wurden, als solche kenntlich gemacht und dass die Arbeit in gleicher oder ähnlicher Form noch keiner Prüfungsbehörde vorgelegt wurde.
+
+\vspace{3cm}
+Ort, Datum \hspace{5cm} Unterschrift \\
+
+\end{document}
