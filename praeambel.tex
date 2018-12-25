@@ -6,7 +6,7 @@
 \usepackage[automark]{scrpage2} % Kopf- und Fußzeilen
 \usepackage{amsmath,marvosym} % Mathesachen
 \usepackage[T1]{fontenc} % Ligaturen, richtige Umlaute im PDF
-\usepackage[utf8]{inputenc}% UTF8-Kodierung für Umlaute usw
+\usepackage[utf8]{inputenc}% UTF8-Kodierung für Umlaute usw.
 % Schriften
 \usepackage{mathpazo} % Palatino für Mathemodus
 %\usepackage{mathpazo,tgpagella} % auch sehr schöne Schriften
@@ -76,7 +76,7 @@
 	postbreak        = ,
 	prebreak         = \raisebox{-.8ex}[0ex][0ex]{\Righttorque},
 }
-% linksbündige Fußboten
+% linksbündige Fußnoten
 \deffootnote{1.5em}{1em}{\makebox[1.5em][l]{\thefootnotemark}}
 
 \typearea{14} % typearea berechnet einen sinnvollen Satzspiegel (das heißt die Seitenränder usw.) siehe auch http://www.ctan.org/pkg/typearea. Diese Berechnung befindet sich am Schluss, damit die Einstellungen von oben berücksichtigt werden
@@ -105,7 +105,7 @@
 \newcommand{\code}[1]{
       {\ttfamily{#1}}
 }
-% bild mit defnierter Breite einfügen
+% Bild mit definierter Breite einfügen
 \newcommand{\bild}[4]{
   \begin{figure}[!hbt]
     \centering
@@ -115,7 +115,7 @@
     \vspace{1ex}
   \end{figure}
 }
-% bild mit eigener Breite
+% Bild mit eigener Breite
 \newcommand{\bilda}[3]{
   \begin{figure}[!hbt]
     \centering
