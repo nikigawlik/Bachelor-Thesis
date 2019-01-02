@@ -36,33 +36,56 @@ Matrikel-Nummer 553449\\
 \pagenumbering{arabic} % ab jetzt die normale arabische Nummerierung
 \chapter{Einführung in das Thema}
 
-\todo{Einleitung}
+\section{Motivation}
 
-Im Rahmen dieser Arbeit soll ein dreidimensionaler zyklischer Dungeon-Generator konzipiert und implementiert werden. 
+In einem Blog Post von 2016 beschreibt Joris Dormans einen Ansatz zur prozeduralen Level-Generierung, den er „Cyclic Dungeon Generation“ nennt. Dieses Verfahren präsentiert er als Gegensatz zu den Verzweigungs-Ansätzen die man in vielen anderen Dungeon-Generatoren findet \cite{blogCyclic}.
+
+Zyklische Ansätze haben viele praktische Vorteile gegenüber Verzweigungs-Ansätzen. Zum einen vermeiden sie Sackgassen und damit verbundenes Backtracking und zum anderen ermöglichen sie das Generieren von typisch zyklischen Strukturen, unter anderem: „Einbahnstraßen“ mit anderem Rückweg, alternative Wege, Abkürzungen und direkte Rückkehr zum Startpunkt des Dungeons 
+\cite{blogCyclic}.
+
+Dormans Spiel „Unexplored“, dass im Blog Post als Beispiel verwendet wird ist ein zweidimensionales Spiel in einer Top-Down-Perspektive. Besonders für zyklische Generierung ist es aber auch interessant einen dreidimensionalen Raum zu nutzen, da dies interessante Strukturen ermöglicht wie Brücken, die bereits besuchte Teile des Dungeons überspannen.  
+
+Das Ziel dieser Bachelorarbeit ist es ein Verfahren zur zyklischen Generierung von Dungeons zu konzipieren und zu implementieren. Dieses Verfahren sollte im dreidimensionalen Raum funktionieren und die dritte Dimension für interessante Strukturen nützen können. Die Implementierung findet in der Game Engine Unity3D statt.
+
+\todo{Quelle finden, dass viele designte Dungeons Zyklen aufweisen}
 
 \section{Dungeons}
 \subsection{Definition von Dungeon}
 
-Der englische Begriff „Dungeon“ wurde für diese Arbeit bewusst gewählt, er hat im Bereich Spiele eine spezielle Bedeutung, 
-die sich von der wörtlichen Übersetzung „Verlies, Kerker“ unterscheidet. \todo{Wörterbuch, Quelle für Satz} Der Begriff geht auf frühe 
+Der englische Begriff „Dungeon“ wurde für diese Arbeit bewusst gewählt, er hat im Bereich Spiele eine Bedeutung, die sich von der wörtlichen Übersetzung „Verlies, Kerker“ unterscheidet. Eine einheitliche Definition für Dungeon in diesem Kontext existiert nicht, aber üblicherweise bezeichnet er einen weitläufigen, in sich geschlossenen Raum gefüllt mit Fallen und Monstern, das ein oder mehrere Spieler navigieren müssen, häufig mit einer großen Herausforderung am Ende, z.B. einem besonders starken Boss-Monster.
 
 \bild{Warreks_Nest}{8cm}{Beispiel eines Dungeons \citeimg{warreksNestMap}}{Dungeon-Beispiel}
 
 \subsection{Wichtige Beispiele von Dungeons}
 
-\todo{Zelda}
+Dungeons ist in einigen der populärsten Spielen vertreten. Beispiele sind „Dungeons \& Dragons“, „The Legend Of Zelda“, „The Elder Scrolls“ und „Minecraft“.
+
+\todo{Eine gute Auswahl finden, Bilder-Collage machen und einfügen}
 
 \subsection{Prozedurale Dungeon-Generierung in Spielen, Geschichte}
+
+In Computerspielen gibt es eine relativ lange Tradition der Dungeon-Generierung.
+
+\todo{Research Rougelikes, Roguelites, TES Oblivion}
 
 \section{Genaue Beschreibung der Fragestellung}
 
 Der Inhalt der Arbeit ist die Entwicklung eines dreidimensionalen zyklischen Dungeon-Generators mit Unity3D. 
 
-Im Folgenden soll erläutert werden, wie die Einschränkungen „dreidimensional“ und „zyklisch“ im Kontext dieser Arbeit zu verstehen sind.
+Im Folgenden soll erläutert werden, wie die Einschränkungen „dreidimensional“ und „zyklisch“ im Kontext dieser Arbeit 
+zu verstehen sind.
 
 \subsection{Definition von zyklisch}\label{c.weitereskapitel}
 
-\subsection{Definition von Dungeon}
+Der Begriff zyklisch ist als deutsches Äquivalent des englischen Begriffs „cyclic“ zu verstehen und ist aus dem bereits erwähnten Blog Post von Joris Dormans \cite{blogCyclic} übernommen. 
+
+Ein Dungeon-Generator is zyklisch wenn A) der generierte Dungeon Zyklen enthält und B) Zyklen als Bausteine während der Generierung dienen.
+
+\bild{Warrek_Graph}{8cm}{Bild eines Dungeons, mit möglichem Level-Graph, der Graph ist ungewichtet und ungerichtet (\citeimg{warreksNestMap}, bearbeitet)}{Dungeon-Beispiel mit Graph}
+
+Zyklen im Dungeon erkennt man am Level-Graph. Betrachtet man das Beispiel in Abbildung \ref{img.Warrek_Graph} kann man mehrere Zyklen erkennen. Praktisch gesehen bedeutet das, dass der Spieler im Kreis laufen kann. Die Übersetzung der Level-Geometrie in einen Graphen ist dabei durchaus subjektiv, aber der Graph sollte die Topologie des Raumes wiedergeben. \todo{Evtl. etwas zu topologischer Graphentheorie schreiben}
+
+In der Realität kommt es selten vor, dass man beurteilen muss ob ein bereits existierender Dungeon zyklisch ist oder nicht. Häufiger ergibt sich ein Level-Graph während der Generierung, z.B. indem kontinuierlich Räume hinzugefügt werden. Die Räume können als Knoten, die Verbindungen zwischen den Räumen als Kanten verstanden werden.
 
 \subsection{Dreidimensionalität}
 
