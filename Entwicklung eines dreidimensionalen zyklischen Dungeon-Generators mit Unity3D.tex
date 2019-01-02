@@ -87,9 +87,21 @@ Zyklen im Dungeon erkennt man am Level-Graph. Betrachtet man das Beispiel in Abb
 
 In der Realität kommt es selten vor, dass man beurteilen muss ob ein bereits existierender Dungeon zyklisch ist oder nicht. Häufiger ergibt sich ein Level-Graph während der Generierung, z.B. indem kontinuierlich Räume hinzugefügt werden. Die Räume können als Knoten, die Verbindungen zwischen den Räumen als Kanten verstanden werden.
 
+Der Bedingung, dass Zyklen während der Generierung als Bausteine des Dungeons dienen, ist wichtig. So wird von einer anderen Art der Generierung unterschieden, wie man sie auch häufig in Level-Generatoren findet: Man generiert ein Labyrinth ohne Zyklen mit einem Verzweigungs-Ansatz und fügt anschließend willkürlich Verbindungen zwischen Räumen hinzu, bzw. - etwas bildlicher - „reißt Wände ein“. So entstehen auch Zyklen, diese sind aber willkürlich und schlecht kontrollierbar. 
+
+Sind allerdings die Zyklen ein Baustein des Dungeons, so dass mehrere vordefinierte Arten von Zyklen durch Aneinanderreihung oder Verschachtelung kombiniert werden, hat man Kontrolle über die Natur der Zyklen. Variablen wie Größe, Richtung und Anordnung der Zyklen sind direkt konfigurierbar.
+
 \subsection{Dreidimensionalität}
 
-\section{Warum Unity3D?}
+Dreidimensionalität \todo{Wie definieren???}
+
+\section{Warum Unity?}
+
+Unity ist eine Game Engine für die Entwicklung von 2D und 3D-Spielen. 
+
+Es wurde eine Game Engine verwendet, um den Implementierungs-Teil der Arbeit auf den Generator selbst und das User-Interface des Generators zu beschränken. Die Implementierung von Engine-typischen Features wie Rendering oder Kollision soll nicht Teil der Arbeit sein.
+
+Die Wahl einer Game Engine für ein bestimmtes Projekt ist immer auch eine subjektive Entscheidung. Hauptargumente für Unity sind die weite Verbreitung der Game Engine unter Indie-Entwicklern (die häufig von prozeduraler Generierung Gebrauch machen \todo{Really?}), das Entity-Component-System, dass einen modularen Aufbau ermöglicht und das Editor Scripting, dass es erlaubt ein User Interface für den Generator innerhalb der Engine zu schreiben. 
 
 \subsection{Entity/Component}
 
