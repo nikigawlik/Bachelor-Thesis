@@ -132,11 +132,50 @@ Durch widerholte Ersetzung von Teilgraphen kann hier aus einem Start-Graph ein E
 
 In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstrukturen zu generieren und Figur-Grammatiken (engl. Shape Grammars) um den zugehörigen Raum zu generieren. Diese Missionsstrukturen sind zyklisch, der Raum allerdings nicht.
 
-\section{Allgemeiner Algorithmus}
-
 \section{Spezieller Algorithmus}
 
-\chapter{Implementierung}
+Der Generator den ich diese Bachelorarbeit entwickelt habe, ist durch wiederholte Iteration und Experimentation entstanden. Diese Implementierung wird später ausführlich in Kapitel \ref{c.implementierung} beschrieben.
+
+Aber zum klareren Verständnis will ich zunächst den spezielleren Algorithmus formal beschreiben, und in 
+\ref{s.allgemeinerAlgorithmus} bei einer Verallgemeinerung ankommen. 
+
+Wie bereits erwähnt ähnelt das Verfahren einer Graphgrammatik. Es ist inspiriert von Joris Dormans Ansatz in 
+\cite{dormansAdventures},
+allerdings werden keine separaten Modelle für Missionsstruktur und Raum verwendet.
+In \cite[2.]{dormansModelTransformation} redet Dormans von „mission and space“ und dass diese Modelle von Level-Designern häufig als isomorphisch angenommen werden, dabei argumentiert er, dass sie als separate Modelle verstanden werden sollten.
+
+Für mein Verfahren wurden keine separaten Modelle verwendet, sondern direkt ein Raum generiert, der eine Missionsstruktur implizit  beinhaltet. Für die Zwecke dieser Arbeit, wurde diese Vereinfachung als „gut genug“ befunden.
+
+Der Generierung dieses Raumes würde ich mich gerne über das bereits bekannte Konzept der Graphgrammatik annähern. Hierfür stelle man sich einen mit Hilfe einer Graphgrammatik generierten Level-Graph vor. Dieser ist allerdings an ein dreidimensionales kartesisches Gitter gebunden. Verbindungen zwischen Knoten des Graphen sind nur zwischen direkt (nicht diagonal) benachbarten Zellen möglich, wie in Abbildung \ref{img.gridExample3D} dargestellt.
+
+\bild{gridExample3D}{6cm}{Beispiel für einen dreidimensionalen Graph innerhalb der Restriktionen des Gitters}{Beispiel für Graph im Gitter}
+
+Zu Jedem Knoten und den mit ihm verbundenen Kanten kann man sich einen äquivalenten Raum vorstellen. Als Verbindung zwischen den Räumen dient eine Tür, die äquivalent zu einer halben Kante ist (siehe Abb. \ref{img.nodeToRoom}).
+
+\bild{nodeToRoom}{8cm}{Knoten mit Halb-Kanten und äquivalenter Raum}{Äquivalenz von Knoten und Raum}
+
+Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt (sechs Ausgänge, mit jeweils zwei Zuständen, „Tür“ oder „keine Tür“), durch geschicktes nutzen von Rotationssymmetrie könnte man diese Zahl verringern. Dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen müsste. 
+
+\todo{Ausführen, dass der Designer auch Variationen erstellen will, was sich multipliziert}
+
+Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser Ansatz wurde ausgetestet, aber nicht weiter verfolgt, da die Räume dadurch zu gleich aussahen. \todo{Screenshot von VoxelRooms}
+
+Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Level-Graphen zu generieren, und dann Räume zuzuordnen, werden die Räume direkt produziert. 
+
+Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne Verwendet wird sondern stattdessen eine „Gittergrammatik“. 
+
+\todo{Formale Definition Gittergrammatik}
+
+
+
+
+
+\section{Allgemeiner Algorithmus}\label{s.allgemeinerAlgorithmus}
+
+\chapter{Implementierung}\label{c.implementierung}
+
+% Recycling-Stoff von Theorie.
+% Er beinhaltet viele einzelne Komponenten und Konfigurationsmöglichkeiten. Er ist objektorientiert programmiert und funktioniert im Zusammenspiel mit der Unity Engine. 
 
 \bild{three_step_process}{16cm}{Test-Bild mit langer Bildunterschrift}{Test-Bild}
 
@@ -161,6 +200,8 @@ In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstruktur
 
 \section{quantitative Auswertung}
 
+\section{Mögliche Verbesserungen}\label{s.verbesserungen}
+
 \section{Mögliche Anwendungsszenarien}
 
 \subsection{Roguelike, Rogue-lite}
@@ -175,7 +216,9 @@ In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstruktur
 
 % Anhang
 \chapter{Verwendete Materialien}
-\LaTeX -Vorlage von Martin Bretschneider \cite{thesislatex}
+\LaTeX -Vorlage von Martin Bretschneider 
+\newblock \url{http://www.bretschneidernet.de/tips/thesislatex.html}, 2006. --
+\newblock letzter Zugriff: 15.10.2018
 
 \bibliographystyle{alphadin_martin}
 \bibliography{bibliographie}
