@@ -111,12 +111,30 @@ Die Wahl einer Game Engine für ein bestimmtes Projekt ist immer auch eine subje
 
 \chapter{Erklärung des Ersetzungs-Algorithmus}
 
-\section{Replacement Grammars}
+Im Folgenden wird der der Arbeit zugrunde liegende Algorithmus theoretisch erklärt.
+
+\section{Formale Grammatiken und Graphgrammatiken für die Generierung}
+
+Dem Algorithmus liegt ein Ersetzungssystem zu Grunde. Dieses ähnelt der Generierung durch eine Graphgrammatik, weswegen kurz auf die Prozedurale Generierung mit Hilfe von Formalen Grammatiken und im speziellen Graphgrammatiken eingegangen wird.
+
+Formale Grammatiken werden in der prozeduralen Generierung gerne verwendet um Wörter und Texte zu generieren oder andere eindimensionale Ketten von Symbolen, wie z.B. Melodien. „Procedural Content Generation In Games“ sagt folgendes:
+
+„Generative grammars were originally developed to formally describe structures in natural language. These structures—phrases, sentences, etc.—are modelled by a finite set of recursive rules that describe how larger-scale structures are built from smaller-scale ones, grounding out in individual words as the terminal symbols.“
+\cite[Kap.~3.5, S.~45]{shaker2016procedural}
+
+Damit eine nicht-deterministische Grammatik zur Generierung verwendet werden kann muss eine Entscheidung getroffen werden, in welcher Reihenfolge Regeln angewendet werden. Eine mögliche Methode ist jeden Generations-Schritt eine zufällige Regel aus der Menge an anwendbaren Regeln auszuwählen. 
+\cite[Kap.~5.2, S.~75]{shaker2016procedural}
+Eine Terminierung des Algorithmus ist hier nicht garantiert, da Regeln rekursiv sein können. Aber bei einer zufälligen Auswahl ist eine Terminierung in einer akzeptablen Laufzeit sehr wahrscheinlich, angenommen die Formale Sprache enthält keine rekursiven Regeln ohne Abbruchbedingung. 
+
+Eine Graphgrammatik verhält sich wie eine Formale Grammatik, allerdings sind die linken und rechten Seiten hier Mustergraphen. Hierbei ist es wichtig, dass die individuellen Knoten auf der linken Seite jeweils individuelle Knoten auf der rechten Seite zugewiesen werden können, damit die Ersetzung stattfinden kann. 
+\cite[Kap.~5.5.1, S.~80]{shaker2016procedural}
+Durch widerholte Ersetzung von Teilgraphen kann hier aus einem Start-Graph ein End-Graph erzeugt werden. Die Menge der produzierbaren Graphen bildet die durch die Graphgrammatik definierte Formale Sprache. 
+
+In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstrukturen zu generieren und Figur-Grammatiken (engl. Shape Grammars) um den zugehörigen Raum zu generieren. Diese Missionsstrukturen sind zyklisch, der Raum allerdings nicht.
 
 \section{Allgemeiner Algorithmus}
 
 \section{Spezieller Algorithmus}
-
 
 \chapter{Implementierung}
 
@@ -145,7 +163,7 @@ Die Wahl einer Game Engine für ein bestimmtes Projekt ist immer auch eine subje
 
 \section{Mögliche Anwendungsszenarien}
 
-\section{Roguelike, Rogue-lite}
+\subsection{Roguelike, Rogue-lite}
 
 \subsection{Minigolf}
 
