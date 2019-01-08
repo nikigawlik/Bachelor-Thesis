@@ -154,30 +154,52 @@ Zu Jedem Knoten und den mit ihm verbundenen Kanten kann man sich einen äquivale
 
 \bild{nodeToRoom}{8cm}{Knoten mit Halb-Kanten und äquivalenter Raum}{Äquivalenz von Knoten und Raum}
 
-Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt (sechs Ausgänge, mit jeweils zwei Zuständen, „Tür“ oder „keine Tür“), durch geschicktes nutzen von Rotationssymmetrie könnte man diese Zahl verringern. Dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen müsste. 
+Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt (sechs Ausgänge, mit jeweils zwei Zuständen, „Tür“ oder „keine Tür“), durch geschicktes nutzen von Rotationssymmetrie könnte man diese Zahl verringern. Dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen müsste. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht alle in allen möglichen Eingangs/Ausgangsvariationen bereitstellen. 
 
-\todo{Ausführen, dass der Designer auch Variationen erstellen will, was sich multipliziert}
+\todo{Nochmal genauer darüber nachdenken, was genau diese Variation nhier bedeuten, etc. (oder streichen)}
 
-Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser Ansatz wurde ausgetestet, aber nicht weiter verfolgt, da die Räume dadurch zu gleich aussahen. \todo{Screenshot von VoxelRooms}
+Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser Ansatz wurde ausgetestet, aber nicht weiter verfolgt, da die Räume dadurch zu gleich aussahen. \todo{Screenshot von VoxelRooms} Einen abwechslungsreichen Raum-Generator zu entwickeln ist ein interessantes Problem, aber nicht Inhalt dieser Arbeit (mehr zu Verbesserungen siehe. \ref{s.verbesserungen}).
 
 Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Level-Graphen zu generieren, und dann Räume zuzuordnen, werden die Räume direkt produziert. 
 
-Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne Verwendet wird sondern stattdessen eine „Gittergrammatik“. 
+Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne Verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. 
 
-\todo{Formale Definition Gittergrammatik}
+Eine Array-Grammatik verhält sich wie eine normale Formale Grammatik, unterscheidet sich jedoch dadurch, dass die linke und rechte Seite gleich große Arrays sind. 
 
+\todo{Formale Definition Gittergrammatik, Buch suchen}
 
+Für diesen Algorithmus wird eine Array-Grammatik verwendet, deren Produktionsregeln als linke und rechte Seite gleich große dreidimensionale Arrays haben. Ein Vorkommen der linken Seite im großen Array $A$ kann durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
 
+\bild{ruleExample1}{8cm}{Beispiel einer Produktionsregel \footnotemark}{Beispiel einer Produktionsregel}
 
+\footnotetext{Arrays werden im Folgenden in 2D dargestellt, um die Grafiken übersichtlicher zu gestalten, sämtliche Illustrationen gelten im gleichen Maße für dreidimensionale Arrays}
+
+Anders als bei eindimensionalen Grammatiken wo sich die länge des Wortes bei der Ersetzung ändern kann, ändert sich die Größe des Arrays dabei nicht, da linke und rechte Seite gleich groß sind, es wird lediglich das relevante Teilstück ersetzt.
+
+\bild{replaceExample1}{8cm}{Anwendung der Produktionsregel A (eine von drei möglichen Positionen der Anwendung)}{Beispiel einer Regelanwendung}
+
+Um mit dieser Array-Grammatik einen Dungeon zu erstellen müssen wir lediglich statt einem Alphabet aus Buchstaben ein Alphabet aus Raumteilen verwenden. Verwendet man ein solches Alphabet, so kann eine Graphgrammatik implizit in den Arrays enthalten sein, wie in Abbildung \ref{img.ruleExample2} illustriert. In der Praxis sind diese Raumteile 3D Modelle, die modular zusammenpassen und so kann ein ganzer Dungeon mit Regeln transformiert werden.
+
+Hierbei ist dem Autor der Regeln überlassen, dass die Regeln selbst einen legalen Dungeon produzieren. Eine Regel, die z.B. eine Verbindung ins Nichts führen lässt sollte nicht erstellt werden. 
+
+Ein großer Vorteil dieser Methode ist, dass das Alphabet aus beliebig vielen oder wenigen Raumteilen bestehen kann. Des weiteren lässt es sich einfach für Rotationssymmetrie optimieren, indem man die Symbole zu Gruppen des gleichen Modells in verschiedenen Rotationen Zusammenfasst (\todo{Ref zu Implementierung}).
+
+\todo{Bild aus der Implementierung nehmen}
+
+\bild{ruleExample2}{10cm}{Alphabet $V$ mit Level-Graph-Teilen und einer Produktionsregel $R$}{Beispiel einer Produktionsregel aus Levelteilen}
 
 \section{Allgemeiner Algorithmus}\label{s.allgemeinerAlgorithmus}
+
+Der in Abschnitt \ref{s.allgemeinerAlgorithmus} beschriebene Algorithmus ist der in der Implementierung verwendete. 
+
+Im Folgenden will ich diesen allerdings zu akademischen Zwecken (\todo{really?}) verallgemeinern.
+
+\todo{Mache ich später, wenn platz und bock. :P}
 
 \chapter{Implementierung}\label{c.implementierung}
 
 % Recycling-Stoff von Theorie.
 % Er beinhaltet viele einzelne Komponenten und Konfigurationsmöglichkeiten. Er ist objektorientiert programmiert und funktioniert im Zusammenspiel mit der Unity Engine. 
-
-\bild{three_step_process}{16cm}{Test-Bild mit langer Bildunterschrift}{Test-Bild}
 
 \section{Tool-Charakter der Implementierung}
 
