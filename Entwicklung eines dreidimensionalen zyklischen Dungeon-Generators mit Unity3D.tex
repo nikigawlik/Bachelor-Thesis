@@ -132,7 +132,7 @@ Durch widerholte Ersetzung von Teilgraphen kann hier aus einem Start-Graph ein E
 
 In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstrukturen zu generieren und Figur-Grammatiken (engl. Shape Grammars) um den zugehörigen Raum zu generieren. Diese Missionsstrukturen sind zyklisch, der Raum allerdings nicht.
 
-\section{Spezieller Algorithmus}
+\section{Spezieller Algorithmus}\label{s.speziellerAlgorithmus}
 
 Der Generator den ich diese Bachelorarbeit entwickelt habe, ist durch wiederholte Iteration und Experimentation entstanden. Diese Implementierung wird später ausführlich in Kapitel \ref{c.implementierung} beschrieben.
 
@@ -162,7 +162,7 @@ Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser A
 
 Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Level-Graphen zu generieren, und dann Räume zuzuordnen, werden die Räume direkt produziert. 
 
-Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne Verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. 
+Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. 
 
 Eine Array-Grammatik verhält sich wie eine normale Formale Grammatik, unterscheidet sich jedoch dadurch, dass die linke und rechte Seite gleich große Arrays sind. 
 
@@ -170,7 +170,7 @@ Eine Array-Grammatik verhält sich wie eine normale Formale Grammatik, untersche
 
 Für diesen Algorithmus wird eine Array-Grammatik verwendet, deren Produktionsregeln als linke und rechte Seite gleich große dreidimensionale Arrays haben. Ein Vorkommen der linken Seite im großen Array $A$ kann durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
 
-\bild{ruleExample1}{8cm}{Beispiel einer Produktionsregel \footnotemark}{Beispiel einer Produktionsregel}
+\bild{ruleExample1}{8cm}{Beispiel einer Produktionsregel\footnotemark}{Beispiel einer Produktionsregel}
 
 \footnotetext{Arrays werden im Folgenden in 2D dargestellt, um die Grafiken übersichtlicher zu gestalten, sämtliche Illustrationen gelten im gleichen Maße für dreidimensionale Arrays}
 
@@ -198,33 +198,101 @@ Im Folgenden will ich diesen allerdings zu akademischen Zwecken (\todo{really?})
 
 \chapter{Implementierung}\label{c.implementierung}
 
-% Recycling-Stoff von Theorie.
-% Er beinhaltet viele einzelne Komponenten und Konfigurationsmöglichkeiten. Er ist objektorientiert programmiert und funktioniert im Zusammenspiel mit der Unity Engine. 
+In diesem Kapitel wird die praktische Umsetzung des in \ref{s.speziellerAlgorithmus} beschriebenen Algorithmus behandelt. Die Implementierung beinhaltet viele einzelne Komponenten und Konfigurationsmöglichkeiten. Sie ist objektorientiert programmiert und läuft als Erweiterung der Unity Engine. 
 
 \section{Tool-Charakter der Implementierung}
 
-\section{Wichtige Klassen}
+Wie in \ref{s.anwendungsmöglichkeiten} beschrieben, sind viele verschiedene Anwendungsszenarien für diesen Generator denkbar. 
 
-\todo{Tile, Pattern, ReplacementEngine, ...}
+Ich habe früh den Entschluss gefasst mit dieser Implementierung einen gewissen Tool-Charakter anzustreben. Es ist mir also wichtig, dass die Software nicht als purer Dungeon-Generator mit spezifischem Anwendungsfall zu verstehen ist, sondern vielmehr als Software in der sich verschiedene Generatoren der gleichen Klasse konfigurieren lassen.
+
+Um dies zu Ermöglichen wurden Features der Unity-Engine geschickt genutzt. 
+
+Unity verwendet eine Entity-Component-Architektur. So werden an ein GameObject beliebig viele Komponenten angehängt, die verschiedene Funktionen erfüllen und miteinander interagieren. Dies ermöglicht einen modularen Aufbau von Objekten. 
+\cite[Seite: GameObjects]{unityManual}
+Neue Komponenten können in Unity programmiert werden, indem man eine Klasse schreibt, die von der Klasse MonoBehaviour erbt.
+\cite[Seite: CreatingAndUsingScripts]{unityManual}
+
+Das wichtigste GameObject der Software ist der „Generator“, dieser ist üblicherweise zusammengesetzt aus folgenden Komponenten: 
+Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder RecipeReplacer, RuleSet, RuleEditor (optional), ReplacementEngine, PatternToPrefabs. Auf diese Komponenten wird später \todo{Wo?} genauer eingegangen.
+
+\bild{screenshotGenerator}{12cm}{Screenshots des Inspektors eines Generator-GameObjects, man sieht alle vorhandenen Komponenten und deren Einstellungen}{Screenshot der Generator-Komponenten}
+
+Ein Beispiel hierfür kann man in Abbildung \ref{img.screenshotGenerator} sehen, nur durch das Zusammenspiel der einzelnen Komponenten ergibt sich ein Generator. Durch den modularen Aufbau verhindert man zum einen Code Duplication (Es wird z.B. der PatternView auch in anderen Objekten wiederverwendet), zum anderen ist es eine Anpassungsmöglichkeit: So lässt sich nach Belieben ein RandomReplacer oder ein RecipeReplacer verwenden um verschiedenes Verhalten zu erzeugen. 
+
+Manche Komponenten ließen sich prinzipiell zusammenfassen, wie z.B. PatternView und PatternToPrefabs, aber wurden trotzdem getrennt implementiert, da sie unterschiedliche Aufgaben erfüllen. Dies macht auch das Ausbauen der Software in der Zukunft einfacher, da einzelne Komponenten ausgetauscht oder umgeschrieben werden können, solange die öffentlichen Funktionen und Variablen dieser Komponenten gleich bleiben.
+
+In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wichtiges Unity-Feature, nämlich die Darstellung von öffentlichen Variablen im Inspektor. Ist ein Field public (oder private und mit dem SerializeField-Attribute gekennzeichnet) so kann der Wert dieses Fields im Unity gesetzt werden; Unity unterstützt hierbei gewisse Datentypen von Haus aus, für andere kann man sog. Property Drawers definieren. Alle Generator-Komponenten haben public Fields, was den ganzen Generator sehr konfigurierbar macht.
+
+Teilweise wurde außerdem das User Interface über selbst geschriebene Editor-UI ausgebaut, mehr hierzu in Abschnitt \todo{ja wo?}.
+
+\section{Erklärung der Komponenten}
+
+Es folgt eine kurze Beschreibung der einzelnen Komponenten. Es wird vor allem beschrieben, wie die Komponenten benutzt werden. \todo{Besser schreiben}
+
+\subsection{PatternView}
+
+Das PatternView repräsentiert einen dreidimensionalen Array von Labels. Diese Labels stehen üblicherweise für einen Raum und eine Rotation. Das label „st\_2“ steht beispielsweise für eine gerades Stück („st“ für „straight“), dass um zwei mal um die y-Achse rotiert wurde. Das PatternView enthält außerdem ein Display Delta, dass bestimmt mit wie viel Abstand die Räume im Raum verteilt sind. Im Scene View\footnote{Übersicht der Unity-UI siehe \cite[Seite: LearningtheInterface]{unityManual}} von Unity werden die Labels als Text im dreidimensionalen Raum angezeigt (erkennbar in Abb. \ref{img.sceneView1}).
+
+\bild{sceneView1}{16cm}{Sicht auf einen Teil eines generierten Dungeons im Unity Scene View}{Dungeon-Teil im Unity Scene View}
+
+\subsection{PatternToPrefabs}
+
+Der PatternToPrefabs Component ist ein Component, der für jedes label im PatternView ein oder mehrere Prefabs in der Szene erstellt. Dies geschieht wenn eine Änderung im PatternView stattfindet und einmal bei Spielstart. In einem ScriptableObject\footnote{Scriptable Objects in Unity: \cite[Seite: class-ScriptableObject]{unityManual}} der Klasse PrefabDictionary wird jedem Raumnamen wie „st“ ein Prefab\footnote{Prefabs in Unity: \cite[Seite: LearningtheInterface]{unityManual}} zugeordnet. 
+
+Es können beliebig viele Raumnamen mit Unterstrichen getrennt in einem label vorkommen, die zugehörigen Prefabs werden dann übereinander generiert. die Kette kann mit einer Zahl beendet werden, die die Rotation in $90^\circ$-Schritten um die y-Achse angibt. Ein Beispiel hierfür ist „it\_obstacle\_0“ in Abbildung \ref{img.sceneView1}. Es wird das Kreuzung-Prefab „it“ mit einem Hindernis-Prefab „obstacle“ generiert und um 0 mal $90^\circ$ gedreht.
+
+Der PatternToPrefabs Component verlangt ein PatternView Component mit RequireComponent\footnote{RequireComponent in Unity: \cite[Seite: RequireComponent]{unitySciptingReference}}
+
+\subsection{ReplacementEngine}
+
+Die ReplacementEngine ist verantwortlich für die im Hintergrund stattfindende Ersetzung. Sie findet im PatternView Matches für Regeln aus dem RuleSet. Erhält sie von einem anderen Component wie RandomReplacer das Signal, wendet sie eine Produktionsregel an. Dabei kann eingestellt werden ob an einer zufälligen Position, der zuerst gefundenen, oder zuletzt gefundenen Position ersetzt werden soll. Es kann außerdem ein Filter angegeben werden, sodass nur bestimmte Regeln ersetzt werden. Dieser Filter wird vom RecipeReplacer ausgiebig verwendet.
+
+Der PatternToPrefabs Component verlangt die PatternView und RuleSet Components mit RequireComponent.
+
+\subsection{RandomReplacer und RecipeReplacer}
+
+Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Interface für den Generator. Von ihnen kann die Generation ausgelöst werden.
+
+Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Knopf drückt, oder zur Laufzeit indem man die Generate-Methode aufruft. Die Generate-Methode generiert einen ganzen Dungeon auf einmal. Alternativ kann man auch einmal die InitializeGeneration-Methode aufrufen und im Anschluss die GenerateStep-Methode um einzelne Ersetzungen Schritt für Schritt vorzunehmen.
+
+Der RandomReplacer ist die simplere Variante der beiden Replacer. Er wählt immer eine zufällige Position und Regel für den nächsten Produktionsschritt. Dabei gewichtet er die einzelnen Positionen gemäß der Gewichtung der Regeln im RuleSet.
+
+Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}
+
+\subsection{RuleSet}
+
+\subsection{RuleEditor}
+
+\section{Wichtige Klassen}
 
 \section{Die Pattern-Datenstruktur}
 
 \section{Lazy updating, suchen}
 
-
 \chapter{Auswertung der generierten Dungeons}
+
+Die Qualität der generierten Dungeons soll im Folgeneden bewertet werden um das Verfahren zu beurteilen. 
 
 \section{Einschränkungen}
 
-\todo{Subjektivität, Spiele-spezifisch}
+Es ist wohl zuerst zu sagen, dass eine objektive Bewertung der Dungeons schwer möglich ist. Dies hat mehrere Gründe.
+
+Ein direkter Test mit Spielern und eine Auswertung über Fragebögen ist nicht möglich, da der Dungeon-Generator nicht für ein bestimmtes Spiel konzipiert würde. Mit einem Test-Spiel wäre dies jedoch ein guter Ansatz, wenn auch etwas aufwändig und nicht im Rahmen dieser Arbeit machbar.
+
+Zweitens ist die Qualität von Dungeons prinzipiell subjektiv, was eine rein statistische Auswertung quasi unmöglich, bzw. wenig aussagekräftig macht.
+
+Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, was einen Vergleich mit anderen Verfahren schwer macht. Eine Vergleich von verschiedenen Verfahren wäre natürlich interessant, aber auch nicht Inhalt dieser Arbeit \todo{Verweis auf Ausblick o.ä.}
 
 \section{qualitative Auswertung}
 
 \section{quantitative Auswertung}
 
+% evtl. Laufzeit betrachten. Evtl. statistische Metriken von Ähnlichkeit herausfinden
+
 \section{Mögliche Verbesserungen}\label{s.verbesserungen}
 
-\section{Mögliche Anwendungsszenarien}
+\section{Mögliche Anwendungsszenarien}\label{s.anwendungsmöglichkeiten}
 
 \subsection{Roguelike, Rogue-lite}
 
@@ -239,8 +307,8 @@ Im Folgenden will ich diesen allerdings zu akademischen Zwecken (\todo{really?})
 % Anhang
 \chapter{Verwendete Materialien}
 \LaTeX -Vorlage von Martin Bretschneider 
-\newblock \url{http://www.bretschneidernet.de/tips/thesislatex.html}, 2006. --
-\newblock letzter Zugriff: 15.10.2018
+\newblock \url{https://www.bretschneidernet.de/tips/thesislatex-vorlagen.html#vorlagen}, 2006. --
+\newblock letzter Zugriff: 08.01.2019
 
 \bibliographystyle{alphadin_martin}
 \bibliography{bibliographie}
