@@ -44,7 +44,7 @@ In einem Blog Post von 2016 beschreibt Joris Dormans einen Ansatz zur prozedural
 Zyklische Ansätze haben viele praktische Vorteile gegenüber Verzweigungs-Ansätzen. Zum einen vermeiden sie Sackgassen und damit verbundenes Backtracking und zum anderen ermöglichen sie das Generieren von typisch zyklischen Strukturen, unter anderem: „Einbahnstraßen“ mit anderem Rückweg, alternative Wege, Abkürzungen und direkte Rückkehr zum Startpunkt des Dungeons 
 \cite{blogCyclic}.
 
-Dormans Spiel „Unexplored“, dass im Blog Post als Beispiel verwendet wird ist ein zweidimensionales Spiel in einer Top-Down-Perspektive. Besonders für zyklische Generierung ist es aber auch interessant einen dreidimensionalen Raum zu nutzen, da dies interessante Strukturen ermöglicht wie Brücken, die bereits besuchte Teile des Dungeons überspannen.  
+Dormans Spiel „Unexplored“, dass im Blog Post als Beispiel verwendet wird, ist ein zweidimensionales Spiel in einer Top-Down-Perspektive. Besonders für zyklische Generierung ist es aber auch interessant einen dreidimensionalen Raum zu nutzen, da dies interessante Strukturen ermöglicht wie Brücken die bereits besuchte Teile des Dungeons überspannen.  
 
 Das Ziel dieser Bachelorarbeit ist es ein Verfahren zur zyklischen Generierung von Dungeons zu konzipieren und zu implementieren. Dieses Verfahren sollte im dreidimensionalen Raum funktionieren und die dritte Dimension für interessante Strukturen nutzen können. Die Implementierung findet in der Game Engine Unity3D statt.
 
@@ -180,13 +180,13 @@ Anders als bei eindimensionalen Grammatiken wo sich die länge des Wortes bei de
 
 Um mit dieser Array-Grammatik einen Dungeon zu erstellen müssen wir lediglich statt einem Alphabet aus Buchstaben ein Alphabet aus Raumteilen verwenden. Verwendet man ein solches Alphabet, so kann eine Graphgrammatik implizit in den Arrays enthalten sein, wie in Abbildung \ref{img.ruleExample2} illustriert. In der Praxis sind diese Raumteile 3D Modelle, die modular zusammenpassen und so kann ein ganzer Dungeon mit Regeln transformiert werden.
 
-Hierbei ist dem Autor der Regeln überlassen, dass die Regeln selbst einen legalen Dungeon produzieren. Eine Regel, die z.B. eine Verbindung ins Nichts führen lässt sollte nicht erstellt werden. 
+Hierbei ist dem Autor/der Autorin der Regeln überlassen, dass die Regeln selbst einen korrekten Dungeon produzieren. Eine Regel, die z.B. eine Verbindung ins Nichts führen lässt sollte nicht erstellt werden. 
 
 Ein großer Vorteil dieser Methode ist, dass das Alphabet aus beliebig vielen oder wenigen Raumteilen bestehen kann. Des weiteren lässt es sich einfach für Rotationssymmetrie optimieren, indem man die Symbole zu Gruppen des gleichen Modells in verschiedenen Rotationen Zusammenfasst (\todo{Ref zu Implementierung}).
 
 \todo{Bild aus der Implementierung nehmen}
 
-\bild{ruleExample2}{10cm}{Alphabet $V$ mit Level-Graph-Teilen und einer Produktionsregel $R$}{Beispiel einer Produktionsregel aus Levelteilen}
+\bild{ruleExample2}{10cm}{Alphabet $\Sigma$ mit Level-Graph-Teilen und einer Produktionsregel $R$}{Beispiel einer Produktionsregel aus Levelteilen}
 
 \section{Allgemeiner Algorithmus}\label{s.allgemeinerAlgorithmus}
 
@@ -200,23 +200,20 @@ Im Folgenden will ich diesen allerdings zu akademischen Zwecken (\todo{really?})
 
 In diesem Kapitel wird die praktische Umsetzung des in \ref{s.speziellerAlgorithmus} beschriebenen Algorithmus behandelt. Die Implementierung beinhaltet viele einzelne Komponenten und Konfigurationsmöglichkeiten. Sie ist objektorientiert programmiert und läuft als Erweiterung der Unity Engine. 
 
-\section{Tool-Charakter der Implementierung}
+\section{Ziele der Implementierung}
 
-Wie in \ref{s.anwendungsmöglichkeiten} beschrieben, sind viele verschiedene Anwendungsszenarien für diesen Generator denkbar. 
+Wie später in \ref{s.anwendungsmöglichkeiten} beschrieben, sind viele verschiedene Anwendungsszenarien für diesen Generator denkbar. 
 
-Ich habe früh den Entschluss gefasst mit dieser Implementierung einen gewissen Tool-Charakter anzustreben. Es ist mir also wichtig, dass die Software nicht als purer Dungeon-Generator mit spezifischem Anwendungsfall zu verstehen ist, sondern vielmehr als Software in der sich verschiedene Generatoren der gleichen Klasse konfigurieren lassen.
+Ein Ziel der Implementierung ist es, dass die Software nicht einen spezifischen Generator darstellt, sondern eine Software in der sich verschiedene Generatoren der gleichen Klasse konfigurieren lassen. Es sollten möglichst große Teile des Algorithmus nicht hard-coded sondern konfigurierbar sein, indem sie als Daten vorliegen. Insbesondere gilt das für das Alphabet und die Produktionsregeln der Array-Grammatik.
 
-Um dies zu Ermöglichen wurden Features der Unity-Engine geschickt genutzt. 
+Ein weiteres Ziel ist es die Features der Unity-Engine zu nutzen, Insbesondere die Entity-Component-Architektur und die Möglichkeiten den Unity-Editor mit eigener UI zu erweitern. 
+
+\section{Wichtige Unity-Features}
 
 Unity verwendet eine Entity-Component-Architektur. So werden an ein GameObject beliebig viele Komponenten angehängt, die verschiedene Funktionen erfüllen und miteinander interagieren. Dies ermöglicht einen modularen Aufbau von Objekten. 
 \cite[Seite: GameObjects]{unityManual}
 Neue Komponenten können in Unity programmiert werden, indem man eine Klasse schreibt, die von der Klasse MonoBehaviour erbt.
 \cite[Seite: CreatingAndUsingScripts]{unityManual}
-
-Das wichtigste GameObject der Software ist der „Generator“, dieser ist üblicherweise zusammengesetzt aus folgenden Komponenten: 
-Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder RecipeReplacer, RuleSet, RuleEditor (optional), ReplacementEngine, PatternToPrefabs. Auf diese Komponenten wird später \todo{Wo?} genauer eingegangen.
-
-\bild{screenshotGenerator}{12cm}{Screenshots des Inspektors eines Generator-GameObjects, man sieht alle vorhandenen Komponenten und deren Einstellungen}{Screenshot der Generator-Komponenten}
 
 Ein Beispiel hierfür kann man in Abbildung \ref{img.screenshotGenerator} sehen, nur durch das Zusammenspiel der einzelnen Komponenten ergibt sich ein Generator. Durch den modularen Aufbau verhindert man zum einen Code Duplication (Es wird z.B. der PatternView auch in anderen Objekten wiederverwendet), zum anderen ist es eine Anpassungsmöglichkeit: So lässt sich nach Belieben ein RandomReplacer oder ein RecipeReplacer verwenden um verschiedenes Verhalten zu erzeugen. 
 
@@ -226,17 +223,24 @@ In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wicht
 
 Teilweise wurde außerdem das User Interface über selbst geschriebene Editor-UI ausgebaut, mehr hierzu in Abschnitt \todo{ja wo?}.
 
-\section{Erklärung der Komponenten}
+\section{Aufbau des Generator-Objekts}
+
+Das wichtigste GameObject der Software ist der „Generator“, dieser ist üblicherweise zusammengesetzt aus folgenden Komponenten: 
+Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder RecipeReplacer, RuleSet, RuleEditor (optional), ReplacementEngine, PatternToPrefabs. Auf diese Komponenten wird in \ref{komponenten} genauer eingegangen.
+
+\bild{screenshotGenerator}{12cm}{Screenshots des Inspektors eines Generator-GameObjects, man sieht alle vorhandenen Komponenten und deren Einstellungen}{Screenshot der Generator-Komponenten}
+
+\subsection{Erklärung der Komponenten}\label{komponenten}
 
 Es folgt eine kurze Beschreibung der einzelnen Komponenten. Es wird vor allem beschrieben, wie die Komponenten benutzt werden. \todo{Besser schreiben}
 
-\subsection{PatternView}
+\subsubsection{PatternView}
 
 Das PatternView repräsentiert einen dreidimensionalen Array von Labels. Diese Labels stehen üblicherweise für einen Raum und eine Rotation. Das label „st\_2“ steht beispielsweise für eine gerades Stück („st“ für „straight“), dass um zwei mal um die y-Achse rotiert wurde. Das PatternView enthält außerdem ein Display Delta, dass bestimmt mit wie viel Abstand die Räume im Raum verteilt sind. Im Scene View\footnote{Übersicht der Unity-UI siehe \cite[Seite: LearningtheInterface]{unityManual}} von Unity werden die Labels als Text im dreidimensionalen Raum angezeigt (erkennbar in Abb. \ref{img.sceneView1}).
 
 \bild{sceneView1}{16cm}{Sicht auf einen Teil eines generierten Dungeons im Unity Scene View}{Dungeon-Teil im Unity Scene View}
 
-\subsection{PatternToPrefabs}
+\subsubsection{PatternToPrefabs}
 
 Der PatternToPrefabs Component ist ein Component, der für jedes label im PatternView ein oder mehrere Prefabs in der Szene erstellt. Dies geschieht wenn eine Änderung im PatternView stattfindet und einmal bei Spielstart. In einem ScriptableObject\footnote{Scriptable Objects in Unity: \cite[Seite: class-ScriptableObject]{unityManual}} der Klasse PrefabDictionary wird jedem Raumnamen wie „st“ ein Prefab\footnote{Prefabs in Unity: \cite[Seite: LearningtheInterface]{unityManual}} zugeordnet. 
 
@@ -244,13 +248,13 @@ Es können beliebig viele Raumnamen mit Unterstrichen getrennt in einem label vo
 
 Der PatternToPrefabs Component verlangt ein PatternView Component mit RequireComponent\footnote{RequireComponent in Unity: \cite[Seite: RequireComponent]{unitySciptingReference}}
 
-\subsection{ReplacementEngine}
+\subsubsection{ReplacementEngine}
 
 Die ReplacementEngine ist verantwortlich für die im Hintergrund stattfindende Ersetzung. Sie findet im PatternView Matches für Regeln aus dem RuleSet. Erhält sie von einem anderen Component wie RandomReplacer das Signal, wendet sie eine Produktionsregel an. Dabei kann eingestellt werden ob an einer zufälligen Position, der zuerst gefundenen, oder zuletzt gefundenen Position ersetzt werden soll. Es kann außerdem ein Filter angegeben werden, sodass nur bestimmte Regeln ersetzt werden. Dieser Filter wird vom RecipeReplacer ausgiebig verwendet.
 
 Der PatternToPrefabs Component verlangt die PatternView und RuleSet Components mit RequireComponent.
 
-\subsection{RandomReplacer und RecipeReplacer}
+\subsubsection{RandomReplacer und RecipeReplacer}
 
 Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Interface für den Generator. Von ihnen kann die Generation ausgelöst werden.
 
@@ -260,19 +264,22 @@ Der RandomReplacer ist die simplere Variante der beiden Replacer. Er wählt imme
 
 Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}
 
-\subsection{RuleSet}
+\subsubsection{RuleSet}
 
-\subsection{RuleEditor}
+Das 
+
+\subsubsection{RuleEditor}
 
 \section{Wichtige Klassen}
-
 \section{Die Pattern-Datenstruktur}
-
 \section{Lazy updating, suchen}
+\section{Editor UI}
+\section{Regelsystem}
+\section{Modelle}
 
 \chapter{Auswertung der generierten Dungeons}
 
-Die Qualität der generierten Dungeons soll im Folgeneden bewertet werden um das Verfahren zu beurteilen. 
+Die Qualität der generierten Dungeons soll im Folgenden bewertet werden um das Verfahren zu beurteilen. 
 
 \section{Einschränkungen}
 
