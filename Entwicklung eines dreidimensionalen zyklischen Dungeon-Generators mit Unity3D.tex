@@ -104,11 +104,6 @@ Es wurde eine Game Engine verwendet, um den Implementierungs-Teil der Arbeit auf
 
 Die Wahl einer Game Engine für ein bestimmtes Projekt ist immer auch eine subjektive Entscheidung. Hauptargumente für Unity sind die weite Verbreitung der Game Engine unter Indie-Entwicklern (die häufig von prozeduraler Generierung Gebrauch machen \todo{Really?}), das Entity-Component-System, dass einen modularen Aufbau ermöglicht und das Editor Scripting, dass es erlaubt ein User Interface für den Generator innerhalb der Engine zu schreiben. 
 
-\subsection{Entity/Component}
-
-\subsection{Editor Scripting}
-
-
 \chapter{Der Ersetzungs-Algorithmus}
 
 Im Folgenden wird der der Arbeit zugrunde liegende Algorithmus theoretisch erklärt.
@@ -222,7 +217,7 @@ Ein weiteres Ziel ist es die Features der Unity-Engine zu nutzen, Insbesondere d
 
 \section{Wichtige Unity-Features}
 
-Unity verwendet eine Entity-Component-Architektur. So werden an ein GameObject beliebig viele Komponenten angehängt, die verschiedene Funktionen erfüllen und miteinander interagieren. Dies ermöglicht einen modularen Aufbau von Objekten. 
+Unity verwendet eine Entity-Component-Architektur. So werden an ein GameObject beliebig viele Komponenten angehängt, die verschiedene Funktionen erfüllen und miteinander interagieren können. Dies ermöglicht einen modularen Aufbau von Objekten. 
 \cite[Seite: GameObjects]{unityManual}
 Neue Komponenten können in Unity programmiert werden, indem man eine Klasse schreibt, die von der Klasse MonoBehaviour erbt.
 \cite[Seite: CreatingAndUsingScripts]{unityManual}
@@ -231,9 +226,9 @@ Ein Beispiel hierfür kann man in Abbildung \ref{img.screenshotGenerator} sehen,
 
 Manche Komponenten ließen sich prinzipiell zusammenfassen, wie z.B. PatternView und PatternToPrefabs, aber wurden trotzdem getrennt implementiert, da sie unterschiedliche Aufgaben erfüllen. Dies macht auch das Ausbauen der Software in der Zukunft einfacher, da einzelne Komponenten ausgetauscht oder umgeschrieben werden können, solange die öffentlichen Funktionen und Variablen dieser Komponenten gleich bleiben.
 
-In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wichtiges Unity-Feature, nämlich die Darstellung von öffentlichen Variablen im Inspektor. Ist ein Field public (oder private und mit dem SerializeField-Attribute gekennzeichnet) so kann der Wert dieses Fields im Unity gesetzt werden; Unity unterstützt hierbei gewisse Datentypen von Haus aus, für andere kann man sog. Property Drawers definieren. Alle Generator-Komponenten haben public Fields, was den ganzen Generator sehr konfigurierbar macht.
+In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wichtiges Unity-Feature, nämlich die Darstellung von öffentlichen Variablen im Inspektor. Ist ein Field public (oder private und mit dem SerializeField-Attribute gekennzeichnet) so kann der Wert dieses Fields im Inspektor gesetzt werden; Unity unterstützt hierbei gewisse Datentypen von Haus aus, für andere kann man sogenannte Property Drawers definieren. Alle Generator-Komponenten haben public Fields, was den ganzen Generator sehr konfigurierbar macht.
 
-Teilweise wurde außerdem das User Interface über selbst geschriebene Editor-UI ausgebaut, mehr hierzu in Abschnitt \todo{ja wo?}.
+Teilweise wurde außerdem das User Interface über selbst geschriebene Editor-UI ausgebaut, mehr hierzu in Abschnitt \ref{s.editorUI}.
 
 \section{Aufbau des Generator-Objekts}
 
@@ -248,27 +243,27 @@ Es folgt eine kurze Beschreibung der einzelnen Komponenten. Es wird vor allem be
 
 \subsubsection{PatternView}
 
-Das PatternView repräsentiert einen dreidimensionalen Array von Labels. Diese Labels stehen üblicherweise für einen Raum und eine Rotation. Das label „st\_2“ steht beispielsweise für eine gerades Stück („st“ für „straight“), dass um zwei mal um die y-Achse rotiert wurde. Das PatternView enthält außerdem ein Display Delta, dass bestimmt mit wie viel Abstand die Räume im Raum verteilt sind. Im Scene View\footnote{Übersicht der Unity-UI siehe \cite[Seite: LearningtheInterface]{unityManual}} von Unity werden die Labels als Text im dreidimensionalen Raum angezeigt (erkennbar in Abb. \ref{img.sceneView1}).
+Das PatternView repräsentiert einen dreidimensionalen Array von Labels. Diese Labels stehen üblicherweise für einen Raum und eine Rotation. Das Label „st\_2“ steht beispielsweise für eine gerades Stück („st“ für „straight“), dass um zwei mal um die y-Achse rotiert wurde. Das PatternView enthält außerdem ein Display Delta, dass bestimmt mit wie viel Abstand die Räume im Raum verteilt sind. Im Scene View\footnote{Übersicht der Unity-UI: \cite[Seite: LearningtheInterface]{unityManual}} von Unity werden die Labels als Text im dreidimensionalen Raum angezeigt (erkennbar in Abb. \ref{img.sceneView1}).
 
 \bild{sceneView1}{16cm}{Sicht auf einen Teil eines generierten Dungeons im Unity Scene View}{Dungeon-Teil im Unity Scene View}
 
 \subsubsection{PatternToPrefabs}
 
-Der PatternToPrefabs Component ist ein Component, der für jedes label im PatternView ein oder mehrere Prefabs in der Szene erstellt. Dies geschieht wenn eine Änderung im PatternView stattfindet und einmal bei Spielstart. In einem ScriptableObject\footnote{Scriptable Objects in Unity: \cite[Seite: class-ScriptableObject]{unityManual}} der Klasse PrefabDictionary wird jedem Raumnamen wie „st“ ein Prefab\footnote{Prefabs in Unity: \cite[Seite: LearningtheInterface]{unityManual}} zugeordnet. 
+Der PatternToPrefabs Component ist ein Component, der für jedes Label im PatternView ein oder mehrere Prefabs in der Szene erstellt. Dies geschieht wenn eine Änderung im PatternView stattfindet und einmal bei Spielstart. In einem ScriptableObject\footnote{Scriptable Objects in Unity: \cite[Seite: class-ScriptableObject]{unityManual}} der Klasse PrefabDictionary wird jedem Raumnamen wie „st“ ein Prefab\footnote{Prefabs in Unity: \cite[Seite: LearningtheInterface]{unityManual}} zugeordnet. 
 
-Es können beliebig viele Raumnamen mit Unterstrichen getrennt in einem label vorkommen, die zugehörigen Prefabs werden dann übereinander generiert. die Kette kann mit einer Zahl beendet werden, die die Rotation in $90^\circ$-Schritten um die y-Achse angibt. Ein Beispiel hierfür ist „it\_obstacle\_0“ in Abbildung \ref{img.sceneView1}. Es wird das Kreuzung-Prefab „it“ mit einem Hindernis-Prefab „obstacle“ generiert und um 0 mal $90^\circ$ gedreht.
+Es können beliebig viele Raumnamen mit Unterstrichen getrennt in einem Label vorkommen, die zugehörigen Prefabs werden dann übereinander generiert. die Kette kann mit einer Zahl beendet werden, die die Rotation in $90^\circ$-Schritten um die y-Achse angibt. Ein Beispiel hierfür ist „it\_obstacle\_0“ in Abbildung \ref{img.sceneView1}. Es wird das Kreuzung-Prefab „it“ mit einem Hindernis-Prefab „obstacle“ generiert und um 0 mal $90^\circ$ gedreht.
 
 Der PatternToPrefabs Component verlangt ein PatternView Component mit RequireComponent\footnote{RequireComponent in Unity: \cite[Seite: RequireComponent]{unitySciptingReference}}
 
 \subsubsection{ReplacementEngine}
 
-Die ReplacementEngine ist verantwortlich für die im Hintergrund stattfindende Ersetzung. Sie findet im PatternView Matches für Regeln aus dem RuleSet. Erhält sie von einem anderen Component wie RandomReplacer das Signal, wendet sie eine Produktionsregel an. Dabei kann eingestellt werden ob an einer zufälligen Position, der zuerst gefundenen, oder zuletzt gefundenen Position ersetzt werden soll. Es kann außerdem ein Filter angegeben werden, sodass nur bestimmte Regeln ersetzt werden. Dieser Filter wird vom RecipeReplacer ausgiebig verwendet.
+Die ReplacementEngine ist verantwortlich für die im Hintergrund stattfindende Ersetzung. Sie findet im PatternView Matches für Regeln aus dem RuleSet. Erhält sie von einem anderen Component wie RandomReplacer das Signal, wendet sie eine Produktionsregel an. Dabei kann eingestellt werden ob an einer zufälligen Position, der zuerst gefundenen, oder zuletzt gefundenen Position ersetzt werden soll. Es kann außerdem ein Filter übergeben werden, sodass nur bestimmte Regeln ersetzt werden. Dieser Filter wird vom RecipeReplacer verwendet.
 
 Der PatternToPrefabs Component verlangt die PatternView und RuleSet Components mit RequireComponent.
 
 \subsubsection{RandomReplacer und RecipeReplacer}
 
-Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Interface für den Generator. Von ihnen kann die Generation ausgelöst werden.
+Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Haupt-Schnittstelle des Generators. Von ihnen kann die Generation ausgelöst werden.
 
 Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Knopf drückt, oder zur Laufzeit indem man die Generate-Methode aufruft. Die Generate-Methode generiert einen ganzen Dungeon auf einmal. Alternativ kann man auch einmal die InitializeGeneration-Methode aufrufen und im Anschluss die GenerateStep-Methode um einzelne Ersetzungen Schritt für Schritt vorzunehmen.
 
@@ -285,7 +280,7 @@ Das
 \section{Wichtige Klassen}
 \section{Die Pattern-Datenstruktur}
 \section{Lazy updating, suchen}
-\section{Editor UI}
+\section{Editor UI}\label{s.editorUI}
 \section{Regelsystem}
 \section{Modelle}
 
