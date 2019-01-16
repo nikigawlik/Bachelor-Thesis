@@ -35,7 +35,7 @@ Matrikel-Nummer 553449\\
 
 % richtiger Inhalt
 \pagenumbering{arabic} % ab jetzt die normale arabische Nummerierung
-\chapter{Einführung in das Thema}
+\chapter{Einführung und Definitionen}
 
 \section{Motivation}
 
@@ -53,7 +53,7 @@ Das Ziel dieser Bachelorarbeit ist es ein Verfahren zur zyklischen Generierung v
 \section{Dungeons}
 \subsection{Definition von Dungeon}
 
-Der englische Begriff „Dungeon“ wurde für diese Arbeit bewusst gewählt, er hat im Bereich Spiele eine Bedeutung, die sich von der wörtlichen Übersetzung „Verlies, Kerker“ unterscheidet. Eine einheitliche Definition für Dungeon in diesem Kontext existiert nicht, aber üblicherweise bezeichnet er einen weitläufigen, in sich geschlossenen Raum gefüllt mit Fallen und Monstern, das ein oder mehrere Spieler navigieren müssen, häufig mit einer großen Herausforderung am Ende, z.B. einem besonders starken Boss-Monster.
+Der englische Begriff „Dungeon“ wurde für diese Arbeit bewusst gewählt, er hat im Bereich Spiele eine Bedeutung, die sich von der wörtlichen Übersetzung „Verlies, Kerker“ unterscheidet. Eine einheitliche Definition für Dungeon in diesem Kontext existiert nicht, aber üblicherweise bezeichnet er einen weitläufigen, in sich geschlossenen Raum gefüllt mit Fallen und Monstern, den ein oder mehrere Spieler navigieren müssen, häufig mit einer großen Herausforderung am Ende, z.B. einem besonders starken Boss-Monster.
 
 \bild{Warreks_Nest}{8cm}{Beispiel eines Dungeons \citeimg{warreksNestMap}}{Dungeon-Beispiel}
 
@@ -80,11 +80,11 @@ zu verstehen sind.
 
 Der Begriff zyklisch ist als deutsches Äquivalent des englischen Begriffs „cyclic“ zu verstehen und ist aus dem bereits erwähnten Blog Post von Joris Dormans \cite{blogCyclic} übernommen. 
 
-Ein Dungeon-Generator is zyklisch wenn A) der generierte Dungeon Zyklen enthält und B) Zyklen als Bausteine während der Generierung dienen.
+Für diese Arbeit wird folgende Definition verwendet: Ein Dungeon-Generator is zyklisch wenn A) der generierte Dungeon Zyklen enthält und B) Zyklen als Bausteine während der Generierung dienen.
 
 \bild{Warrek_Graph}{8cm}{Bild eines Dungeons, mit möglichem Level-Graph, der Graph ist ungewichtet und ungerichtet (\citeimg{warreksNestMap}, bearbeitet)}{Dungeon-Beispiel mit Graph}
 
-Zyklen im Dungeon erkennt man am Level-Graph. Betrachtet man das Beispiel in Abbildung \ref{img.Warrek_Graph} kann man mehrere Zyklen erkennen. Praktisch gesehen bedeutet das, dass der Spieler im Kreis laufen kann. Die Übersetzung der Level-Geometrie in einen Graphen ist dabei durchaus subjektiv, aber der Graph sollte die Topologie des Raumes wiedergeben. \todo{Evtl. etwas zu topologischer Graphentheorie schreiben}
+Zyklen im Dungeon erkennt man am Level-Graph, ist der Level-Graph zyklisch, so ist auch der Dungeon zyklisch. Betrachtet man das Beispiel in Abbildung \ref{img.Warrek_Graph} kann man mehrere Zyklen erkennen. Praktisch gesehen bedeutet das, dass der Spieler im Kreis laufen kann. Die Übersetzung der Level-Geometrie in einen Graphen ist nicht eindeutig - es sind mehrere Graphen möglich, aber der Graph sollte die Topologie des Raumes wiedergeben. \todo{Evtl. etwas zu topologischer Graphentheorie schreiben}
 
 In der Realität kommt es selten vor, dass man beurteilen muss ob ein bereits existierender Dungeon zyklisch ist oder nicht. Häufiger ergibt sich ein Level-Graph während der Generierung, z.B. indem kontinuierlich Räume hinzugefügt werden. Die Räume können als Knoten, die Verbindungen zwischen den Räumen als Kanten verstanden werden.
 
@@ -109,7 +109,7 @@ Die Wahl einer Game Engine für ein bestimmtes Projekt ist immer auch eine subje
 \subsection{Editor Scripting}
 
 
-\chapter{Erklärung des Ersetzungs-Algorithmus}
+\chapter{Der Ersetzungs-Algorithmus}
 
 Im Folgenden wird der der Arbeit zugrunde liegende Algorithmus theoretisch erklärt.
 
@@ -142,7 +142,7 @@ Aber zum klareren Verständnis will ich zunächst den spezielleren Algorithmus f
 Wie bereits erwähnt ähnelt das Verfahren einer Graphgrammatik. Es ist inspiriert von Joris Dormans Ansatz in 
 \cite{dormansAdventures},
 allerdings werden keine separaten Modelle für Missionsstruktur und Raum verwendet.
-In \cite[2.]{dormansModelTransformation} redet Dormans von „mission and space“ und dass diese Modelle von Level-Designern häufig als isomorphisch angenommen werden, dabei argumentiert er, dass sie als separate Modelle verstanden werden sollten.
+In \cite[2.]{dormansModelTransformation} redet Dormans von „mission and space“ und dass diese beiden Modelle von Level-Designern häufig als isomorphisch angenommen werde. Er argumentiert jedoch, dass sie als separate Modelle verstanden werden sollten.
 
 Für mein Verfahren wurden keine separaten Modelle verwendet, sondern direkt ein Raum generiert, der eine Missionsstruktur implizit  beinhaltet. Für die Zwecke dieser Arbeit, wurde diese Vereinfachung als „gut genug“ befunden.
 
@@ -150,17 +150,17 @@ Der Generierung dieses Raumes würde ich mich gerne über das bereits bekannte K
 
 \bild{gridExample3D}{6cm}{Beispiel für einen dreidimensionalen Graph innerhalb der Restriktionen des Gitters}{Beispiel für Graph im Gitter}
 
-Zu Jedem Knoten und den mit ihm verbundenen Kanten kann man sich einen äquivalenten Raum vorstellen. Als Verbindung zwischen den Räumen dient eine Tür, die äquivalent zu einer halben Kante ist (siehe Abb. \ref{img.nodeToRoom}).
+Zu Jedem Knoten und den mit ihm verbundenen Kanten kann man sich einen äquivalenten Raum vorstellen. Als Verbindung zwischen den Räumen dient ein Ausgang, die äquivalent zu einer halben Kante ist (siehe Abb. \ref{img.nodeToRoom}).
 
 \bild{nodeToRoom}{8cm}{Knoten mit Halb-Kanten und äquivalenter Raum}{Äquivalenz von Knoten und Raum}
 
-Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt (sechs Ausgänge, mit jeweils zwei Zuständen, „Tür“ oder „keine Tür“), durch geschicktes nutzen von Rotationssymmetrie könnte man diese Zahl verringern. Dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen müsste. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht alle in allen möglichen Eingangs/Ausgangsvariationen bereitstellen. 
+Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt, da es sechs Ausgänge pro Raum gibt, die jeweils zwei Zustände („Tür“ oder „keine Tür“) haben können. Durch geschicktes nutzen von Rotationssymmetrie könnte man diese Zahl verringern, dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen müsste. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht alle in allen möglichen Eingangs/Ausgangsvariationen bereitstellen. 
 
-\todo{Nochmal genauer darüber nachdenken, was genau diese Variation nhier bedeuten, etc. (oder streichen)}
+\todo{Nochmal genauer darüber nachdenken, was genau diese Variation hier bedeuten, etc. (oder streichen)}
 
 Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser Ansatz wurde ausgetestet, aber nicht weiter verfolgt, da die Räume dadurch zu gleich aussahen. \todo{Screenshot von VoxelRooms} Einen abwechslungsreichen Raum-Generator zu entwickeln ist ein interessantes Problem, aber nicht Inhalt dieser Arbeit (mehr zu Verbesserungen siehe. \ref{s.verbesserungen}).
 
-Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Level-Graphen zu generieren, und dann Räume zuzuordnen, werden die Räume direkt produziert. 
+Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Level-Graphen zu generieren, und diesen in einem zweiten Schritt in Räume zu übersetzen, werden die Räume direkt produziert. 
 
 Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. 
 
@@ -168,7 +168,7 @@ Eine Array-Grammatik verhält sich wie eine normale Formale Grammatik, untersche
 
 \todo{Formale Definition Gittergrammatik, Buch suchen}
 
-Für diesen Algorithmus wird eine Array-Grammatik verwendet, deren Produktionsregeln als linke und rechte Seite gleich große dreidimensionale Arrays haben. Ein Vorkommen der linken Seite im großen Array $A$ kann durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
+Für diesen Algorithmus wird eine Array-Grammatik verwendet, deren Produktionsregeln als linke und rechte Seite gleich große dreidimensionale Arrays haben. Ein Vorkommen der linken Seite kann durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
 
 \bild{ruleExample1}{8cm}{Beispiel einer Produktionsregel\footnotemark}{Beispiel einer Produktionsregel}
 
@@ -193,6 +193,18 @@ Ein großer Vorteil dieser Methode ist, dass das Alphabet aus beliebig vielen od
 Der in Abschnitt \ref{s.allgemeinerAlgorithmus} beschriebene Algorithmus ist der in der Implementierung verwendete. 
 
 Im Folgenden will ich diesen allerdings zu akademischen Zwecken (\todo{really?}) verallgemeinern.
+
+$ G = (V, T, P, S) $
+
+$ V $ ist die Symbolmenge 
+
+$ T \subset V $ ist die Menge der Terminalsymbole
+
+$ P \subset (V^\ast \setminus t^\ast) \times V^\ast $ ist die Menge der Produktionsregeln
+
+$ X^\ast $ 
+
+
 
 \todo{Mache ich später, wenn platz und bock. :P}
 
