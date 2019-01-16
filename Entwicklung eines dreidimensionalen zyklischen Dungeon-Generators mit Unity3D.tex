@@ -269,19 +269,36 @@ Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Kno
 
 Der RandomReplacer ist die simplere Variante der beiden Replacer. Er wählt immer eine zufällige Position und Regel für den nächsten Produktionsschritt. Dabei gewichtet er die einzelnen Positionen gemäß der Gewichtung der Regeln im RuleSet.
 
-Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}
+Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewandt werden. Das genaue Format des Recipes ist in \ref{s.recipeFormat} beschrieben.
 
 \subsubsection{RuleSet}
 
-Das 
+Das RuleSet ist der Component in dem alle Produktionsregeln enthalten sind. Die Inspektor-UI dieses Components enthält die Möglichkeit Regeln im JSON-Format zu laden und zu speichern. Es lassen sich Regeln entfernen, hinzufügen und auswählen. Ist eine Regel ausgewählt, kann sie im RuleEditor-Component editiert werden (vorausgesetzt es ist ein RuleEditor an das GameObject angehängt).
+
+Das RuleSet ist nur im Namen ein Set, nicht im informatischen Sinne. Ein Set wäre ungeordnet, das RuleSet allerdings enthält eine Liste an Regeln. Die Reihenfolge der Regeln in der Liste kann in bestimmten Fällen eine Rolle spielen, etwa wenn in der ReplacementEngine die „Replacement Strategy“ auf „First“ oder „Last“ gesetzt ist.
 
 \subsubsection{RuleEditor}
+
+Der RuleEditor ist ein Component der zum editieren von Regeln verwendet wird. 
+
+\bild{screenshotRuleEditor}{8cm}{Inspektor des RuleEditor-Components}{Inspektor des RuleEditor-Components}
+
+Ist im RuleSet eine Regel ausgewählt, enthält der RuleEditor-Inspektor die Einstellungen für genau diese Regel. Es können Parameter wie Name und Gewichtung der Regel gesetzt werden. Außerdem eine maximale Anzahl an Anwendungen dieser bestimmten Regel und und eine Anzahl an „Wait Steps“. Der Generator wendet die Regel nicht an bevor nicht so viele Generationsschritte vergangen sind.
+
+Ist der Toggle „Obey rule orientation“ aktiv, werden für diese Regel intern vier Regeln generiert, eine für jede Himmelsrichtung. Dieses Feature existiert, da Menschen instinktiv nicht zwischen Himmelsrichtungen unterscheiden, und somit die meisten Regeln um die y-Achse rotiert auch angewendet werden können. Ist der toggle angeschaltet kann die rotation auch per Knopfdruck geändert werden. 
+
+Ist der Toggle „Reversible“ aktiv, so kann die Regel nicht nur angewendet, sondern auch rückgängig gemacht werden. Hierfür wird im Hintergrund eine inverse Regel erstellt, bei der die linke und rechte Seite vertauscht sind. Dies kann schnell zu Fluktuationen im Generator führen, wobei eine Regel in aufeinanderfolgenden Schritten widerholt angewandt und rückgängig gemacht wird. Deshalb sollte dieses Feature bewusst verwendet werden.
+
+Die linke und rechte Seite der Regeln werden hier in Textfeldern angegeben. Da diese Seiten  dreidimensionale Arrays sind ist die Eingabemethode nicht trivial. Es wurde eine eindimensionale Darstellung des dreidimensionalen Arrays gewählt. Die Symbole „ “, „,“ und „;“ Brechen jeweils in die nächste Dimension um. Die in Abbildung \ref{img.screenshotRuleEditor} abgebildete Regel liegt z.B. in der xz-Ebene, da „ “ in x-Richtung trennt und „;“ in z-Richtung.
+
+Dieses Format ist nicht wirklich intuitiv, wurde aber aus Gründen von Aufwands/Nutzen-Erwägungen so belassen. Eine mögliche Verbesserung findet sich in \ref{s.verbesserungen}.
 
 \section{Wichtige Klassen}
 \section{Die Pattern-Datenstruktur}
 \section{Lazy updating, suchen}
 \section{Editor UI}\label{s.editorUI}
 \section{Regelsystem}
+\section{Recipe-Format}\label{s.recipeFormat}
 \section{Modelle}
 
 \chapter{Auswertung der generierten Dungeons}
