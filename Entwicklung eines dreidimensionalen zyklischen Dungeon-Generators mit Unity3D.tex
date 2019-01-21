@@ -259,7 +259,7 @@ Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder R
 
 Es folgt eine kurze Beschreibung der einzelnen Components. Es wird dabei hauptsächlich auf die Funktion und Bedienung der Components eingegangen, nicht auf Implementierungsdetails.
 
-\subsubsection{PatternView}
+\subsubsection{PatternView}\label{sss.patternView}
 
 Das PatternView repräsentiert einen dreidimensionalen Array von Labels. Diese Labels stehen üblicherweise für einen Raum und eine Rotation. Das Label „st\_2“ steht beispielsweise für eine gerades Stück („st“ für „straight“), dass um zwei mal um die y-Achse rotiert wurde. Das PatternView enthält außerdem ein Display Delta, dass bestimmt mit wie viel Abstand die Räume im Raum verteilt sind. Im Scene View\footnote{Übersicht der Unity-UI: \cite[Seite: LearningtheInterface]{unityManual}} von Unity werden die Labels als Text im dreidimensionalen Raum angezeigt (erkennbar in Abb. \ref{img.sceneView1}).
 
@@ -295,7 +295,7 @@ Das RuleSet ist der Component in dem alle Produktionsregeln enthalten sind. Die 
 
 Das RuleSet ist nur im Namen ein Set, nicht im informatischen Sinne. Ein Set wäre ungeordnet, das RuleSet allerdings enthält eine Liste an Regeln. Die Reihenfolge der Regeln in der Liste kann in bestimmten Fällen eine Rolle spielen, etwa wenn in der ReplacementEngine die „Replacement Strategy“ auf „First“ oder „Last“ gesetzt ist.
 
-\subsubsection{RuleEditor}
+\subsubsection{RuleEditor}\label{sss.ruleEditor}
 
 Der RuleEditor ist ein Component der zum editieren von Regeln verwendet wird. 
 
@@ -323,14 +323,16 @@ Das Tile repräsentiert einen einzelnen Raum im dreidimensionalen Array. Diese K
 
 \subsection{Pattern}
 
-Das Pattern stellt einen dreidimensionalen Array von Tiles dar. Diese Wrapper-Klasse erledigt einige Aufgaben. 
+Das Pattern stellt einen dreidimensionalen Array von Tiles dar. Diese Wrapper-Klasse erledigt einige Aufgaben. Zum einen implementiert diese Klasse die Serialisierung des mehrdimensionalen Arrays, die Unity nicht standardmäßig durchführt. Die Pattern-Klasse besitzt mehrere Konstruktoren, z.B. um ein Pattern mit einer bestimmten Größe, gefüllt mit einem bestimmten Tile zu erzeugen, oder ein Pattern als Kopie eines anderen Patterns zu erzeugen. 
 
-\todo{yada yada yada}
+Außerdem gibt es die Methode RotatePattern90Y, die eine um $ 90^\circ $ um die y-Achse rotierte Kopie des Patterns zurückgibt. Diese Methode wird benutzt um die in \ref{sss.ruleEditor} erwähnte „obey rule orientation“ Funktionalität des RuleEditors zu ermöglichen. Diese Methode könnte auch für andere Permutationen ausgebaut werden, aber für den Großteil der Anwendungsszenarien ist dies ausreichend, da Gravitation üblicherweise in y-Richtung wirkt, was bedeutet, dass Räume häufig um die y-Achse drehbar sein müssen, jedoch nicht in andere Richtungen.
+
+Des weiteren stellt das Pattern die Methoden GetTile und SetTile zur Verfügung um Tiles an gegebenen Positionen im Gitter erhalten und zu modifizieren. Diese Methoden führen einen Bounds-Check durch, um IndexOutOfRangeExceptions zu vermeiden, ein Bounds-Check in anderen Teilen des Programms wird damit überflüssig. Wird eine Position außerhalb des Patterns abgefragt wird stattdessen das spezielle OutOfBounds-Tile zurückgegeben.
+
+Patterns finden sowohl als Datenstruktur des gesamten Dungeons Verwendung, als auch als auch als Datenstruktur der linken und rechten Seiten in Regeln. Sie werden auch zur puren Visualisierung verwendet z.B. um im Editor die linke und rechte Seite einer Regel zu visualisieren, die geschieht dann mit Hilfe eines PatternViews (\ref{sss.patternView}: PatternView).
 
 \subsection{Rule}
 \subsection{Utils}
-
-\section{Die Pattern-Datenstruktur}
 \section{Lazy updating, suchen}
 \section{Editor UI}\label{s.editorUI}
 \section{Regelsystem}
