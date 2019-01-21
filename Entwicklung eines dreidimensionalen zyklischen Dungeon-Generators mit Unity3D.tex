@@ -236,6 +236,8 @@ Teilweise wurde außerdem das User Interface über selbst geschriebene Editor-UI
 
 \section{Ordnerstruktur}
 
+\todo{Namespaces!}
+
 Die Ordnerstruktur des Projektes ist auf der höchsten Ebene in drei Ordner unterteilt: EasyButtons, ReplaceDungeonGenerator und Game.
 
 EasyButtons ist ein Package, dass das einfache Erstellen von Buttons im Inspektor zum Aufrufen von Methoden des Components erlaubt. \todo{ref zu materialien}.
@@ -315,7 +317,8 @@ Dieses Format ist nicht wirklich intuitiv, wurde aber aus Gründen von Aufwands/
 
 \section{Wichtige Klassen}
 
-Es gibt auch einige Klassen, die keine Components sind, aber trotzdem erwähnenswert sind.
+Es gibt auch einige Klassen, die keine Components, aber trotzdem erwähnenswert sind. Die Klassen Tile, Pattern und Rule sind mit dem Attribut System.Serializable markiert, was bedeutet, dass sie serialisiert werden können, ohne von MonoBehaviour oder ScriptableObject zu erben. Die Serialisierung ist notwendig, damit diese Klassen von Unity intern gespeichert werden können. 
+\footnote{Serialisierung in Unity: \cite[Seite: script-Serialization]{unityManual}}
 
 \subsection{Tile}
 
@@ -332,7 +335,21 @@ Des weiteren stellt das Pattern die Methoden GetTile und SetTile zur Verfügung 
 Patterns finden sowohl als Datenstruktur des gesamten Dungeons Verwendung, als auch als auch als Datenstruktur der linken und rechten Seiten in Regeln. Sie werden auch zur puren Visualisierung verwendet z.B. um im Editor die linke und rechte Seite einer Regel zu visualisieren, die geschieht dann mit Hilfe eines PatternViews (\ref{sss.patternView}: PatternView).
 
 \subsection{Rule}
+
+Die Klasse Rule implementiert eine einzelne Produktionsregel. Wie schon im theoretischen Teil beschrieben besteht eine Produktionsregel aus einer linken und rechten Seite, diese Seiten sind jeweils ein Objekt der bereits beschriebenen Pattern-Klasse.
+
+Des weiteren enthält sie ein Field für den Namen der Regel und folgende Felder für Einstellungsmöglichkeiten: weight, strictRotation, maximumApplications.
+
+Die Klasse ist Serializable, dennoch gibt es außerdem die Klasse SerializedRule; diese wird verwendet, wenn die Klasse für Menschen lesbar serialisiert werden soll, insbesondere für das Speichern eines RuleSets im JSON-Format. 
+
 \subsection{Utils}
+
+Die Klasse Utils ist eine statische Utility-Klasse, die ein paar häufig verwendet Funktionen beinhaltet, die zu keiner bestimmten anderen Klasse zugehörig sind.
+
+Sie enthält verschiedene Funktionen für Vector3Int: Clamping, Bounds-Checking, Bounds-Überschneidung und Iteration über ein einen dreidimensionales Gitter.
+
+Außerdem eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen. Eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software „Asset Forge“ erstellte Modelle).
+
 \section{Lazy updating, suchen}
 \section{Editor UI}\label{s.editorUI}
 \section{Regelsystem}
