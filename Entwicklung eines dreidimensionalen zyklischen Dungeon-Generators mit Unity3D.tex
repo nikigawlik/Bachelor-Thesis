@@ -207,6 +207,10 @@ $ X^\ast $
 
 In diesem Kapitel wird die praktische Umsetzung des in \ref{s.speziellerAlgorithmus} beschriebenen Algorithmus behandelt. Die Implementierung beinhaltet viele einzelne Komponenten und Konfigurationsmöglichkeiten. Sie ist objektorientiert programmiert und läuft als Erweiterung der Unity Engine. 
 
+\bild{projectOverview}{16cm}{Ansicht des Unity-Editors in einer typischen Szene}{Ansicht des Unity-Editors}
+
+\bild{dungeons}{16cm}{Verschiedene in Unity generierte Dungeons, im Scene View betrachtet}{Verschiedene generierte Dungeons}
+
 \section{Ziele der Implementierung}
 
 Wie später in \ref{s.anwendungsmöglichkeiten} beschrieben, sind viele verschiedene Anwendungsszenarien für diesen Generator denkbar. 
@@ -230,16 +234,30 @@ In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wicht
 
 Teilweise wurde außerdem das User Interface über selbst geschriebene Editor-UI ausgebaut, mehr hierzu in Abschnitt \ref{s.editorUI}.
 
+\section{Ordnerstruktur}
+
+Die Ordnerstruktur des Projektes ist auf der höchsten Ebene in drei Ordner unterteilt: EasyButtons, ReplaceDungeonGenerator und Game.
+
+EasyButtons ist ein Package, dass das einfache Erstellen von Buttons im Inspektor zum Aufrufen von Methoden des Components erlaubt. \todo{ref zu materialien}.
+
+ReplaceDungeonGenerator enthält die Kern-Assets des Generators. Dieser Ordner kann in jedes Projekt eingefügt werden. Dieses Package hat lediglich EasyButtons als Dependency. Somit lässt sich der Generator einfach in anderen Projekten einsetzen ohne unnötige Assets wie Modelle, PlayerController, etc. mit zu Importieren.
+
+Game enthält alle Spiel-spezifischen Assets, die nicht Teil des Generator-Kerns sind.
+
+Innerhalb dieser Ordner wird nach Asset-Typ unterschieden (Scenes, Models, Scripts, ...). Ordner, die Editor heißen, werden nur für den Editor gebraucht und darin enthaltene Assets sind im fertigen Spiel nicht verwendbar.
+
+Weitere Unterordner wurden nach Bedarf erstellt, wie z.B. um die Modelle von zwei Generations-Stilen (Rooms und DiagonalRooms) zu unterscheiden.
+
 \section{Aufbau des Generator-Objekts}
 
 Das wichtigste GameObject der Software ist der „Generator“, dieser ist üblicherweise zusammengesetzt aus folgenden Komponenten: 
-Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder RecipeReplacer, RuleSet, RuleEditor (optional), ReplacementEngine, PatternToPrefabs. Auf diese Komponenten wird in \ref{komponenten} genauer eingegangen.
+Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder RecipeReplacer, RuleSet, RuleEditor (optional), ReplacementEngine, PatternToPrefabs. Auf diese Komponenten wird in \ref{ss.komponenten} genauer eingegangen.
 
 \bild{screenshotGenerator}{12cm}{Screenshots des Inspektors eines Generator-GameObjects, man sieht alle vorhandenen Komponenten und deren Einstellungen}{Screenshot der Generator-Komponenten}
 
-\subsection{Erklärung der Komponenten}\label{komponenten}
+\subsection{Erklärung der Komponenten}\label{ss.komponenten}
 
-Es folgt eine kurze Beschreibung der einzelnen Komponenten. Es wird vor allem beschrieben, wie die Komponenten benutzt werden. \todo{Besser schreiben}
+Es folgt eine kurze Beschreibung der einzelnen Components. Es wird dabei hauptsächlich auf die Funktion und Bedienung der Components eingegangen, nicht auf Implementierungsdetails.
 
 \subsubsection{PatternView}
 
@@ -289,11 +307,29 @@ Ist der Toggle „Obey rule orientation“ aktiv, werden für diese Regel intern
 
 Ist der Toggle „Reversible“ aktiv, so kann die Regel nicht nur angewendet, sondern auch rückgängig gemacht werden. Hierfür wird im Hintergrund eine inverse Regel erstellt, bei der die linke und rechte Seite vertauscht sind. Dies kann schnell zu Fluktuationen im Generator führen, wobei eine Regel in aufeinanderfolgenden Schritten widerholt angewandt und rückgängig gemacht wird. Deshalb sollte dieses Feature bewusst verwendet werden.
 
-Die linke und rechte Seite der Regeln werden hier in Textfeldern angegeben. Da diese Seiten  dreidimensionale Arrays sind ist die Eingabemethode nicht trivial. Es wurde eine eindimensionale Darstellung des dreidimensionalen Arrays gewählt. Die Symbole „ “, „,“ und „;“ Brechen jeweils in die nächste Dimension um. Die in Abbildung \ref{img.screenshotRuleEditor} abgebildete Regel liegt z.B. in der xz-Ebene, da „ “ in x-Richtung trennt und „;“ in z-Richtung.
+Die linke und rechte Seite der Regeln werden hier in Textfeldern angegeben. Da diese Seiten  dreidimensionale Arrays sind ist die Eingabemethode nicht trivial. Es wurde eine eindimensionale Darstellung des dreidimensionalen Arrays gewählt. Die Symbole Semikolon, Komma und Leerzeichen Brechen jeweils in die nächste Dimension um. Die in Abbildung \ref{img.ruleEditorExample} abgebildete Regel liegt z.B. in der xz-Ebene, da Semikolon in x-Richtung trennt und Leerzeichen in z-Richtung. Die Regeln lesen sich auf dem Screenshot von unten nach oben (z) und von links nach rechts (x).
+
+\bild{ruleEditorExample}{16cm}{Beispiel einer Produktionsregel in Unity mit linker und rechter Seite und den dazugehörigen String-Darstellungen. Die verwendeten Symbole sind „st“ (straight), „tl“ (turn left) und „tr“ (turn right). Die Pfeile bezeichnen die vorgesehene Begehungsrichtung und sind nur im Scene View sichtbar. }{Beispiel einer Produktionsregel in Unity}
 
 Dieses Format ist nicht wirklich intuitiv, wurde aber aus Gründen von Aufwands/Nutzen-Erwägungen so belassen. Eine mögliche Verbesserung findet sich in \ref{s.verbesserungen}.
 
 \section{Wichtige Klassen}
+
+Es gibt auch einige Klassen, die keine Components sind, aber trotzdem erwähnenswert sind.
+
+\subsection{Tile}
+
+Das Tile repräsentiert einen einzelnen Raum im dreidimensionalen Array. Diese Klasse ist ein Wrapper um einen read-only string, der das Label des Raumes darstellt, und hat zusätzliche Convenience-Funktionen, wie z.B. statische read-only Variablen für besondere Tiles (Empty, Wildcard, OutOfBounds).
+
+\subsection{Pattern}
+
+Das Pattern stellt einen dreidimensionalen Array von Tiles dar. Diese Wrapper-Klasse erledigt einige Aufgaben. 
+
+\todo{yada yada yada}
+
+\subsection{Rule}
+\subsection{Utils}
+
 \section{Die Pattern-Datenstruktur}
 \section{Lazy updating, suchen}
 \section{Editor UI}\label{s.editorUI}
@@ -337,9 +373,12 @@ Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, 
 
 % Anhang
 \chapter{Verwendete Materialien}
+
 \LaTeX -Vorlage von Martin Bretschneider 
 \newblock \url{https://www.bretschneidernet.de/tips/thesislatex-vorlagen.html#vorlagen}, 2006. --
 \newblock letzter Zugriff: 08.01.2019
+
+\todo{Easybuttons}
 
 \bibliographystyle{alphadin_martin}
 \bibliography{bibliographie}
