@@ -62,13 +62,13 @@
      transform="translate(2.6911933,-74.795364)">
     <image
        sodipodi:absref="D:\projects\_WISE18_19\Bachelorarbeit\Arbeit\3dzdg\images\ruleEditorExample.png"
-       y="74.795364"
-       x="-2.6911933"
-       id="image823"
-       xlink:href="file:///D:/projects/_WISE18_19/Bachelorarbeit/Arbeit/3dzdg/images/ruleEditorExample.png"
-       preserveAspectRatio="none"
+       xlink:href="ruleEditorExample.png"
+       width="223.09666"
        height="120.86166"
-       width="223.09666" />
+       preserveAspectRatio="none"
+       id="image823"
+       x="-2.6911933"
+       y="74.795364" />
     <rect
        style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.99024389"
        id="rect892"

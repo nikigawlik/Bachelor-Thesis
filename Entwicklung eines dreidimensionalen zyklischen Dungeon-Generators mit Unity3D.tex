@@ -50,31 +50,31 @@ Das Ziel dieser Bachelorarbeit ist es ein Verfahren zur zyklischen Generierung v
 
 \todo{Quelle finden, dass viele designte Dungeons Zyklen aufweisen}
 
-\section{Dungeons}
+
+\section{Genaue Beschreibung der Fragestellung}
+
+Der Inhalt der Arbeit ist die Entwicklung eines dreidimensionalen zyklischen Dungeon-Generators mit Unity3D. 
+
+Im Folgenden soll erläutert werden, was unter Dungeons zu verstehen ist und wie die Einschränkungen „dreidimensional“ und „zyklisch“ im Kontext dieser Arbeit zu verstehen sind.
+
+% \section{Dungeons}
 \subsection{Definition von Dungeon}
 
 Der englische Begriff „Dungeon“ wurde für diese Arbeit bewusst gewählt, er hat im Bereich Spiele eine Bedeutung, die sich von der wörtlichen Übersetzung „Verlies, Kerker“ unterscheidet. Eine einheitliche Definition für Dungeon in diesem Kontext existiert nicht, aber üblicherweise bezeichnet er einen weitläufigen, in sich geschlossenen Raum gefüllt mit Fallen und Monstern, den ein oder mehrere Spieler navigieren müssen, häufig mit einer großen Herausforderung am Ende, z.B. einem besonders starken Boss-Monster.
 
 \bild{Warreks_Nest}{8cm}{Beispiel eines Dungeons \citeimg{warreksNestMap}}{Dungeon-Beispiel}
 
-\subsection{Wichtige Beispiele von Dungeons}
+% \subsection{Wichtige Beispiele von Dungeons}
 
-Dungeons ist in einigen der populärsten Spielen vertreten. Beispiele sind „Dungeons \& Dragons“, „The Legend Of Zelda“, „The Elder Scrolls“ und „Minecraft“.
+% Dungeons ist in einigen der populärsten Spielen vertreten. Beispiele sind „Dungeons \& Dragons“, „The Legend Of Zelda“, „The Elder Scrolls“ und „Minecraft“.
 
-\todo{Eine gute Auswahl finden, Bilder-Collage machen und einfügen}
+% \todo{Eine gute Auswahl finden, Bilder-Collage machen und einfügen}
 
-\subsection{Prozedurale Dungeon-Generierung in Spielen, Geschichte}
+% \subsection{Prozedurale Dungeon-Generierung in Spielen, Geschichte}
 
-In Computerspielen gibt es eine relativ lange Tradition der Dungeon-Generierung.
+% In Computerspielen gibt es eine relativ lange Tradition der Dungeon-Generierung.
 
-\todo{Research Rougelikes, Roguelites, TES Oblivion}
-
-\section{Genaue Beschreibung der Fragestellung}
-
-Der Inhalt der Arbeit ist die Entwicklung eines dreidimensionalen zyklischen Dungeon-Generators mit Unity3D. 
-
-Im Folgenden soll erläutert werden, wie die Einschränkungen „dreidimensional“ und „zyklisch“ im Kontext dieser Arbeit 
-zu verstehen sind.
+% \todo{Research Rougelikes, Roguelites, TES Oblivion}
 
 \subsection{Definition von zyklisch}\label{c.weitereskapitel}
 
@@ -94,15 +94,15 @@ Sind allerdings die Zyklen ein Baustein des Dungeons, so dass mehrere vordefinie
 
 \subsection{Dreidimensionalität}
 
-Dreidimensionalität \todo{Wie definieren???}
+Dreidimensionalität bedeutet im Kontext dieser Arbeit, dass alle generierten Strukturen räumlich sind. Ein Spieler kann sich durch den Dungeon sowohl parallel zum Boden als auch vertikal (z.B. über Treppen oder Leitern bewegen). Es soll die Möglichkeit bestehen, dass Strukturen über andere Strukturen hinwegführen.
 
-\section{Warum Unity?}
+\section{Die Unity Game Engine}
 
 Unity ist eine Game Engine für die Entwicklung von 2D und 3D-Spielen. 
 
 Es wurde eine Game Engine verwendet, um den Implementierungs-Teil der Arbeit auf den Generator selbst und das User-Interface des Generators zu beschränken. Die Implementierung von Engine-typischen Features wie Rendering oder Kollision soll nicht Teil der Arbeit sein.
 
-Die Wahl einer Game Engine für ein bestimmtes Projekt ist immer auch eine subjektive Entscheidung. Hauptargumente für Unity sind die weite Verbreitung der Game Engine unter Indie-Entwicklern (die häufig von prozeduraler Generierung Gebrauch machen \todo{Really?}), das Entity-Component-System, dass einen modularen Aufbau ermöglicht und das Editor Scripting, dass es erlaubt ein User Interface für den Generator innerhalb der Engine zu schreiben. 
+Die Wahl einer Game Engine für ein bestimmtes Projekt ist immer auch eine subjektive Entscheidung. Hauptargumente für Unity sind die weite Verbreitung der Game Engine unter Indie-Entwicklern, das Entity-Component-System, dass einen modularen Aufbau ermöglicht und das Editor Scripting, dass es erlaubt ein User Interface für den Generator innerhalb der Engine zu schreiben. 
 
 \chapter{Der Ersetzungs-Algorithmus}
 
@@ -137,9 +137,9 @@ Aber zum klareren Verständnis will ich zunächst den spezielleren Algorithmus f
 Wie bereits erwähnt ähnelt das Verfahren einer Graphgrammatik. Es ist inspiriert von Joris Dormans Ansatz in 
 \cite{dormansAdventures},
 allerdings werden keine separaten Modelle für Missionsstruktur und Raum verwendet.
-In \cite[2.]{dormansModelTransformation} redet Dormans von „mission and space“ und dass diese beiden Modelle von Level-Designern häufig als isomorphisch angenommen werde. Er argumentiert jedoch, dass sie als separate Modelle verstanden werden sollten.
+In \cite[2.]{dormansModelTransformation} geht Dormans genauer auf „mission and space“ ein und dass diese beiden Modelle von Level-Designern häufig als isomorphisch angenommen werde. Er argumentiert jedoch, dass sie als separate Modelle verstanden werden sollten. Mission bezeichnet dabei ein Modell der Aufgaben die der Spieler bewältigen muss, Space bezeichnet den Raum in dem diese Aufgaben ausgeführt werden müssen.
 
-Für mein Verfahren wurden keine separaten Modelle verwendet, sondern direkt ein Raum generiert, der eine Missionsstruktur implizit  beinhaltet. Für die Zwecke dieser Arbeit, wurde diese Vereinfachung als „gut genug“ befunden.
+Für mein Verfahren wurden keine separaten Modelle für Mission und Space verwendet, sondern direkt ein Raum generiert, der eine Missionsstruktur implizit beinhaltet. Für die Zwecke dieser Arbeit, wurde diese Vereinfachung als „gut genug“ befunden.
 
 Der Generierung dieses Raumes würde ich mich gerne über das bereits bekannte Konzept der Graphgrammatik annähern. Hierfür stelle man sich einen mit Hilfe einer Graphgrammatik generierten Level-Graph vor. Dieser ist allerdings an ein dreidimensionales kartesisches Gitter gebunden. Verbindungen zwischen Knoten des Graphen sind nur zwischen direkt (nicht diagonal) benachbarten Zellen möglich, wie in Abbildung \ref{img.gridExample3D} dargestellt.
 
@@ -149,9 +149,7 @@ Zu Jedem Knoten und den mit ihm verbundenen Kanten kann man sich einen äquivale
 
 \bild{nodeToRoom}{8cm}{Knoten mit Halb-Kanten und äquivalenter Raum}{Äquivalenz von Knoten und Raum}
 
-Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt, da es sechs Ausgänge pro Raum gibt, die jeweils zwei Zustände („Tür“ oder „keine Tür“) haben können. Durch geschicktes nutzen von Rotationssymmetrie könnte man diese Zahl verringern, dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen müsste. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht alle in allen möglichen Eingangs/Ausgangsvariationen bereitstellen. 
-
-\todo{Nochmal genauer darüber nachdenken, was genau diese Variation hier bedeuten, etc. (oder streichen)}
+Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt, da es sechs Ausgänge pro Raum gibt, die jeweils zwei Zustände („Tür“ oder „keine Tür“) haben können. Durch geschicktes nutzen von Rotationssymmetrie könnte man diese Zahl verringern, dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen müsste. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht alle in allen möglichen Raumvariationen bereitstellen. 
 
 Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser Ansatz wurde ausgetestet, aber nicht weiter verfolgt, da die Räume dadurch zu gleich aussahen, wie man in Abbildung \ref{img.voxelRoomDungeon} sehen kann. Einen abwechslungsreichen Raum-Generator zu entwickeln ist ein interessantes Problem, aber nicht Inhalt dieser Arbeit.
 
@@ -348,8 +346,35 @@ Sie enthält verschiedene Funktionen für Vector3Int: Clamping, Bounds-Checking,
 
 Außerdem eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen. Eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software „Asset Forge“ erstellte Modelle).
 
-\section{Lazy updating, suchen}
+\section{Optimierungen des Pattern Matchings}
+
+Der in \ref{s.speziellerAlgorithmus} beschriebene Ersetzungs-Algorithmus verlangt, dass bei der Anwendung einer Produktionsregel die linke Seite einer Regel im Dungeon-Array gefunden werden muss.
+
+In einem Generations-Schritt müssen zuerst alle möglichen Ersetzungen gefunden werden, damit dann eine zufällige ausgewählt werden kann. Der Algorithmus zum finden der Matches sieht so aus:
+
+\begin{verbatim}
+    D := Pattern des Dungeons
+    R := Regeln
+    ls(r) := Pattern der linken Seite einer Regel r
+    tile(P, p)
+
+    für alle Positionen p1 in D:
+        für alle Regeln r in R:
+            für alle Positionen p2 in ls(r):
+                wenn tile(p1 + p2, D) != tile(p2, ls(r)))
+                    return false
+\end{verbatim}
+
+\todo{Den Algorithmus mal richtig schreiben}
+
+Dieser Algorithmus selbst ist relativ aufwändig, und schwer zu optimieren. 
+
+Aber eine einfache Art und Weise die Generierung insgesamt schneller zu machen ist diese Suche nicht jeden Schritt auf dem ganzen Dungeon durchzuführen. Stattdessen wird nur im ersten Schritt das gesamte Dungeon-Pattern durchsucht, gefundene Matches werden in einer Liste gespeichert. Wird in darauf folgenden Schritten eine Ersetzung durchgeführt wird nur die Gegend um das eben ersetzte Stück als „schmutzig“ angesehen. Matches die mit dieser Gegend überschneiden werden aus der Liste gelöscht und die Gegend wird erneut nach Matches durchsucht. 
+
+\todo{Visualisierungs-Screenshots (gelbe Boxen)}
+
 \section{Editor UI}\label{s.editorUI}
+
 \section{Regelsystem}
 \section{Recipe-Format}\label{s.recipeFormat}
 \section{Modelle}
@@ -376,14 +401,35 @@ Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, 
 
 \section{Mögliche Verbesserungen}\label{s.verbesserungen}
 
+% Mögl. Verbesserung: Statt Array eine unendlich große Struktur verwenden (Hash-Irgendwas?)
+
 \section{Mögliche Anwendungsszenarien}\label{s.anwendungsmöglichkeiten}
+
+Der Generator wurde konzipiert um and vielfältige Anwendungsszenarien angepasst werden zu können, es folgen eine kleine Auswahl. So soll eine kleiner Überblick über den durch diese Software abgedeckten Raum an möglichen Generatoren gegeben werden.
 
 \subsection{Roguelike, Rogue-lite}
 
+Das Genre der Roguelike-Spiele umfasst im engeren Sinne Spiele die direkt von dem Spiel „Rogue“ inspiriert sind und im weiteren Sinne Spiele, die die Charakteristiken Perma-Death und zufällig generierte Levels aufweisen. Spiele die nur diese Charakteristiken aufweisen ohne auf andere Art und Weise Rogue zu imitieren werden auch manchmal unter dem Begriff Rogue-lite zusammengefasst.
+
+Roguelikes sind der klassische Anwendungsfall für Dungeon-Generatoren. Durch die Verwendung von zufällig generierten Dungeons wird in Roguelikes sichergestellt, dass der Fortschritt des Spielers durch meistern der Spielmechaniken stattfindet, nicht durch auswendig lernen der Levels. 
+
+\todo{Regelsystem für eine Roguelike}
+
 \subsection{Minigolf}
 
-\subsection{Text adventure}
+Minigolfspiele sind ein Genre an Casual Games, direkt inspiriert von realem Minigolf (korrekt „Bahnengolf“). Hier ist es das Ziel einen Golfball mit möglichst wenig Schlägen über eine Bahn in ein Loch zu befördern. Stärke und Richtung werden hierbei vom Spieler gesetzt. 
 
+\todo{Regelsystem für eine Roguelike}
+
+\subsection{Text Adventure}
+
+Obwohl der Dungeon-Generator einen dreidimensionalen Raum verwendet, bedeutet dass nicht, dass zwangsläufig eine dreidimensionale visuelle Darstellung notwendig ist.
+
+In einem Text Adventure ließt der Spieler Texte und trifft Entscheidungen, die wiederum weitere Texte auslösen. In klassischen Text Adventures werden diese Entscheidungen durch Texteingabe getroffen. In modernen Varianten sind die Entscheidungen häufig multiple choice.
+
+\todo{Regelsystem für Text Adventure}
+
+\todo{Regelszstem für Text Adventure Generator}
 
 \chapter{Zusammenfassung}\label{c.zusammenfassung}
 
