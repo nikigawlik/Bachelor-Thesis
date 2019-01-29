@@ -63,17 +63,21 @@
 % Quellcode
 % für Formatierung in Quelltexten, hier im Anhang
 \usepackage{listings}
+\usepackage{xcolor}
 \definecolor{grau}{gray}{0.25}
 \lstset{
+  language=[Sharp]C, 
+  frame=lr, 
+  rulecolor=\color{blue!80!black},
 	extendedchars=true,
-	basicstyle=\tiny\ttfamily,
+	basicstyle=\ttfamily,
 	%basicstyle=\footnotesize\ttfamily,
 	tabsize=2,
 	keywordstyle=\textbf,
 	commentstyle=\color{grau},
 	stringstyle=\textit,
 	numbers=left,
-	numberstyle=\tiny,
+	numberstyle=\ttfamily,
 	% für schönen Zeilenumbruch
 	breakautoindent  = true,
 	breakindent      = 2em,
