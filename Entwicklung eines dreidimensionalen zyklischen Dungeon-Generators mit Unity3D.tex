@@ -277,7 +277,7 @@ Die ReplacementEngine ist verantwortlich für die im Hintergrund stattfindende E
 
 Der PatternToPrefabs Component verlangt die PatternView und RuleSet Components mit RequireComponent.
 
-\subsection{RandomReplacer und RecipeReplacer}
+\subsection{RandomReplacer und RecipeReplacer}\label{ss.replacers}
 
 Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Haupt-Schnittstelle des Generators. Von ihnen kann die Generation ausgelöst werden.
 
@@ -285,7 +285,7 @@ Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Kno
 
 Der RandomReplacer ist die simplere Variante der beiden Replacer. Er wählt immer eine zufällige Position und Regel für den nächsten Produktionsschritt. Dabei gewichtet er die einzelnen Positionen gemäß der Gewichtung der Regeln im RuleSet.
 
-Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewandt werden. Das genaue Format des Recipes ist in \ref{s.recipeFormat} beschrieben.
+Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewandt werden. Das genaue Format des Recipes ist in \ref{s.regelsystem} beschrieben.
 
 \subsection{RuleSet}
 
@@ -346,7 +346,7 @@ Sie enthält verschiedene Funktionen für Vector3Int: Clamping, Bounds-Checking,
 
 Außerdem eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen. Eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software „Asset Forge“ erstellte Modelle).
 
-\section{Optimierungen des Pattern Matchings}
+\section{Optimierungen des Pattern Matchings}\label{s.optimierungen}
 
 Der in \ref{s.speziellerAlgorithmus} beschriebene Ersetzungs-Algorithmus verlangt, dass bei der Anwendung einer Produktionsregel die linke Seite einer Regel im Dungeon-Array gefunden werden muss.
 
@@ -408,10 +408,42 @@ Des weiteren implementieren einige Components die OnGizmosDraw Methode (siehe \c
 
 \bild{screenshotGizmos}{16cm}{Beispiel von benutzerdefinierter Visualisierung im Scene View: Pfeile, die die Raumdurchquerungsrichtung angeben, Schlösser- und Schlüssel-Indikatoren, Boxen die die Positionen von bestimmten Patterns anzeigen und Labels, die Matches und Räume bezeichnen.}{Beispiele für benutzerdefinierte Gizmos}
 
-\section{Regelsystem}
-\section{Recipe-Format}\label{s.recipeFormat}
+\section{Regelsystem}\label{s.regelsystem}
 
+Wie bereits in \ref{ss.replacers} erwähnt verwendet der RecipeReplacer eine Text-Datei in der die Reihenfolge der Regelanwendungen definiert werden kann. Will man eine stärkere Kontrolle über den Generierungsprozess haben, ist dies notwendig. So kann man z.B. einschränken, dass erst ein grober Aufbau des Dungeons mit einer eingeschränkten Anzahl an Regeln erzeugt wird, bevor der Dungeon im Detail ausgearbeitet wird.
 
+In der Rezept-Datei ist jede Zeile eine Anweisung, es existieren die in Tabelle \ref{t.anweisungen} aufgelisteten Anweisungen.
+
+\begin{table}[h]
+    \begin{tabular}{@{}llll@{}}
+        \toprule
+        <Name> & Einmalige Anwendung einer Regel oder Funktion \\ \midrule
+        <Name> <n> & n-malige Anwendung \\ \midrule
+        <Name> <n> <m> & Zufällige Zahl an Anwendungen zwischen n und m \\ \midrule
+        <Name> ! & Alle Vorkommen der Regel werden „gleichzeitig“ angewendet \\ \midrule
+        subdivide <x> <y> <z> & Unterteilung des Dungeons \\ \midrule
+        def <Funktionsname> & Beginn einer Funktionsdefinition \\ \midrule
+        end & Ende einer Funktionsdefinition \\ \midrule
+        \# <beliebiger Text> & Kommentar \\ \bottomrule
+    \end{tabular}
+    \caption{Arten von Anweisungen in der Rezept-Datei}
+    \label{t.anweisungen}
+\end{table}
+
+Die Namen der Regeln sind als Filter implementiert, haben mehrere Regeln den gleichen Namen wird eine zufällige ausgewählt. Dies ist nützlich wenn zwei Regeln konzeptionell identisch sind, aber als unterschiedliche Regeln aufgeschrieben werden müssen. Im Bezug auf die in \ref{s.optimierungen} beschriebene Implementierung bedeutet das, dass die vorhandene Liste an möglichen Matches bezüglich des Regelnamens gefiltert wird und alle andersnamigen Matches ignoriert werden. 
+
+In einer Anweisung kann der Name einer Regel auch das Format \texttt{<Regelanfang>*} haben. In diesem Fall muss eine Regel nur mit \texttt{<Regelanfang>} anfangen um angewendet werden zu können. So kann z.B. die Anweisung \texttt{feature\_*} sowohl die Regel \texttt{feature\_alternative} als auch die Regel \texttt{feature\_shortcut} anwenden.
+
+Die beiden Anweisungen \texttt{<Name> !} und \texttt{subdivide <x> <y> <z>} widersprechen dem in \ref{s.speziellerAlgorithmus} beschriebenen Algorithmus, und sind deswegen nur behutsam anzuwenden.
+
+Die Anweisung \texttt{<Name> !} wird verwendet um eine Regel massenhaft anzuwenden. Die definierte Regel wird für alle momentan bekannten Matches angewendet, ohne die Liste der Matches zwischenzeitlich neu zu berechnen. Das heißt wenn sich Matches überschneiden wird der Dungeon unter Umständen in einen Zustand transformiert, der so durch die Produktionsregeln nicht definiert wurde. 
+
+Dies ist ein Kompromiss, der eingegangen wurde, da diese Anweisung sehr viel performanter ist als eine widerholte sequenzielle Anwendung mit ständiger Neuberechnung. Außerdem gibt es bestimmte Anwendungsszenarien für diese Regel:...
+\todo{Spezialfall Cellular Automaton, P-System} 
+
+Die Anweisung \texttt{subdivide <x> <y> <z>} wird verwendet um das Gitter zu vergrößern. Ist z.B. der Parameter <x> 1 so wird für jedes Tile im Dungeon genau ein Tile in x-Richtung eingeschoben, was effektiv die Größe des Gitters in diese Richtung verdoppelt. Diese Anweisung kann verwendet werden um erst die Makro-Struktur des Dungeons mit wenigen Tiles zu generieren, und anschließend den Dungeon zu strecken bevor weiter-generiert wird. Diese Anweisung muss üblicherweise mit einer \texttt{<Name> !} Anweisung kombiniert werden, die die entstandenen Lücken füllt. Dieser Prozess ist in 
+
+\bild{subdivisionProcess}{16cm}{Anwendungsbeispiel von Unterteilung und Füllen von Lücken.}{Dungeonunterteilungs-Beispiel}
 
 \section{Spielmechaniken}
 
@@ -431,7 +463,7 @@ Diese Spielmechaniken bilden natürlich kein richtiges Spiel ab, reichen aber au
 
 Ähnlich wie die Spielmechaniken sind auch die Modelle der einzelnen Räume eher exemplarischer Natur. Diese Räume müssten für jedes Spiel individuell modelliert und gestaltet werden. 
 
-Da die Räume als Prefabs vorliegen sollte es einem mit Unity vertrauten Level-Designer kein Problem sein die einzelnen Räume zu erstellen. Es muss lediglich darauf geachtet werden, dass die Räume and den Kanten perfekt zusammenpassen. Für diese Arbeit wurde das Programm Asset Forge verwendet um die Räume zu erstellen. Die Raumteile für Decken, Wände und Türbögen wurden in Blender modelliert. 
+Da die Räume als Prefabs vorliegen sollte es einem mit Unity vertrauten Level-Designer kein Problem sein die einzelnen Räume zu erstellen. Es muss lediglich darauf geachtet werden, dass die Räume and den Kanten perfekt zusammenpassen. Für diese Arbeit wurde das Programm Asset Forge verwendet um die Räume zu erstellen. Die Raumteile für Decken, Wände und Türbögen sowie die Modelle für Schlüssel und Schloss wurden in Blender modelliert. Das Modell der Tür ist ein öffentlich verfügbares Modell. (siehe \ref{m.tuer})
 
 \bild{screenshotRoomPrefabs}{16cm}{Screenshot der Raum-Prefabs und des dazugehörigen PrefabDictionary im Project-Window}{Raum-Prefabs im Project-Window}
 
@@ -499,7 +531,7 @@ In einem Text Adventure ließt der Spieler Texte und trifft Entscheidungen, die 
 \newblock letzter Zugriff: 08.01.2019
 
 \todo{Easybuttons}
-\todo{Dungeon-Tileset für Tür}
+\todo{Dungeon-Tileset für Tür}\label{m.tuer}
 \todo{Asset Forge}
 
 \bibliographystyle{alphadin_martin}
