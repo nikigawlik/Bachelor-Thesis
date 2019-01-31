@@ -285,7 +285,7 @@ Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Kno
 
 Der RandomReplacer ist die simplere Variante der beiden Replacer. Er wählt immer eine zufällige Position und Regel für den nächsten Produktionsschritt. Dabei gewichtet er die einzelnen Positionen gemäß der Gewichtung der Regeln im RuleSet.
 
-Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewandt werden. Das genaue Format des Recipes ist in \ref{s.regelsystem} beschrieben.
+Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewandt werden. Das genaue Format des Recipes ist in \ref{s.rezeptDatei} beschrieben.
 
 \subsection{RuleSet}
 
@@ -344,7 +344,7 @@ Die Klasse Utils ist eine statische Utility-Klasse, die ein paar häufig verwend
 
 Sie enthält verschiedene Funktionen für Vector3Int: Clamping, Bounds-Checking, Bounds-Überschneidung und Iteration über ein einen dreidimensionales Gitter.
 
-Außerdem eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen. Eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software „Asset Forge“ erstellte Modelle).
+Außerdem eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen. Eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software „AssetForge“ erstellte Modelle).
 
 \section{Optimierungen des Pattern Matchings}\label{s.optimierungen}
 
@@ -408,11 +408,15 @@ Des weiteren implementieren einige Components die OnGizmosDraw Methode (siehe \c
 
 \bild{screenshotGizmos}{16cm}{Beispiel von benutzerdefinierter Visualisierung im Scene View: Pfeile, die die Raumdurchquerungsrichtung angeben, Schlösser- und Schlüssel-Indikatoren, Boxen die die Positionen von bestimmten Patterns anzeigen und Labels, die Matches und Räume bezeichnen.}{Beispiele für benutzerdefinierte Gizmos}
 
-\section{Regelsystem}\label{s.regelsystem}
+\section{Regelsystem für einen Dungeon}
+
+
+
+\section{Rezept-Datei}\label{s.rezeptDatei}
 
 Wie bereits in \ref{ss.replacers} erwähnt verwendet der RecipeReplacer eine Text-Datei in der die Reihenfolge der Regelanwendungen definiert werden kann. Will man eine stärkere Kontrolle über den Generierungsprozess haben, ist dies notwendig. So kann man z.B. einschränken, dass erst ein grober Aufbau des Dungeons mit einer eingeschränkten Anzahl an Regeln erzeugt wird, bevor der Dungeon im Detail ausgearbeitet wird.
 
-In der Rezept-Datei ist jede Zeile eine Anweisung, es existieren die in Tabelle \ref{t.anweisungen} aufgelisteten Anweisungen.
+In der Rezept-Datei ist jede Zeile genau eine Anweisung, es existieren die in Tabelle \ref{t.anweisungen} aufgelisteten Anweisungen.
 
 \begin{table}[h]
     \begin{tabular}{@{}llll@{}}
@@ -441,7 +445,7 @@ Die Anweisung \texttt{<Name> !} wird verwendet um eine Regel massenhaft anzuwend
 Dies ist ein Kompromiss, der eingegangen wurde, da diese Anweisung sehr viel performanter ist als eine widerholte sequenzielle Anwendung mit ständiger Neuberechnung. Außerdem gibt es bestimmte Anwendungsszenarien für diese Regel:...
 \todo{Spezialfall Cellular Automaton, P-System} 
 
-Die Anweisung \texttt{subdivide <x> <y> <z>} wird verwendet um das Gitter zu vergrößern. Ist z.B. der Parameter <x> 1 so wird für jedes Tile im Dungeon genau ein Tile in x-Richtung eingeschoben, was effektiv die Größe des Gitters in diese Richtung verdoppelt. Diese Anweisung kann verwendet werden um erst die Makro-Struktur des Dungeons mit wenigen Tiles zu generieren, und anschließend den Dungeon zu strecken bevor weiter-generiert wird. Diese Anweisung muss üblicherweise mit einer \texttt{<Name> !} Anweisung kombiniert werden, die die entstandenen Lücken füllt. Dieser Prozess ist in 
+Die Anweisung \texttt{subdivide <x> <y> <z>} wird verwendet um das Gitter zu vergrößern. Ist z.B. der Parameter <x> 1 so wird für jedes Tile im Dungeon genau ein Tile in x-Richtung eingeschoben, was effektiv die Größe des Gitters in diese Richtung verdoppelt. Diese Anweisung kann verwendet werden um erst die Makro-Struktur des Dungeons mit wenigen Tiles zu generieren, und anschließend den Dungeon zu strecken bevor weiter-generiert wird. Diese Anweisung muss üblicherweise mit einer \texttt{<Name> !} Anweisung kombiniert werden, die die entstandenen Lücken füllt. Dieser Prozess ist in \todo{in... ?}
 
 \bild{subdivisionProcess}{16cm}{Anwendungsbeispiel von Unterteilung und Füllen von Lücken.}{Dungeonunterteilungs-Beispiel}
 
@@ -461,9 +465,9 @@ Diese Spielmechaniken bilden natürlich kein richtiges Spiel ab, reichen aber au
 
 \section{Raum-Modelle}
 
-Ähnlich wie die Spielmechaniken sind auch die Modelle der einzelnen Räume eher exemplarischer Natur. Diese Räume müssten für jedes Spiel individuell modelliert und gestaltet werden. 
+Ähnlich wie die Spielmechaniken sind auch die Modelle der einzelnen Räume zur Veranschaulichung gedacht und enthalten keine Monster, Fallen oder ähnliches. Diese Räume müssten für jedes Spiel individuell modelliert und gestaltet werden. 
 
-Da die Räume als Prefabs vorliegen sollte es einem mit Unity vertrauten Level-Designer kein Problem sein die einzelnen Räume zu erstellen. Es muss lediglich darauf geachtet werden, dass die Räume and den Kanten perfekt zusammenpassen. Für diese Arbeit wurde das Programm Asset Forge verwendet um die Räume zu erstellen. Die Raumteile für Decken, Wände und Türbögen sowie die Modelle für Schlüssel und Schloss wurden in Blender modelliert. Das Modell der Tür ist ein öffentlich verfügbares Modell. (siehe \ref{m.tuer})
+Da die Räume als Prefabs vorliegen sollte es einem mit Unity vertrauten Level-Designer kein Problem sein die einzelnen Räume zu erstellen. Es muss lediglich darauf geachtet werden, dass die Räume and den Kanten perfekt zusammenpassen. Für diese Arbeit wurde das Programm AssetForge verwendet um die Räume zu erstellen, aber die Räume hätten auch mit einem herkömmlichen 3D-Editor oder in Unity erstellt werden können. Die Raumteile für Decken, Wände und Türbögen sowie die Modelle für Schlüssel und Schloss wurden in Blender modelliert. Das Modell der Tür ist ein öffentlich verfügbares Modell. (siehe \ref{m.tuer})
 
 \bild{screenshotRoomPrefabs}{16cm}{Screenshot der Raum-Prefabs und des dazugehörigen PrefabDictionary im Project-Window}{Raum-Prefabs im Project-Window}
 
