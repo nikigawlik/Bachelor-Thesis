@@ -46,7 +46,7 @@ Zyklische Ansätze haben viele praktische Vorteile gegenüber Verzweigungs-Ansä
 
 Dormans Spiel „Unexplored“, dass im Blog Post als Beispiel verwendet wird, ist ein zweidimensionales Spiel in einer Top-Down-Perspektive. Besonders für zyklische Generierung ist es aber auch interessant einen dreidimensionalen Raum zu nutzen, da dies interessante Strukturen ermöglicht wie Brücken die bereits besuchte Teile des Dungeons überspannen.  
 
-Das Ziel dieser Bachelorarbeit ist es ein Verfahren zur zyklischen Generierung von Dungeons zu konzipieren und zu implementieren. Dieses Verfahren sollte im dreidimensionalen Raum funktionieren und die dritte Dimension für interessante Strukturen nutzen können. Die Implementierung findet in der Game Engine Unity3D statt.
+Das Ziel dieser Bachelorarbeit ist es ein Verfahren zur zyklischen Generierung von Dungeons zu konzipieren und zu implementieren. Dieses Verfahren sollte im dreidimensionalen Raum funktionieren und die dritte Dimension für interessante Strukturen nutzen können. Die Implementierung findet in der Game Engine Unity statt.
 
 \todo{Quelle finden, dass viele designte Dungeons Zyklen aufweisen}
 
@@ -60,11 +60,9 @@ Im Folgenden soll erläutert werden, was unter Dungeons zu verstehen ist und wie
 % \section{Dungeons}
 \subsection{Definition von Dungeon}
 
-Der englische Begriff „Dungeon“ wurde für diese Arbeit bewusst gewählt, er hat im Bereich Spiele eine Bedeutung, die sich von der wörtlichen Übersetzung „Verlies, Kerker“ unterscheidet. Eine einheitliche Definition für Dungeon in diesem Kontext existiert nicht, aber üblicherweise bezeichnet er einen weitläufigen, in sich geschlossenen Raum gefüllt mit Fallen und Monstern, den ein oder mehrere Spieler navigieren müssen, häufig mit einer großen Herausforderung am Ende, z.B. einem besonders starken Boss-Monster.
+Der englische Begriff „Dungeon“ wurde für diese Arbeit bewusst gewählt, er hat im Bereich Spiele eine Bedeutung, die sich von der wörtlichen Übersetzung „Verlies, Kerker“ unterscheidet. Eine einheitlich etablierte Definition für Dungeon in diesem Kontext existiert nicht. In \cite{proceduralGenerationOfDungeons} wird wie folgt definiert: „We define adventure and RPG dungeon levels as labyrinthic environments,  consisting  mostly  of  inter-related  challenges, rewards and puzzles, tightly paced in time and space to offer highly structured gameplay progressions.“. Diese Definition wird auch für diese Arbeit verwendet.
 
 \bild{Warreks_Nest}{8cm}{Beispiel eines Dungeons \citeimg{warreksNestMap}}{Dungeon-Beispiel}
-
-Dungeons haben auch eine Tradition prozeduraler Generierung. \todotext{later}
 
 % \subsection{Wichtige Beispiele von Dungeons}
 
@@ -84,25 +82,26 @@ Der Begriff zyklisch ist als deutsches Äquivalent des englischen Begriffs „cy
 
 Für diese Arbeit wird folgende Definition verwendet: Ein Dungeon-Generator is zyklisch wenn A) der generierte Dungeon Zyklen enthält und B) Zyklen als Bausteine während der Generierung dienen.
 
-\bild{Warrek_Graph}{8cm}{Bild eines Dungeons, mit möglichem Level-Graph, der Graph ist ungewichtet und ungerichtet (\citeimg{warreksNestMap}, bearbeitet)}{Dungeon-Beispiel mit Graph}
+Im folgenden wird der Begriff Dungeon-Graph verwendet. Der Dungeon-Graph ist eine Graph-Repräsentation des Dungeons. Die Knoten des Graphen repräsentieren Räume, die Kanten repräsentiert Übergänge zwischen Räumen. 
 
-Zyklen im Dungeon erkennt man am Level-Graph, ist der Level-Graph zyklisch, so ist auch der Dungeon zyklisch. Betrachtet man das Beispiel in Abbildung \ref{img.Warrek_Graph} kann man mehrere Zyklen erkennen. Praktisch gesehen bedeutet das, dass der Spieler im Kreis laufen kann. Die Übersetzung der Level-Geometrie in einen Graphen ist nicht eindeutig - es sind mehrere Graphen möglich, aber der Graph sollte die Topologie des Raumes wiedergeben. \todo{Evtl. etwas zu topologischer Graphentheorie schreiben}
+\bild{Warrek_Graph}{8cm}{Bild eines Dungeons, mit möglichem Dungeon-Graph, der Graph ist ungewichtet und ungerichtet (\citeimg   {warreksNestMap}, bearbeitet)}{Dungeon-Beispiel mit Graph}
 
-In der Realität kommt es selten vor, dass man beurteilen muss ob ein bereits existierender Dungeon zyklisch ist oder nicht. Häufiger ergibt sich ein Level-Graph während der Generierung, z.B. indem kontinuierlich Räume hinzugefügt werden. Die Räume können als Knoten, die Verbindungen zwischen den Räumen als Kanten verstanden werden.
+Ist der Dungeon-Graph zyklisch, so ist auch der Dungeon zyklisch. Betrachtet man das Beispiel in Abbildung \ref{img.Warrek_Graph} kann man mehrere Zyklen erkennen. Praktisch gesehen bedeutet das, dass der Spieler im Kreis laufen kann. 
 
-Der Bedingung, dass Zyklen während der Generierung als Bausteine des Dungeons dienen, ist wichtig. So wird von einer anderen Art der Generierung unterschieden, wie man sie auch häufig in Level-Generatoren findet: Man generiert ein Labyrinth ohne Zyklen mit einem Verzweigungs-Ansatz und fügt anschließend willkürlich Verbindungen zwischen Räumen hinzu, bzw. - etwas bildlicher - „reißt Wände ein“. So entstehen auch Zyklen, diese sind aber willkürlich und schlecht kontrollierbar. 
-
-Sind allerdings die Zyklen ein Baustein des Dungeons, so dass mehrere vordefinierte Arten von Zyklen durch Aneinanderreihung oder Verschachtelung kombiniert werden, hat man Kontrolle über die Natur der Zyklen. Variablen wie Größe, Richtung und Anordnung der Zyklen sind direkt konfigurierbar.
+Die andere Bedingung, dass Zyklen während der Generierung als Bausteine des Dungeons dienen, ist wichtig. So wird von einer anderen Art der Generierung unterschieden, wie man sie häufig in Level-Generatoren findet: Man generiert ein Labyrinth ohne Zyklen mit einem Verzweigungs-Ansatz und fügt anschließend willkürlich Verbindungen zwischen Räumen hinzu, bzw. -- etwas bildlicher -- „reißt Wände ein“. So entstehen auch Zyklen, diese sind aber willkürlich und schlecht kontrollierbar. Sind die Zyklen ein Baustein des Dungeons, so dass mehrere vordefinierte Arten von Zyklen durch Aneinanderreihung oder Verschachtelung kombiniert werden, hat man Kontrolle über die Natur der Zyklen. Variablen wie Größe, Richtung und Anordnung der Zyklen sind konfigurierbar.
 
 \subsection{Dreidimensionalität}
 
 Dreidimensionalität bedeutet im Kontext dieser Arbeit, dass alle generierten Strukturen räumlich sind. Ein Spieler kann sich durch den Dungeon sowohl parallel zum Boden als auch vertikal (z.B. über Treppen oder Leitern bewegen). Es soll die Möglichkeit bestehen, dass Strukturen über andere Strukturen hinwegführen.
 
+\todo{Kann ich hier über planare Graphen schreiben?}
+% Eine strengere Definition für Dreidimensionalität wäre, dass der Dungeon-Graph nicht planar sein darf. Diese Bedingung ist aber zu streng gewählt, da der Dungeon
+
 \section{Die Unity Game Engine}
 
 Unity ist eine Game Engine für die Entwicklung von 2D und 3D-Spielen. 
 
-Es wurde eine Game Engine verwendet, um den Implementierungs-Teil der Arbeit auf den Generator selbst und das User-Interface des Generators zu beschränken. Die Implementierung von Engine-typischen Features wie Rendering oder Kollision soll nicht Teil der Arbeit sein.
+Die Verwendung einer Game Engine ist dadurch begründet, dass der Implementierungs-Teil der Arbeit auf den Generator selbst und das User-Interface des Generators beschränkt sein soll. Die Implementierung von Engine-typischen Features wie Rendering oder Kollision soll nicht Teil der Arbeit sein.
 
 Die Wahl einer Game Engine für ein bestimmtes Projekt ist immer auch eine subjektive Entscheidung. Hauptargumente für Unity sind die weite Verbreitung der Game Engine unter Indie-Entwicklern, das Entity-Component-System, dass einen modularen Aufbau ermöglicht und das Editor Scripting, dass es erlaubt ein User Interface für den Generator innerhalb der Engine zu schreiben. 
 
@@ -121,17 +120,17 @@ Formale Grammatiken werden in der prozeduralen Generierung gerne verwendet um W�
 
 Damit eine nicht-deterministische Grammatik zur Generierung verwendet werden kann muss eine Entscheidung getroffen werden, in welcher Reihenfolge Regeln angewendet werden. Eine mögliche Methode ist jeden Generations-Schritt eine zufällige Regel aus der Menge an anwendbaren Regeln auszuwählen. 
 \cite[Kap.~5.2, S.~75]{shaker2016procedural}
-Eine Terminierung des Algorithmus ist hier nicht garantiert, da Regeln rekursiv sein können. Aber bei einer zufälligen Auswahl ist eine Terminierung in einer akzeptablen Laufzeit sehr wahrscheinlich, angenommen die Formale Sprache enthält keine rekursiven Regeln ohne Abbruchbedingung. 
+Eine Terminierung des Algorithmus ist hier nicht garantiert, da Regeln rekursiv sein können. Aber bei einer zufälligen Auswahl ist eine Terminierung in einer akzeptablen Laufzeit sehr wahrscheinlich, angenommen die Formale Sprache enthält keine rekursiven Regeln ohne Abbruchbedingung, was zu einer unvermeidbaren Endlosschleife führen würde.
 
-Eine Graphgrammatik verhält sich wie eine Formale Grammatik, allerdings sind die linken und rechten Seiten hier Mustergraphen. Hierbei ist es wichtig, dass die individuellen Knoten auf der linken Seite jeweils individuelle Knoten auf der rechten Seite zugewiesen werden können, damit die Ersetzung stattfinden kann. 
+Eine Graphgrammatik verhält sich wie eine Formale Grammatik, allerdings sind die linken und rechten Seiten Mustergraphen. Hierbei ist es wichtig, dass die individuellen Knoten auf der linken Seite jeweils individuelle Knoten auf der rechten Seite zugewiesen werden können, damit die Ersetzung stattfinden kann. 
 \cite[Kap.~5.5.1, S.~80]{shaker2016procedural}
 Durch widerholte Ersetzung von Teilgraphen kann hier aus einem Start-Graph ein End-Graph erzeugt werden. Die Menge der produzierbaren Graphen bildet die durch die Graphgrammatik definierte Formale Sprache. 
 
-In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstrukturen zu generieren und Figur-Grammatiken (engl. Shape Grammars) um den zugehörigen Raum zu generieren. Diese Missionsstrukturen sind zyklisch, der Raum allerdings nicht.
+In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstrukturen zu generieren und Figur-Grammatiken (engl. Shape Grammars) um den zugehörigen Raum zu generieren.
 
 \section{Spezieller Algorithmus}\label{s.speziellerAlgorithmus}
 
-Der Generator den ich diese Bachelorarbeit entwickelt habe, ist durch wiederholte Iteration und Experimentation entstanden. Diese Implementierung wird später ausführlich in Kapitel \ref{c.implementierung} beschrieben.
+Der Generator den ich diese Bachelorarbeit entwickelt habe, ist durch wiederholtes Iterieren und Experimentieren entstanden. Diese Implementierung wird später ausführlich in Kapitel \ref{c.implementierung} beschrieben.
 
 Aber zum klareren Verständnis will ich zunächst den spezielleren Algorithmus formal beschreiben, und in 
 \ref{s.allgemeinerAlgorithmus} bei einer Verallgemeinerung ankommen. 
@@ -139,11 +138,11 @@ Aber zum klareren Verständnis will ich zunächst den spezielleren Algorithmus f
 Wie bereits erwähnt ähnelt das Verfahren einer Graphgrammatik. Es ist inspiriert von Joris Dormans Ansatz in 
 \cite{dormansAdventures},
 allerdings werden keine separaten Modelle für Missionsstruktur und Raum verwendet.
-In \cite[2.]{dormansModelTransformation} geht Dormans genauer auf „mission and space“ ein und dass diese beiden Modelle von Level-Designern häufig als isomorphisch angenommen werde. Er argumentiert jedoch, dass sie als separate Modelle verstanden werden sollten. Mission bezeichnet dabei ein Modell der Aufgaben die der Spieler bewältigen muss, Space bezeichnet den Raum in dem diese Aufgaben ausgeführt werden müssen.
+In \cite{dormansModelTransformation} geht Dormans genauer auf „mission and space“ ein und dass diese beiden Modelle von Level-Designern häufig als isomorphisch angenommen werde. Er argumentiert jedoch, dass sie als separate Modelle verstanden werden sollten. Mission bezeichnet dabei ein Modell der Aufgaben die der Spieler bewältigen muss, Space bezeichnet den Raum in dem diese Aufgaben ausgeführt werden müssen.
 
 Für mein Verfahren wurden keine separaten Modelle für Mission und Space verwendet, sondern direkt ein Raum generiert, der eine Missionsstruktur implizit beinhaltet. Für die Zwecke dieser Arbeit, wurde diese Vereinfachung als „gut genug“ befunden.
 
-Der Generierung dieses Raumes würde ich mich gerne über das bereits bekannte Konzept der Graphgrammatik annähern. Hierfür stelle man sich einen mit Hilfe einer Graphgrammatik generierten Level-Graph vor. Dieser ist allerdings an ein dreidimensionales kartesisches Gitter gebunden. Verbindungen zwischen Knoten des Graphen sind nur zwischen direkt (nicht diagonal) benachbarten Zellen möglich, wie in Abbildung \ref{img.gridExample3D} dargestellt.
+Der Generierung dieses Raumes würde ich mich gerne über das bereits bekannte Konzept der Graphgrammatik annähern. Hierfür stelle man sich einen mit Hilfe einer Graphgrammatik generierten Dungeon-Graph vor. Dieser ist allerdings an ein dreidimensionales kartesisches Gitter gebunden. Verbindungen zwischen Knoten des Graphen sind nur zwischen direkt (nicht diagonal) benachbarten Zellen möglich, wie in Abbildung \ref{img.gridExample3D} dargestellt.
 
 \bild{gridExample3D}{6cm}{Beispiel für einen dreidimensionalen Graph innerhalb der Restriktionen des Gitters}{Beispiel für Graph im Gitter}
 
@@ -151,35 +150,35 @@ Zu Jedem Knoten und den mit ihm verbundenen Kanten kann man sich einen äquivale
 
 \bild{nodeToRoom}{8cm}{Knoten mit Halb-Kanten und äquivalenter Raum}{Äquivalenz von Knoten und Raum}
 
-Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt, da es sechs Ausgänge pro Raum gibt, die jeweils zwei Zustände („Tür“ oder „keine Tür“) haben können. Durch geschicktes nutzen von Rotationssymmetrie könnte man diese Zahl verringern, dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen müsste. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht alle in allen möglichen Raumvariationen bereitstellen. 
+Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt, da es sechs Ausgänge pro Raum gibt, die jeweils zwei Zustände („Tür“ oder „keine Tür“) haben können. Durch Nutzen von Rotationssymmetrie könnte man diese Zahl verringern, dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen muss. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht alle in allen möglichen Raumvariationen bereitstellen. 
 
 Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser Ansatz wurde ausgetestet, aber nicht weiter verfolgt, da die Räume dadurch zu gleich aussahen, wie man in Abbildung \ref{img.voxelRoomDungeon} sehen kann. Einen abwechslungsreichen Raum-Generator zu entwickeln ist ein interessantes Problem, aber nicht Inhalt dieser Arbeit.
 
-\bild{voxelRoomDungeon}{16cm}{Screenshot einer frühen Version des Generators mit prozedural generierten Räumen. Die Räume sehen sehr ähnlich aus.}{Generator mit prozeduralen Räumen} 
+\bild{voxelRoomDungeon}{8cm}{Screenshot einer frühen Version des Generators mit prozedural generierten Räumen. Die Räume sehen sehr ähnlich aus.}{Generator mit prozeduralen Räumen} 
 
-Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Level-Graphen zu generieren, und diesen in einem zweiten Schritt in Räume zu übersetzen, werden die Räume direkt produziert. 
+Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Dungeon-Graphen zu generieren, und diesen in einem zweiten Schritt in Räume zu übersetzen, werden die Räume direkt produziert. 
 
 Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. 
 
-Für diesen Algorithmus wird eine Array-Grammatik verwendet, deren Produktionsregeln als linke und rechte Seite gleich große dreidimensionale Arrays haben. Ein Vorkommen der linken Seite kann durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
+Für diesen Algorithmus wird eine Array-Grammatik verwendet, deren Produktionsregeln als linke und rechte Seite dreidimensionale Arrays haben. Die Seiten sind zueinander identisch in Länge, Höhe und Breite, somit kann ein Vorkommen der linken Seite durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
 
 \bild{ruleExample1}{8cm}{Beispiel einer Produktionsregel\footnotemark}{Beispiel einer Produktionsregel}
 
 \footnotetext{Arrays werden im Folgenden in 2D dargestellt, um die Grafiken übersichtlicher zu gestalten, sämtliche Grafiken gelten im gleichen Maße für dreidimensionale Arrays}
 
-Anders als bei eindimensionalen Grammatiken wo sich die länge des Wortes bei der Ersetzung ändern kann, ändert sich die Größe des Arrays dabei nicht, da linke und rechte Seite gleich groß sind, es wird lediglich das relevante Teilstück ersetzt.
+Anders als bei Zeichenketten-basierten Grammatiken wo sich die Länge des Wortes bei der Ersetzung ändern kann, ändert sich die Größe des Arrays dabei nicht, da linke und rechte Seite gleich groß sind, es wird nur das relevante Teilstück ersetzt.
 
 \bild{replaceExample1}{8cm}{Anwendung der Produktionsregel A (eine von drei möglichen Positionen der Anwendung)}{Beispiel einer Regelanwendung}
 
 Um mit dieser Array-Grammatik einen Dungeon zu erstellen müssen wir lediglich statt einem Alphabet aus Buchstaben ein Alphabet aus Raumteilen verwenden. Verwendet man ein solches Alphabet, so kann eine Graphgrammatik implizit in den Arrays enthalten sein, wie in Abbildung \ref{img.ruleExample2} illustriert. In der Praxis sind diese Raumteile 3D Modelle, die modular zusammenpassen und so kann ein ganzer Dungeon mit Regeln transformiert werden.
 
-Hierbei ist dem Autor/der Autorin der Regeln überlassen, dass die Regeln selbst einen korrekten Dungeon produzieren. Eine Regel, die z.B. eine Verbindung ins Nichts führen lässt sollte nicht erstellt werden. 
+Hierbei ist dem Autor/der Autorin der Regeln überlassen, dass die Regeln selbst einen korrekten Dungeon produzieren. Eine Regel, die z.B. eine Verbindung ins Nichts führen lässt, sollte nicht erstellt werden. 
 
-Ein großer Vorteil dieser Methode ist, dass das Alphabet aus beliebig vielen oder wenigen Raumteilen bestehen kann. Symbole für verschiedene Rotationen des gleichen Modells können automatisch erzeugt werden.
+\bild{ruleExample2}{10cm}{Alphabet $\Sigma$ mit Dungeon-Graph-Teilen und einer Produktionsregel $R$}{Beispiel einer Produktionsregel aus Levelteilen}
 
-\todo{Bild aus der Implementierung nehmen}
+Ein großer Vorteil dieser Methode ist, dass das Alphabet aus beliebig vielen oder wenigen Raumteilen bestehen kann, ein Mangel an Raumteilen schränkt lediglich die Menge der sinnvollen Regeln ein. Symbole für verschiedene Rotationen des gleichen Modells können automatisch erzeugt werden (siehe Abb. \ref{img.roomRotationsLabeled}).
 
-\bild{ruleExample2}{10cm}{Alphabet $\Sigma$ mit Level-Graph-Teilen und einer Produktionsregel $R$}{Beispiel einer Produktionsregel aus Levelteilen}
+\bild{roomRotationsLabeled}{8cm}{Das gleiche Raum-Modell in verschiedenen Rotationen, mit jeweils anderem Symbol.}{Raum-Rotationen mit Symbolen}
 
 \section{Allgemeiner Algorithmus}\label{s.allgemeinerAlgorithmus}
 
@@ -543,7 +542,7 @@ In einem Text Adventure ließt der Spieler Texte und trifft Entscheidungen, die 
 \bibliographystyleimg{alphadin_martin}
 \bibliographyimg{bildquellenverzeichnis}
 
-\chapter{Erklärung}
+\chapter*{Erklärung}
 
 Hiermit versichere ich, dass ich die vorliegende Arbeit selbstständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel benutzt habe, dass alle Stellen der Arbeit, die wörtlich oder sinngemäß aus anderen Quellen übernommen wurden, als solche kenntlich gemacht und dass die Arbeit in gleicher oder ähnlicher Form noch keiner Prüfungsbehörde vorgelegt wurde.
 
