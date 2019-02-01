@@ -132,8 +132,8 @@ In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstruktur
 
 Der Generator den ich diese Bachelorarbeit entwickelt habe, ist durch wiederholtes Iterieren und Experimentieren entstanden. Diese Implementierung wird später ausführlich in Kapitel \ref{c.implementierung} beschrieben.
 
-Aber zum klareren Verständnis will ich zunächst den spezielleren Algorithmus formal beschreiben, und in 
-\ref{s.allgemeinerAlgorithmus} bei einer Verallgemeinerung ankommen. 
+Aber zum klareren Verständnis will ich zunächst den implementierten Algorithmus beschreiben, und in 
+\ref{s.allgemeinerAlgorithmus} diesen verallgemeinern.
 
 Wie bereits erwähnt ähnelt das Verfahren einer Graphgrammatik. Es ist inspiriert von Joris Dormans Ansatz in 
 \cite{dormansAdventures},
@@ -158,7 +158,7 @@ Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser A
 
 Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Dungeon-Graphen zu generieren, und diesen in einem zweiten Schritt in Räume zu übersetzen, werden die Räume direkt produziert. 
 
-Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. 
+Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. Ein Eintrag im Array lässt sich über die Indizes einer Gitterzelle zuweisen, dies führt dazu, dass das Gitter räumlich durch die Größe des Arrays begrenzt ist.
 
 Für diesen Algorithmus wird eine Array-Grammatik verwendet, deren Produktionsregeln als linke und rechte Seite dreidimensionale Arrays haben. Die Seiten sind zueinander identisch in Länge, Höhe und Breite, somit kann ein Vorkommen der linken Seite durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
 
@@ -182,21 +182,15 @@ Ein großer Vorteil dieser Methode ist, dass das Alphabet aus beliebig vielen od
 
 \section{Allgemeiner Algorithmus}\label{s.allgemeinerAlgorithmus}
 
-Der in Abschnitt \ref{s.allgemeinerAlgorithmus} beschriebene Algorithmus ist der in der Implementierung verwendete. 
+In \ref{s.speziellerAlgorithmus} wurde der Algorithmus für eine kartesisches Gitter beschrieben. Im folgenden soll ein Überblick gegeben werden wie eine Verallgemeinerung auf beliebige Gitter möglich wäre.
 
-Im Folgenden will ich diesen allerdings zu akademischen Zwecken (\todo{really?}) verallgemeinern.
+Um den Algorithmus für alle Gitter verallgemeinern, muss eine allgemeine Definition für ein Teilstück des Gitters gefunden werden, dass die linke und rechte Seite einer Produktionsregel beschreibt. 
 
-$ G = (V, T, P, S) $
+Alle Gitter -- auch ungleichmäßige Gitter -- haben eine Nachbarschaftsdefinition. Strukturierte Gitter haben den Vorteil, dass sie über Indizes adressiert werden können, somit kann hier ein Teilstück als Abbildung relativer Positionen auf Symbole verstanden werden. Hierbei kann eine Position auch nicht definiert sein, wenn sie außerhalb des Teilstücks liegt.
 
-$ V $ ist die Symbolmenge 
-
-$ T \subset V $ ist die Menge der Terminalsymbole
-
-$ P \subset (V^\ast \setminus t^\ast) \times V^\ast $ ist die Menge der Produktionsregeln
-
-$ X^\ast $ 
-
-
+$ V $ ist die Symbolmenge \\
+$ n \in \N $ ist die Dimension \\
+$ p = (i_1, \dotsc , i_n) \quad i_1, \dotsc , i_n \in \mathbb{Z} $
 
 \todo{Mache ich später, wenn platz und bock. :P}
 
@@ -206,15 +200,15 @@ In diesem Kapitel wird die praktische Umsetzung des in \ref{s.speziellerAlgorith
 
 \bild{projectOverview}{16cm}{Ansicht des Unity-Editors in einer typischen Szene}{Ansicht des Unity-Editors}
 
-\bild{dungeons}{16cm}{Verschiedene in Unity generierte Dungeons, im Scene View betrachtet}{Verschiedene generierte Dungeons}
+\bild{dungeons}{16cm}{Verschiedene in Unity generierte Dungeons}{Verschiedene generierte Dungeons}
 
 \section{Ziele der Implementierung}
 
-Wie später in \ref{s.anwendungsmöglichkeiten} beschrieben, sind viele verschiedene Anwendungsszenarien für diesen Generator denkbar. 
+Wie in \ref{s.anwendungsmöglichkeiten} beschrieben, sind viele verschiedene Anwendungsszenarien für diesen Generator denkbar. 
 
-Ein Ziel der Implementierung ist es, dass die Software nicht einen spezifischen Generator darstellt, sondern eine Software in der sich verschiedene Generatoren der gleichen Klasse konfigurieren lassen. Es sollten möglichst große Teile des Algorithmus nicht hard-coded sondern konfigurierbar sein, indem sie als Daten vorliegen. Insbesondere gilt das für das Alphabet und die Produktionsregeln der Array-Grammatik.
+Ein Ziel der Implementierung ist es, dass das Programm nicht einen spezifischen Generator darstellt, sondern ein Werkzeug mit dem sich verschiedene Generatoren der gleichen Klasse konfigurieren lassen. Es sollten möglichst große Teile des Algorithmus nicht hard-coded sondern konfigurierbar sein, indem sie als Daten vorliegen. Insbesondere gilt das für das Alphabet und die Produktionsregeln der Array-Grammatik.
 
-Ein weiteres Ziel ist es die Features der Unity-Engine zu nutzen, Insbesondere die Entity-Component-Architektur und die Möglichkeiten den Unity-Editor mit eigener UI zu erweitern. 
+Ein weiteres Ziel ist es die Features der Unity-Engine zu nutzen, insbesondere die Entity-Component-Architektur und die Möglichkeiten den Unity-Editor mit eigener UI zu erweitern. 
 
 \section{Wichtige Unity-Features}
 
@@ -227,38 +221,36 @@ Ein Beispiel hierfür kann man in Abbildung \ref{img.screenshotGenerator} sehen,
 
 Manche Komponenten ließen sich prinzipiell zusammenfassen, wie z.B. PatternView und PatternToPrefabs, aber wurden trotzdem getrennt implementiert, da sie unterschiedliche Aufgaben erfüllen. Dies macht auch das Ausbauen der Software in der Zukunft einfacher, da einzelne Komponenten ausgetauscht oder umgeschrieben werden können, solange die öffentlichen Funktionen und Variablen dieser Komponenten gleich bleiben.
 
-In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wichtiges Unity-Feature, nämlich die Darstellung von öffentlichen Variablen im Inspektor. Ist ein Field public (oder private und mit dem SerializeField-Attribute gekennzeichnet) so kann der Wert dieses Fields im Inspektor gesetzt werden; Unity unterstützt hierbei gewisse Datentypen von Haus aus, für andere kann man sogenannte Property Drawers definieren. Alle Generator-Komponenten haben public Fields, was den ganzen Generator sehr konfigurierbar macht.
+In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wichtiges Unity-Feature, nämlich die Darstellung von öffentlichen Variablen im Inspektor. Ist ein Field public (oder private und mit dem SerializeField-Attribute gekennzeichnet) so kann der Wert dieses Fields im Inspektor gesetzt werden \cite[Seite: VariablesAndTheInspector]{unityManual} \cite[Seite: SerializeField]{unitySciptingReference}. Unity unterstützt hierbei die häufigsten Datentypen von Haus aus. Es wurde bei der Implementierung der Komponenten darauf geachtet möglichst viele Einstellungen so im Inspektor editierbar zu machen.
 
-Teilweise wurde außerdem das User Interface über selbst geschriebene Editor-UI ausgebaut, mehr hierzu in Abschnitt \ref{s.editorUI}.
+Außerdem wurde das User Interface über selbst geschriebene Editor-UI ausgebaut, mehr hierzu in Abschnitt \ref{s.editorUI}.
 
 \section{Ordnerstruktur}
 
-\todo{Namespaces!}
+Die Ordnerstruktur des Projektes ist auf der höchsten Ebene in drei Ordner unterteilt: EasyButtons, ReplaceDungeonGenerator und Game. Die Ordner EasyButtons und ReplaceDungeonGenerator haben ihren eigenen Namespaces, die jeweils mit dem Ordnernamen identisch sind.
 
-Die Ordnerstruktur des Projektes ist auf der höchsten Ebene in drei Ordner unterteilt: EasyButtons, ReplaceDungeonGenerator und Game.
+EasyButtons ist ein Open-Source-Package, dass das einfache Erstellen von Buttons im Inspektor zum Aufrufen von Methoden von MonoBehaviour- und ScriptableObject-Klassen erlaubt. \cite{easyButtons}
 
-EasyButtons ist ein Package, dass das einfache Erstellen von Buttons im Inspektor zum Aufrufen von Methoden des Components erlaubt. \todo{ref zu materialien}.
+ReplaceDungeonGenerator enthält die Kern-Assets des Generators und kann in jedes Projekt eingefügt werden. Das Package hat lediglich EasyButtons als Dependency. Somit lässt sich der Generator einfach in anderen Projekten einsetzen ohne unnötige Spiel-spezifische Assets wie Modelle, PlayerController, etc. mit zu importieren. Der Ordner enthält eine Beispielszene mit einer simplen Grammatik, die auf Würfeln basiert.
 
-ReplaceDungeonGenerator enthält die Kern-Assets des Generators. Dieser Ordner kann in jedes Projekt eingefügt werden. Dieses Package hat lediglich EasyButtons als Dependency. Somit lässt sich der Generator einfach in anderen Projekten einsetzen ohne unnötige Assets wie Modelle, PlayerController, etc. mit zu Importieren.
+Game enthält alle Spiel-spezifischen Assets, die nicht Teil des Generator-Kerns sind. Dazu gehört unter anderem der Programmcode der Spielmechaniken (siehe \ref{s.spielmechaniken}) und die Regeln, die Räume und das Rezept des zyklische Dungeon-Generators (siehe \ref{s.regelsystem}).
 
-Game enthält alle Spiel-spezifischen Assets, die nicht Teil des Generator-Kerns sind.
+Innerhalb dieser Ordner wird nach Asset-Typ unterschieden (Scenes, Models, Scripts, \dots). Ordner, die Editor heißen, werden nur für den Editor gebraucht und darin enthaltene Assets sind im fertigen Spiel nicht verwendbar \cite[Seite: SpecialFolders]{unityManual}
 
-Innerhalb dieser Ordner wird nach Asset-Typ unterschieden (Scenes, Models, Scripts, ...). Ordner, die Editor heißen, werden nur für den Editor gebraucht und darin enthaltene Assets sind im fertigen Spiel nicht verwendbar.
-
-Weitere Unterordner wurden nach Bedarf erstellt, wie z.B. um die Modelle von zwei Generations-Stilen (Rooms und DiagonalRooms) zu unterscheiden.
+Weitere Unterordner wurden nach Bedarf erstellt, z.B. um die Modelle von zwei Generations-Stilen (Rooms und DiagonalRooms) zu unterscheiden.
 
 \section{Aufbau des Generator-Objekts}
 
-Das wichtigste GameObject der Software ist der „Generator“, dieser ist üblicherweise zusammengesetzt aus folgenden Komponenten: 
-Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder RecipeReplacer, RuleSet, RuleEditor (optional), ReplacementEngine, PatternToPrefabs. 
+Das wichtigste GameObject ist der „Generator“, dieser ist üblicherweise zusammengesetzt aus folgenden Komponenten: 
+Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder RecipeReplacer, RuleSet, RuleEditor (optional), ReplacementEngine, PatternToPrefabs (siehe Abb. \ref{img.screenshotGenerator}). 
 
-\bild{screenshotGenerator}{12cm}{Screenshots des Inspektors eines Generator-GameObjects, man sieht alle vorhandenen Komponenten und deren Einstellungen}{Screenshot der Generator-Komponenten}
+\bild{screenshotGenerator}{12cm}{Screenshot des Inspektors eines Generator-GameObjects, man sieht alle vorhandenen Komponenten und deren Einstellungen}{Screenshot der Generator-Komponenten}
 
-Es folgt eine kurze Beschreibung der einzelnen Components. Es wird dabei hauptsächlich auf die Funktion und Bedienung der Components eingegangen, nicht auf Implementierungsdetails.
+Es folgt eine kurze Beschreibung der einzelnen Komponenten. Es wird dabei hauptsächlich auf die Funktion und Bedienung der Komponenten eingegangen, nicht auf Implementierungsdetails.
 
 \subsection{PatternView}\label{ss.patternView}
 
-Das PatternView repräsentiert einen dreidimensionalen Array von Labels. Diese Labels stehen üblicherweise für einen Raum und eine Rotation. Das Label „st\_2“ steht beispielsweise für eine gerades Stück („st“ für „straight“), dass um zwei mal um die y-Achse rotiert wurde. Das PatternView enthält außerdem ein Display Delta, dass bestimmt mit wie viel Abstand die Räume im Raum verteilt sind. Im Scene View\footnote{Übersicht der Unity-UI: \cite[Seite: LearningtheInterface]{unityManual}} von Unity werden die Labels als Text im dreidimensionalen Raum angezeigt (erkennbar in Abb. \ref{img.sceneView1}).
+Das PatternView repräsentiert einen dreidimensionalen Array von Labels. Diese Labels sind äquivalent zu den Symbolen der Graphgrammatik, sie können verschiedene Bedeutungen haben, können aber prinzipiell jede Zeichenkette sein. Das PatternView enthält außerdem einen dreidimensionalen Vector „Display Delta“. Dieser legt die Größe einer Gitterzelle des dreidimensionalen kartesischen Gitters fest, mit dem die Räume in der Szene angeordnet werden. Im Scene View\footnote{Übersicht der Unity-UI: \cite[Seite: LearningtheInterface]{unityManual}} von Unity werden die Labels als Text im dreidimensionalen Raum angezeigt (erkennbar in Abb. \ref{img.sceneView1}).
 
 \bild{sceneView1}{16cm}{Sicht auf einen Teil eines generierten Dungeons im Unity Scene View}{Dungeon-Teil im Unity Scene View}
 
@@ -268,7 +260,13 @@ Der PatternToPrefabs Component ist ein Component, der für jedes Label im Patter
 
 Es können beliebig viele Raumnamen mit Unterstrichen getrennt in einem Label vorkommen, die zugehörigen Prefabs werden dann übereinander generiert. die Kette kann mit einer Zahl beendet werden, die die Rotation in $90^\circ$-Schritten um die y-Achse angibt. Ein Beispiel hierfür ist „it\_obstacle\_0“ in Abbildung \ref{img.sceneView1}. Es wird das Kreuzung-Prefab „it“ mit einem Hindernis-Prefab „obstacle“ generiert und um 0 mal $90^\circ$ gedreht.
 
-Der PatternToPrefabs Component verlangt ein PatternView Component mit RequireComponent\footnote{RequireComponent in Unity: \cite[Seite: RequireComponent]{unitySciptingReference}}
+Der PatternToPrefabs Component verlangt ein PatternView Component mit RequireComponent\footnote{RequireComponent in Unity: \cite[Seite: RequireComponent]{unitySciptingReference}}.
+
+\subsection{RuleSet}
+
+Das RuleSet ist der Component in dem alle Produktionsregeln enthalten sind. Die Inspektor-UI dieses Components enthält die Möglichkeit Regeln im JSON-Format zu laden und zu speichern. Es lassen sich Regeln entfernen, hinzufügen und auswählen. Ist eine Regel ausgewählt, kann sie im RuleEditor-Component editiert werden (vorausgesetzt es ist ein RuleEditor an das GameObject angehängt).
+
+Das RuleSet ist nur im Namen ein Set, nicht im informatischen Sinne. Ein Set wäre ungeordnet, das RuleSet allerdings enthält eine Liste an Regeln. Die Reihenfolge der Regeln in der Liste kann in bestimmten Fällen eine Rolle spielen, etwa wenn in der ReplacementEngine die Replacement Strategy auf „First“ oder „Last“ gesetzt ist.
 
 \subsection{ReplacementEngine}
 
@@ -278,19 +276,11 @@ Der PatternToPrefabs Component verlangt die PatternView und RuleSet Components m
 
 \subsection{RandomReplacer und RecipeReplacer}\label{ss.replacers}
 
-Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Haupt-Schnittstelle des Generators. Von ihnen kann die Generation ausgelöst werden.
+Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Haupt-Schnittstelle des Generators. Von ihnen kann die Generation ausgelöst werden. Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Knopf drückt, oder zur Laufzeit indem man die Generate-Methode aufruft. Die Generate-Methode erzeugt einen ganzen Dungeon auf einmal. Alternativ kann man auch einmal die InitializeGeneration-Methode aufrufen und im Anschluss die GenerateStep-Methode um einzelne Ersetzungen Schritt für Schritt vorzunehmen.
 
-Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Knopf drückt, oder zur Laufzeit indem man die Generate-Methode aufruft. Die Generate-Methode generiert einen ganzen Dungeon auf einmal. Alternativ kann man auch einmal die InitializeGeneration-Methode aufrufen und im Anschluss die GenerateStep-Methode um einzelne Ersetzungen Schritt für Schritt vorzunehmen.
+Der RandomReplacer ist die simplere Variante der beiden Replacer. Er wählt immer eine zufällige Ersetzung für den nächsten Produktionsschritt. Dabei gewichtet er die einzelnen möglichen Ersetzungen gemäß der Gewichtung der zugehörigen Regel im RuleSet.
 
-Der RandomReplacer ist die simplere Variante der beiden Replacer. Er wählt immer eine zufällige Position und Regel für den nächsten Produktionsschritt. Dabei gewichtet er die einzelnen Positionen gemäß der Gewichtung der Regeln im RuleSet.
-
-Der RecipeReplacer verwendet eine Recipe-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewandt werden. Das genaue Format des Recipes ist in \ref{s.rezeptDatei} beschrieben.
-
-\subsection{RuleSet}
-
-Das RuleSet ist der Component in dem alle Produktionsregeln enthalten sind. Die Inspektor-UI dieses Components enthält die Möglichkeit Regeln im JSON-Format zu laden und zu speichern. Es lassen sich Regeln entfernen, hinzufügen und auswählen. Ist eine Regel ausgewählt, kann sie im RuleEditor-Component editiert werden (vorausgesetzt es ist ein RuleEditor an das GameObject angehängt).
-
-Das RuleSet ist nur im Namen ein Set, nicht im informatischen Sinne. Ein Set wäre ungeordnet, das RuleSet allerdings enthält eine Liste an Regeln. Die Reihenfolge der Regeln in der Liste kann in bestimmten Fällen eine Rolle spielen, etwa wenn in der ReplacementEngine die „Replacement Strategy“ auf „First“ oder „Last“ gesetzt ist.
+Der RecipeReplacer verwendet eine Rezept-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewandt werden. Das genaue Format der Rezept-Datei ist in \ref{s.rezeptDatei} beschrieben.
 
 \subsection{RuleEditor}\label{ss.ruleEditor}
 
@@ -298,22 +288,23 @@ Der RuleEditor ist ein Component der zum editieren von Regeln verwendet wird.
 
 \bild{screenshotRuleEditor}{8cm}{Inspektor des RuleEditor-Components}{Inspektor des RuleEditor-Components}
 
-Ist im RuleSet eine Regel ausgewählt, enthält der RuleEditor-Inspektor die Einstellungen für genau diese Regel. Es können Parameter wie Name und Gewichtung der Regel gesetzt werden. Außerdem eine maximale Anzahl an Anwendungen dieser bestimmten Regel und und eine Anzahl an „Wait Steps“. Der Generator wendet die Regel nicht an bevor nicht so viele Generationsschritte vergangen sind.
+Ist im RuleSet eine Regel ausgewählt, enthält der RuleEditor-Inspektor die Einstellungen für diese Regel. Es können Parameter wie Name und Gewichtung der Regel, eine maximale Anzahl an Anwendungen dieser bestimmten Regel und eine Anzahl an „Wait Steps“ gesetzt werden. Der Generator wendet die Regel nicht an bevor nicht so viele Generationsschritte vergangen sind.
 
-Ist der Toggle „Obey rule orientation“ aktiv, werden für diese Regel intern vier Regeln generiert, eine für jede Himmelsrichtung. Dieses Feature existiert, da Menschen instinktiv nicht zwischen Himmelsrichtungen unterscheiden, und somit die meisten Regeln um die y-Achse rotiert auch angewendet werden können. Ist der toggle angeschaltet kann die rotation auch per Knopfdruck geändert werden. 
+Ist der Toggle „Obey rule orientation“ aktiv, werden für diese Regel intern vier Regeln generiert, eine für jede Himmelsrichtung. Dieses Feature existiert, da Menschen instinktiv nicht zwischen Himmelsrichtungen unterscheiden, und somit die meisten Regeln um die y-Achse rotiert auch angewendet werden können. Ist der Toggle angeschaltet kann die Rotation auch per Knopfdruck geändert werden. 
 
 Ist der Toggle „Reversible“ aktiv, so kann die Regel nicht nur angewendet, sondern auch rückgängig gemacht werden. Hierfür wird im Hintergrund eine inverse Regel erstellt, bei der die linke und rechte Seite vertauscht sind. Dies kann schnell zu Fluktuationen im Generator führen, wobei eine Regel in aufeinanderfolgenden Schritten widerholt angewandt und rückgängig gemacht wird. Deshalb sollte dieses Feature bewusst verwendet werden.
 
-Die linke und rechte Seite der Regeln werden hier in Textfeldern angegeben. Da diese Seiten  dreidimensionale Arrays sind ist die Eingabemethode nicht trivial. Es wurde eine eindimensionale Darstellung des dreidimensionalen Arrays gewählt. Die Symbole Semikolon, Komma und Leerzeichen Brechen jeweils in die nächste Dimension um. Die in Abbildung \ref{img.ruleEditorExample} abgebildete Regel liegt z.B. in der xz-Ebene, da Semikolon in x-Richtung trennt und Leerzeichen in z-Richtung. Die Regeln lesen sich auf dem Screenshot von unten nach oben (z) und von links nach rechts (x).
+Die linke und rechte Seite der Regeln werden hier in Textfeldern angegeben. Da diese Seiten dreidimensionale Arrays sind, ist die Frage der Eingabemethode für diese Arrays nicht trivial. Es wird hier eine eindimensionale Darstellung des dreidimensionalen Arrays gewählt; die Symbole Semikolon, Komma und Leerzeichen brechen jeweils in die nächste Dimension um. Die in Abbildung \ref{img.ruleEditorExample} abgebildete Regel liegt z.B. in der xz-Ebene, da Semikolon in x-Richtung trennt und Leerzeichen in z-Richtung. Die Regeln lesen sich auf dem Screenshot von unten nach oben (z) und von links nach rechts (x).
 
-\bild{ruleEditorExample}{16cm}{Beispiel einer Produktionsregel in Unity mit linker und rechter Seite und den dazugehörigen String-Darstellungen. Die verwendeten Symbole sind „st“ (straight), „tl“ (turn left) und „tr“ (turn right). Die Pfeile bezeichnen die vorgesehene Begehungsrichtung und sind nur im Scene View sichtbar. }{Beispiel einer Produktionsregel in Unity}
+\bild{ruleEditorExample}{16cm}{Beispiel einer Produktionsregel in Unity mit linker und rechter Seite und den dazugehörigen String-Darstellungen. Die verwendeten Symbole sind „st“ (straight), „tl“ (turn left), „tr“ (turn right) und „.“ (kein Raum). Die Pfeile bezeichnen die vorgesehene Begehungsrichtung und sind nur im Scene View sichtbar. }{Beispiel einer Produktionsregel in Unity}
 
-Dieses Format ist nicht wirklich intuitiv, wurde aber aus Gründen von Aufwands/Nutzen-Erwägungen so belassen. Eine mögliche Verbesserung findet sich in \ref{s.verbesserungen}.
+Dieses Format ist nicht wirklich intuitiv, wurde aber so belassen, um den Programmieraufwand akzeptabel zu belassen. Eine mögliche Verbesserung findet sich in \ref{s.verbesserungen}. 
+
+% TODO - Löschen, falls keine Verbesserung
 
 \section{Wichtige Klassen}
 
-Es gibt auch einige Klassen, die keine Components, aber trotzdem erwähnenswert sind. Die Klassen Tile, Pattern und Rule sind mit dem Attribut System.Serializable markiert, was bedeutet, dass sie serialisiert werden können, ohne von MonoBehaviour oder ScriptableObject zu erben. Die Serialisierung ist notwendig, damit diese Klassen von Unity intern gespeichert werden können.
-\footnote{Serialisierung in Unity: \cite[Seite: script-Serialization]{unityManual}}
+Es gibt auch einige Klassen, die keine Components, aber trotzdem erwähnenswert sind. Die Klassen Tile, Pattern und Rule modellieren für den Ersetzungsalgorithmus essenzielle Objekte und sind mit dem Attribut System.Serializable markiert, was bedeutet, dass sie serialisiert werden können, ohne von MonoBehaviour oder ScriptableObject zu erben. Die Serialisierung ist notwendig, damit diese Klassen von Unity intern gespeichert werden können.\footnote{Serialisierung in Unity: \cite[Seite: script-Serialization]{unityManual}}
 
 \subsection{Tile}
 
@@ -321,17 +312,17 @@ Das Tile repräsentiert einen einzelnen Raum im dreidimensionalen Array. Diese K
 
 \subsection{Pattern}
 
-Das Pattern stellt einen dreidimensionalen Array von Tiles dar. Diese Wrapper-Klasse erledigt einige Aufgaben. Zum einen implementiert diese Klasse die Serialisierung des mehrdimensionalen Arrays, die Unity nicht standardmäßig durchführt. Die Pattern-Klasse besitzt mehrere Konstruktoren, z.B. um ein Pattern mit einer bestimmten Größe, gefüllt mit einem bestimmten Tile zu erzeugen, oder ein Pattern als Kopie eines anderen Patterns zu erzeugen. 
+Das Pattern stellt einen dreidimensionalen Array von Tiles dar. Diese Wrapper-Klasse erledigt einige Aufgaben. Sie implementiert die Serialisierung des mehrdimensionalen Arrays, die Unity nicht standardmäßig durchführt. Die Pattern-Klasse besitzt mehrere Konstruktoren, z.B. um ein Pattern mit einer bestimmten Größe, gefüllt mit einem bestimmten Tile zu erzeugen, oder ein Pattern als Kopie eines anderen Patterns zu erzeugen. 
 
-Außerdem gibt es die Methode RotatePattern90Y, die eine um $ 90^\circ $ um die y-Achse rotierte Kopie des Patterns zurückgibt. Diese Methode wird benutzt um die in \ref{ss.ruleEditor} erwähnte „obey rule orientation“ Funktionalität des RuleEditors zu ermöglichen. Diese Methode könnte auch für andere Permutationen ausgebaut werden, aber für den Großteil der Anwendungsszenarien ist dies ausreichend, da Gravitation üblicherweise in y-Richtung wirkt, was bedeutet, dass Räume häufig um die y-Achse drehbar sein müssen, jedoch nicht in andere Richtungen.
+Außerdem hat die Klasse die Methode RotatePattern90Y, die eine um $ 90^\circ $ um die y-Achse rotierte Kopie des Patterns zurückgibt. Diese Methode wird benutzt um die in \ref{ss.ruleEditor} erwähnte „obey rule orientation“ Funktionalität des RuleEditors zu ermöglichen. Diese Methode könnte auch für andere Permutationen ausgebaut werden, aber für den Großteil der Anwendungsszenarien ist dies ausreichend, da Gravitation üblicherweise in y-Richtung wirkt, was bedeutet, dass Räume häufig um die y-Achse drehbar sein müssen, jedoch nicht in andere Richtungen.
 
 Des weiteren stellt das Pattern die Methoden GetTile und SetTile zur Verfügung um Tiles an gegebenen Positionen im Gitter erhalten und zu modifizieren. Diese Methoden führen einen Bounds-Check durch, um IndexOutOfRangeExceptions zu vermeiden, ein Bounds-Check in anderen Teilen des Programms wird damit überflüssig. Wird eine Position außerhalb des Patterns abgefragt wird stattdessen das spezielle OutOfBounds-Tile zurückgegeben.
 
-Patterns finden sowohl als Datenstruktur des gesamten Dungeons Verwendung, als auch als auch als Datenstruktur der linken und rechten Seiten in Regeln. Sie werden auch zur puren Visualisierung verwendet z.B. um im Editor die linke und rechte Seite einer Regel zu visualisieren, die geschieht dann mit Hilfe eines PatternViews (\ref{ss.patternView}: PatternView).
+Patterns finden sowohl als Datenstruktur des gesamten Dungeons Verwendung, als auch als auch als Datenstruktur der linken und rechten Seiten in Regeln. Sie werden auch zur puren Visualisierung verwendet z.B. um im Editor die linke und rechte Seite einer Regel zu visualisieren, die geschieht dann mit Hilfe eines PatternViews (siehe \ref{ss.patternView}).
 
 \subsection{Rule}
 
-Die Klasse Rule implementiert eine einzelne Produktionsregel. Wie schon im theoretischen Teil beschrieben besteht eine Produktionsregel aus einer linken und rechten Seite, diese Seiten sind jeweils ein Objekt der bereits beschriebenen Pattern-Klasse.
+Die Klasse Rule modelliert eine einzelne Produktionsregel. Wie schon im theoretischen Teil beschrieben besteht eine Produktionsregel aus einer linken und rechten Seite, diese Seiten sind jeweils ein Objekt der bereits beschriebenen Pattern-Klasse.
 
 Des weiteren enthält sie ein Field für den Namen der Regel und folgende Felder für Einstellungsmöglichkeiten: weight, strictRotation, maximumApplications.
 
@@ -339,11 +330,11 @@ Die Klasse ist Serializable, dennoch gibt es außerdem die Klasse SerializedRule
 
 \subsection{Utils}
 
-Die Klasse Utils ist eine statische Utility-Klasse, die ein paar häufig verwendet Funktionen beinhaltet, die zu keiner bestimmten anderen Klasse zugehörig sind.
+Die Klasse Utils ist eine statische Utility-Klasse, die häufig verwendete Funktionen beinhaltet, die zu keiner bestimmten anderen Klasse zugehörig sind.
 
-Sie enthält verschiedene Funktionen für Vector3Int: Clamping, Bounds-Checking, Bounds-Überschneidung und Iteration über ein einen dreidimensionales Gitter.
+Sie enthält verschiedene Funktionen für Vector3Int\cite[Seite: Vector3Int]{unitySciptingReference}: Clamping, Bounds-Checking, Bounds-Überschneidung und Iteration über ein einen dreidimensionales Gitter.
 
-Außerdem eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen. Eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software „AssetForge“ erstellte Modelle).
+Außerdem enthält sie eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen, eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software „AssetForge“ erstellte Modelle).
 
 \section{Optimierungen des Pattern Matchings}\label{s.optimierungen}
 
@@ -407,7 +398,7 @@ Des weiteren implementieren einige Components die OnGizmosDraw Methode (siehe \c
 
 \bild{screenshotGizmos}{16cm}{Beispiel von benutzerdefinierter Visualisierung im Scene View: Pfeile, die die Raumdurchquerungsrichtung angeben, Schlösser- und Schlüssel-Indikatoren, Boxen die die Positionen von bestimmten Patterns anzeigen und Labels, die Matches und Räume bezeichnen.}{Beispiele für benutzerdefinierte Gizmos}
 
-\section{Regelsystem für einen Dungeon}
+\section{Regelsystem für einen zyklischen Dungeon-Generator}\label{s.regelsystem}
 
 
 
@@ -448,7 +439,7 @@ Die Anweisung \texttt{subdivide <x> <y> <z>} wird verwendet um das Gitter zu ver
 
 \bild{subdivisionProcess}{16cm}{Anwendungsbeispiel von Unterteilung und Füllen von Lücken.}{Dungeonunterteilungs-Beispiel}
 
-\section{Spielmechaniken}
+\section{Spielmechaniken}\label{s.spielmechaniken}
 
 Um den Dungeon-Generator zu demonstrieren wurden ein paar rudimentäre Spielmechaniken implementiert. Startet man das Spiel wird ein Dungeon generiert und der Spieler erscheint im Start-Raum des Dungeons.
 
@@ -493,6 +484,7 @@ Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, 
 \section{Mögliche Verbesserungen}\label{s.verbesserungen}
 
 % Mögl. Verbesserung: Statt Array eine unendlich große Struktur verwenden (Hash-Irgendwas?)
+% intuitiveres Format für Patterns (linke rechte Seite)
 
 \section{Mögliche Anwendungsszenarien}\label{s.anwendungsmöglichkeiten}
 
@@ -532,6 +524,10 @@ In einem Text Adventure ließt der Spieler Texte und trifft Entscheidungen, die 
 \LaTeX -Vorlage von Martin Bretschneider 
 \newblock \url{https://www.bretschneidernet.de/tips/thesislatex-vorlagen.html#vorlagen}, 2006. --
 \newblock letzter Zugriff: 08.01.2019
+
+EasyButtons von Mads Bang Hoffensetz
+\newblock \url{https://github.com/madsbangh/EasyButtons},
+\newblock letzter Zugriff: 01.02.2019
 
 \todo{Easybuttons}
 \todo{Dungeon-Tileset für Tür}\label{m.tuer}
