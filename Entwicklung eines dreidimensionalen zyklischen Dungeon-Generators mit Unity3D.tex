@@ -60,9 +60,6 @@ Dormans Spiel „Unexplored“, dass im Blog Post als Beispiel verwendet wird, i
 
 Das Ziel dieser Bachelorarbeit ist es ein Verfahren zur zyklischen Generierung von Dungeons zu konzipieren und zu implementieren. Dieses Verfahren sollte im dreidimensionalen Raum funktionieren und die dritte Dimension für interessante Strukturen nutzen können. Die Implementierung findet in der Game Engine Unity statt.
 
-\todo{Quelle finden, dass viele designte Dungeons Zyklen aufweisen}
-
-
 \section{Genaue Beschreibung der Fragestellung}
 
 Der Inhalt der Arbeit ist die Entwicklung eines dreidimensionalen zyklischen Dungeon-Generators mit Unity3D. 
@@ -106,7 +103,7 @@ Die andere Bedingung, dass Zyklen während der Generierung als Bausteine des Dun
 
 Dreidimensionalität bedeutet im Kontext dieser Arbeit, dass alle generierten Strukturen räumlich sind. Ein Spieler kann sich durch den Dungeon sowohl parallel zum Boden als auch vertikal (z.B. über Treppen oder Leitern bewegen). Es soll die Möglichkeit bestehen, dass Strukturen über andere Strukturen hinwegführen.
 
-\todo{Kann ich hier über planare Graphen schreiben?}
+% \todo{Kann ich hier über planare Graphen schreiben?}
 % Eine strengere Definition für Dreidimensionalität wäre, dass der Dungeon-Graph nicht planar sein darf. Diese Bedingung ist aber zu streng gewählt, da der Dungeon
 
 \section{Die Unity Game Engine}
@@ -216,7 +213,8 @@ In diesem Kapitel wird die praktische Umsetzung des in \ref{s.speziellerAlgorith
 
 \section{Ziele der Implementierung}
 
-Wie in \ref{s.anwendungsmöglichkeiten} beschrieben, sind viele verschiedene Anwendungsszenarien für diesen Generator denkbar. 
+% Wie in \ref{s.anwendungsmoeglichkeiten} beschrieben,
+Es sind viele verschiedene Anwendungsszenarien für diesen Generator denkbar. 
 
 Ein Ziel der Implementierung ist es, dass das Programm nicht einen spezifischen Generator darstellt, sondern ein Werkzeug mit dem sich verschiedene Generatoren der gleichen Klasse konfigurieren lassen. Es sollten möglichst große Teile des Algorithmus nicht hard-coded sondern konfigurierbar sein, indem sie als Daten vorliegen. Insbesondere gilt das für das Alphabet und die Produktionsregeln der Array-Grammatik.
 
@@ -346,7 +344,7 @@ Die Klasse Utils ist eine statische Utility-Klasse, die häufig verwendete Funkt
 
 Sie enthält verschiedene Funktionen für Vector3Int\cite[Seite: Vector3Int]{unitySciptingReference}: Clamping, Bounds-Checking, Bounds-Überschneidung und Iteration über ein einen dreidimensionales Gitter.
 
-Außerdem enthält sie eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen, eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software „AssetForge“ erstellte Modelle).
+Außerdem enthält sie eine Funktion für gewichteten Zufall, eine Funktion um ein Child-Objekt in der Hierarchie einzigartig zu erzeugen, eine Funktion um Labels im Scene View im dreidimensionalen Raum zu zeichnen und ein Tool, dass Mesh Collider für Objekte mit bestimmter Benennung hinzufügt (Speziell für mit der Software Asset Forge erstellte Modelle).
 
 \section{Optimierungen des Pattern Matchings}\label{s.optimierungen}
 
@@ -408,7 +406,7 @@ Die drei Components PatternView, RuleEditor und RuleSet haben benutzerdefinierte
 
 Für das RuleSet wurde eine Editor geschrieben um die Unity-Klasse ReorderableList zu nutzen. Mit dieser Klasse kann eine Listenansicht erzeugt werden, die hinzufügen, entfernen und umordnen von Einträgen einer Liste möglich macht. Diese Ansicht wird für die Produktionsregeln verwendet (Listenansicht zu sehen in Abb. \ref{img.screenshotGenerator}). Außerdem kann der Benutzer eine Regel auswählen. Die ausgewählte Regel kann dann im RuleEditor-Component editiert werden.
 
-Der RuleEditor hat auch einen Custom Editor, da hier die Eigenschaften der aktuell ausgewählten Regel angezeigt werden. Da sich die momentan ausgewählte Regel ständig ändern kann, musste diese UI manuell geschrieben werden. Außerdem werden hier die in \ref{ss.ruleEditor} bereits erklärten String-Darstellungen der linken und rechten Seite der Regel in Arrays umgewandelt. \todo{bloß schöner schreiben}
+Der RuleEditor hat auch einen Custom Editor, da hier die Eigenschaften der aktuell ausgewählten Regel angezeigt werden. Da sich die momentan ausgewählte Regel ständig ändern kann, wurde ein User Interface geschrieben, das die eingegebenen Werte für die momentan ausgewählte Regel setzt. Außerdem werden hier die in \ref{ss.ruleEditor} bereits erklärten String-Darstellungen der linken und rechten Seite der Regel in Arrays umgewandelt.
 
 Des weiteren implementieren einige Components die OnDrawGizmos Methode (siehe \cite[Seite: MonoBehaviour.OnDrawGizmos]{unitySciptingReference}) um ihre eigenen Grafiken im SceneView zu zeichnen. 
 
@@ -485,9 +483,9 @@ Diese Spielmechaniken bilden natürlich kein richtiges Spiel ab, reichen aber au
 
 Ähnlich wie die Spielmechaniken sind auch die Modelle der einzelnen Räume zur Veranschaulichung gedacht und enthalten keine Monster, Fallen oder ähnliches. Diese Räume müssten für jedes Spiel individuell modelliert und gestaltet werden. 
 
-Die Räume liegen als Prefabs vor, was heißt, dass eine mit Unity vertraute Person kein Problem haben sollte diese Räume zu erstellen, es muss lediglich darauf geachtet werden, dass die Räume and den Übergängen perfekt zusammenpassen. Für diese Arbeit wurde das Programm AssetForge verwendet um die Räume zu erstellen, aber die Räume hätten auch mit einem herkömmlichen 3D-Editor oder in Unity erstellt werden können. Die Raumteile für Decken, Wände und Türbögen sowie die Modelle für Schlüssel und Schloss wurden in Blender modelliert. Es wurden vereinzelt Modelle aus einem öffentlich verfügbaren Modell-Set verwendet (siehe \ref{m.tuer}).
+\bild{screenshotRoomPrefabs}{12cm}{Screenshot der Raum-Prefabs im Project-Window}{Raum-Prefabs im Project-Window}
 
-\bild{screenshotRoomPrefabs}{16cm}{Screenshot der Raum-Prefabs im Project-Window}{Raum-Prefabs im Project-Window}
+Die Räume liegen als Prefabs vor, was heißt, dass eine mit Unity vertraute Person kein Problem haben sollte diese Räume zu erstellen, es muss lediglich darauf geachtet werden, dass die Räume and den Übergängen perfekt zusammenpassen. Für diese Arbeit wurde das Programm Asset Forge verwendet um die Räume zu erstellen, aber die Räume hätten auch mit einem herkömmlichen 3D-Editor oder in Unity erstellt werden können. Die Raumteile für Decken, Wände und Türbögen sowie die Modelle für Schlüssel und Schloss wurden in Blender modelliert. Es wurden vereinzelt Modelle aus einem öffentlich verfügbaren Modell-Set verwendet (siehe \ref{m.tuer}).
 
 \chapter{Auswertung}
 
@@ -503,46 +501,43 @@ Ein direkter Test mit Spielern und eine Auswertung über Fragebögen ist nicht m
 
 Zweitens ist die Qualität von Dungeons prinzipiell subjektiv, was eine rein statistische Auswertung erschwert.
 
-Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, was einen Vergleich mit anderen Verfahren schwer macht. Eine Vergleich von verschiedenen Verfahren wäre natürlich interessant, aber auch nicht Inhalt dieser Arbeit \todo{Verweis auf Ausblick o.ä.}
+Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, was einen Vergleich mit anderen Verfahren schwer macht. Eine Vergleich von verschiedenen Verfahren wäre natürlich interessant, aber auch nicht Inhalt dieser Arbeit.
 
-%\subsection{qualitative Auswertung}
+\subsection{Subjektive Einschätzung der Dungeons}
 
-%\subsection{quantitative Auswertung}
-
-% evtl. Laufzeit betrachten. Evtl. statistische Metriken von Ähnlichkeit herausfinden
+% TODO - Objektiv: evtl. Laufzeit betrachten. Evtl. statistische Metriken von Ähnlichkeit herausfinden
 
 \section{Mögliche Verbesserungen}\label{s.verbesserungen}
 
-% Mögl. Verbesserung: Statt Array eine unendlich große Struktur verwenden (Hash-Irgendwas?)
+% Richtige Templates
+% Mögl. Verbesserung: Statt Array eine unendlich große Struktur verwenden -> Objekte + Gitter
 % intuitiveres Format für Patterns (linke rechte Seite)
 
-\section{Mögliche Anwendungsszenarien}\label{s.anwendungsmöglichkeiten}
+% \section{Mögliche Anwendungsszenarien}\label{s.anwendungsmoeglichkeiten}
 
-Der Generator wurde konzipiert um and vielfältige Anwendungsszenarien angepasst werden zu können, es folgen eine kleine Auswahl. So soll eine kleiner Überblick über den durch diese Software abgedeckten Raum an möglichen Generatoren gegeben werden.
+% Der Generator wurde konzipiert um and vielfältige Anwendungsszenarien angepasst werden zu können, es folgen eine kleine Auswahl. So soll eine kleiner Überblick über den durch diese Software abgedeckten Raum an möglichen Generatoren gegeben werden.
 
-\subsection{Roguelike, Rogue-lite}
+% \subsection{Roguelike, Rogue-lite}
 
-Das Genre der Roguelike-Spiele umfasst im engeren Sinne Spiele die direkt von dem Spiel „Rogue“ inspiriert sind und im weiteren Sinne Spiele, die die Charakteristiken Perma-Death und zufällig generierte Levels aufweisen. Spiele die nur diese Charakteristiken aufweisen ohne auf andere Art und Weise Rogue zu imitieren werden auch manchmal unter dem Begriff Rogue-lite zusammengefasst.
+% Das Genre der Roguelike-Spiele umfasst im engeren Sinne Spiele die direkt von dem Spiel „Rogue“ inspiriert sind und im weiteren Sinne Spiele, die die Charakteristiken Perma-Death und zufällig generierte Levels aufweisen. Spiele die nur diese Charakteristiken aufweisen ohne auf andere Art und Weise Rogue zu imitieren werden auch manchmal unter dem Begriff Rogue-lite zusammengefasst.
 
-Roguelikes sind der klassische Anwendungsfall für Dungeon-Generatoren. Durch die Verwendung von zufällig generierten Dungeons wird in Roguelikes sichergestellt, dass der Fortschritt des Spielers durch meistern der Spielmechaniken stattfindet, nicht durch auswendig lernen der Levels. 
+% Roguelikes sind der klassische Anwendungsfall für Dungeon-Generatoren. Durch die Verwendung von zufällig generierten Dungeons wird in Roguelikes sichergestellt, dass der Fortschritt des Spielers durch meistern der Spielmechaniken stattfindet, nicht durch auswendig lernen der Levels. 
 
-\todo{Regelsystem für eine Roguelike}
+% \todo{Regelsystem für eine Roguelike}
 
-\subsection{Minigolf}
+% \subsection{Minigolf}
 
-Minigolfspiele sind ein Genre an Casual Games, direkt inspiriert von realem Minigolf (korrekt „Bahnengolf“). Hier ist es das Ziel einen Golfball mit möglichst wenig Schlägen über eine Bahn in ein Loch zu befördern. Stärke und Richtung werden hierbei vom Spieler gesetzt. 
+% Minigolfspiele sind ein Genre an Casual Games, direkt inspiriert von realem Minigolf (korrekt „Bahnengolf“). Hier ist es das Ziel einen Golfball mit möglichst wenig Schlägen über eine Bahn in ein Loch zu befördern. Stärke und Richtung werden hierbei vom Spieler gesetzt. 
 
-\todo{Regelsystem für eine Roguelike}
+% \todo{Regelsystem für eine Roguelike}
 
-\subsection{Text Adventure}
+% \subsection{Text Adventure}
 
-Obwohl der Dungeon-Generator einen dreidimensionalen Raum verwendet, bedeutet dass nicht, dass zwangsläufig eine dreidimensionale visuelle Darstellung notwendig ist.
+% Obwohl der Dungeon-Generator einen dreidimensionalen Raum verwendet, bedeutet dass nicht, dass zwangsläufig eine dreidimensionale visuelle Darstellung notwendig ist.
 
-In einem Text Adventure ließt der Spieler Texte und trifft Entscheidungen, die wiederum weitere Texte auslösen. In klassischen Text Adventures werden diese Entscheidungen durch Texteingabe getroffen. In modernen Varianten sind die Entscheidungen häufig multiple choice.
+% In einem Text Adventure ließt der Spieler Texte und trifft Entscheidungen, die wiederum weitere Texte auslösen. In klassischen Text Adventures werden diese Entscheidungen durch Texteingabe getroffen. In modernen Varianten sind die Entscheidungen häufig multiple choice.
 
-\todo{Regelsystem für Text Adventure}
-
-\todo{Regelszstem für Text Adventure Generator}
+%\todo{Regelszstem für Text Adventure Generator}
 
 \chapter{Fazit}\label{c.zusammenfassung}
 
@@ -551,16 +546,23 @@ In einem Text Adventure ließt der Spieler Texte und trifft Entscheidungen, die 
 % Anhang
 \chapter{Verwendete Materialien}
 
-\LaTeX -Vorlage von Martin Bretschneider 
-\newblock \url{https://www.bretschneidernet.de/tips/thesislatex-vorlagen.html#vorlagen}, 2006. --
-\newblock letzter Zugriff: 08.01.2019
+Unity Engine von Unity Technologies
+\newblock \url{https://unity3d.com/}
+
+Blender
+\newblock \url{https://www.blender.org/}
 
 EasyButtons von Mads Bang Hoffensetz
-\newblock \url{https://github.com/madsbangh/EasyButtons},
-\newblock letzter Zugriff: 01.02.2019
+\newblock \url{https://github.com/madsbangh/EasyButtons}
 
-\todo{Dungeon-Tileset für Tür}\label{m.tuer}
-\todo{Asset Forge}
+Asset Forge von Kenney
+\newblock \url{https://assetforge.io/}
+
+Modular Dungeon 2 - 3D Models von Keith at Fertile Soil Productions \label{m.tuer}
+\newblock \url{https://opengameart.org/content/modular-dungeon-2-3d-models}
+
+\LaTeX -Vorlage von Martin Bretschneider 
+\newblock \url{https://www.bretschneidernet.de/tips/thesislatex-vorlagen.html#vorlagen}
 
 \bibliographystyle{alphadin_martin}
 \bibliography{bibliographie}
