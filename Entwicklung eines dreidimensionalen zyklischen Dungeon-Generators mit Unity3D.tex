@@ -560,6 +560,8 @@ Die letzte Anwendung \textit{post\_* 10 20} wendet wiederholt Regeln der Form \t
 
 Ein interessantes Ergebnis erhält man auch, wenn man den Recipe-Replacer durch einen RandomReplacer austauscht. Die Dungeons sind kompakter, da keine Unterteilung stattfindet, aber sehr viel abwechslungsreicher, da weniger Struktur vorgegeben ist.
 
+% todo - evtl. Bilder von fertigen Dungeons einfügen
+
 \chapter{Auswertung}
 
 \section{Auswertung der generierten Dungeons}
@@ -572,9 +574,9 @@ Zweitens ist die Qualität von Dungeons prinzipiell subjektiv, was eine rein sta
 
 Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, was einen Vergleich mit anderen Verfahren schwer macht. Eine Vergleich von verschiedenen Verfahren wäre natürlich interessant, aber auch nicht Inhalt dieser Arbeit.
 
-Es entsteht allerdings der subjektive Eindruck, dass die Dungeons so wie sie in \ref{s.regelsystem} generiert werden, zueinander relativ ähnlich sind. Dies ist der Tatsache geschuldet, dass nur eine kleine Anzahl an Feature-Regeln erstellt wurden. Diese Strukturen kehren immer wieder, und es fällt einem Spieler/einer Spielerin auf, dass z.B. auf eine Tür häufig ein Treppenaufgang auf der linken Seite folgt.
+Es entsteht allerdings der subjektive Eindruck, dass die Dungeons so wie sie in \ref{s.regelsystem} generiert werden, zueinander relativ ähnlich sind. Dies ist der Tatsache geschuldet, dass nur eine kleine Anzahl an Feature-Regeln erstellt wurden. Diese Strukturen kehren immer wieder, und es fällt einem Spieler/einer Spielerin auf, dass z.B. auf eine Tür häufig ein Treppenaufgang auf der linken Seite folgt. 
 
-Davon abgesehen ist dennoch gezeigt, dass Dungeons aus Zyklen auf diese Art und Weise gebaut werden können, mögliche Verbesserungen, die die generierten Dungeons abwechslungsreicher gestalten werden in \ref{s.verbesserungen} betrachtet. 
+Davon abgesehen ist dennoch gezeigt, dass Dungeons aus Zyklen auf diese Art und Weise gebaut werden können und es ist denkbar, dass mit einem komplexeren Regelsystem noch bessere Ergebnisse erzielt werden können. Mögliche Verbesserungen, die die generierten Dungeons abwechslungsreicher gestalten werden in \ref{s.verbesserungen} betrachtet. 
 
 Das entstandene Array-Ersetzungs-System ist darüber hinaus äußerst flexibel. Es ist auch für nicht-zyklische Strukturen sehr effektiv, ein Beispiel hierfür ist im Projekt in der Szene CubeScene gezeigt (Abb. \ref{img.cubeExample}) und in der Szene DoorSpaceScene (Abb. \ref{img.doorSpaceExample})
 
@@ -586,15 +588,34 @@ Das entstandene Array-Ersetzungs-System ist darüber hinaus äußerst flexibel. 
 
 \section{Mögliche Verbesserungen des Systems, Ausblick}\label{s.verbesserungen}
 
+\subsection{Ausbauen des Regel- und Rezept-Systems}
+
+Damit die Dungeons abwechslungsreicher ausfallen könnte das Regel- und Rezept-System weiter ausgebaut werden. Eine Möglichkeit wäre Regeln nicht nur automatisch zu rotieren, sonder auch zu spiegeln. Hierzu müsste für die Räume allerdings Symmetrieinformation existieren (z.B. Raumteil \textit{tl} ist spiegelverkehrt zu Raumteil \textit{tr}).
+
+Eine nützliche Erweiterung des Rezept-Systems wäre das Definieren von Mengen an Regeln. Man könnte Regeln bestimmten Mengen zuweisen und dann zufällige Regeln einer Menge ausführen. Dies wäre ein Kompromiss zwischen RandomReplacer und RecipeReplacer, da sich innerhalb einer Menge der RecipeReplacer wie ein RandomReplacer verhält -- er sucht aus einer Menge an Regeln komplett zufällig aus. Anstatt Mengen in der Rezept-Datei zu definieren wäre auch eine Lösung mit mehreren RuleSets denkbar.
+
 \subsection{Verbessern der Räume}
 % Richtige Templates
+
+Die Räume, die die Bausteine des Dungeons sind, sind uninteressant und sehen immer gleich aus. Eine einfache Möglichkeit dies zu verbessern wäre einen einfachen Raum-Generator zu schreiben, der Räume mit Objekten dekoriert. Man könnte in den Räumen Spawnpoint-Objekte platzieren, die zufällig Möbel, Fallen oder Monster erzeugen.
+
+Ein weiterer wichtiger Schritt wäre eine große Anzahl an Räumen zu erzeugen, die alle mit Post-Processing-Regeln (siehe \ref{s.regelsystem}) platziert werden und Abwechslung für häufig auftauchende Strukturen erzeugen ohne die Komplexität des Regelwerks zu beeinträchtigen. Anstatt von Post-Processing-Regeln könnte man diesen Schritt auch in das PrefabDictionary integrieren und dort mehrere Varianten für ein Raum-Symbol einstellbar machen, aus denen zufällig ausgewählt wird.
 
 \subsection{Modellierung der Muster}
 % Mögl. Verbesserung: Statt Array eine unendlich große Struktur verwenden -> Objekte + Gitter
 
+Da die Generierung auf einem Array stattfindet ist die Größe des Dungeons durch den Array begrenzt. Häufig sind dennoch große Teile des Arrays nicht gefüllt. Des weiteren wäre es interessant den Generator für beliebige Gitter-Strukturen wie in \ref{s.allgemeinerAlgorithmus} beschrieben auszubauen.
+
+Es ist unter Umständen sinnvoll die Datenstruktur eines Arrays aufzugeben und eine flexiblere zu wählen. Diese Datenstruktur müsste eine Abbildung von ganzzahligen Tupeln auf Symbole ermöglichen. Eine offensichtliche Wahl wäre ein HashSet, dass Integer-Vektoren auf Tiles abbildet. Die Hash-Funktion der Integer-Vector-Klasse müsste einzigartig im Bezug auf die Koordinaten sein, damit an der selben Position nicht zwei Tiles liegen können. Das HashSet würde nur die Positionen abbilden, an denen nicht-leere Tiles liegen, der Rest des Raumes wird als leere Tiles angenommen. 
+
+Nach dieser Änderung könnte der Dungeon beliebig groß wachsen. Es ist außerdem eine Performance-Verbesserung denkbar, da nun in keinem Fall das ganze Array durchsucht werden muss.
+
 \subsection{Eingabe der Regeln}
 % intuitiveres Format für Patterns (linke rechte Seite)
 
+Wie bereits in \ref{ss.ruleEditor} erwähnt ist die textbasierte Eingabe der Regeln nicht intuitiv und selbst dann umständlich wenn man mit dem System vertraut ist. Es würde sehr viel Sinn machen ein besseres Eingabesystem zu konzipieren.
+
+Es ist schwer zu sagen wie ein solches System aussehen sollte, da es das editieren in drei Dimensionen ermöglichen muss. Denkbar wären unter anderem ein intuitiveres textbasiertes System, ein dreidimensionaler Editor, oder ein zweidimensionaler Editor in dem man die einzelnen Scheiben eines Patterns editiert. 
 
 % \section{Mögliche Anwendungsszenarien}\label{s.anwendungsmoeglichkeiten}
 
