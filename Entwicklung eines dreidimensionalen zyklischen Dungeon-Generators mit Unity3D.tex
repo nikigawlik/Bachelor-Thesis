@@ -340,34 +340,39 @@ Außerdem enthält sie eine Funktion für gewichteten Zufall, eine Funktion um e
 
 Der in \ref{s.speziellerAlgorithmus} beschriebene Ersetzungs-Algorithmus verlangt, dass bei der Anwendung einer Produktionsregel die linke Seite einer Regel im Dungeon-Array gefunden werden muss.
 
-In einem Generations-Schritt müssen zuerst alle möglichen Ersetzungen gefunden werden, damit dann eine zufällige ausgewählt werden kann. Der Algorithmus zum finden der Matches sieht so aus:
+In einem Generations-Schritt müssen alle möglichen Ersetzungen bekannt sein, damit eine zufällige ausgewählt werden kann. Dies wird getan indem über den Dungeon-Array, über alle Regeln und über die linke Seite der jeweiligen Regel iteriert wird. Diese dreifache Verschachtelung kann sehr rechenaufwändig sein, vor allem für eine große Anzahl an Regeln oder einen großen Dungeon-Array. 
 
-\begin{verbatim}
-    D := Pattern des Dungeons
-    R := Regeln
-    ls(r) := Pattern der linken Seite einer Regel r
-    tile(P, p)
+% TODO low priority - mit Wort "paarweise" beschreiben
 
-    für alle Positionen p1 in D:
-        für alle Regeln r in R:
-            für alle Positionen p2 in ls(r):
-                wenn tile(p1 + p2, D) != tile(p2, ls(r)))
-                    return false
-\end{verbatim}
+% \begin{verbatim}
+% D := Pattern des Dungeons
+% R := Regeln
+% ls(r) := Pattern der linken Seite einer Regel r
+% tile(P, p)
 
-\todo{Den Algorithmus mal richtig schreiben}
+% für alle Positionen p1 in D:
+%     für alle Regeln r in R:
+%         für alle Positionen p2 in ls(r):
+%             wenn tile(p1 + p2, D) != tile(p2, ls(r)))
+%                 return false
+%     return true
+% \end{verbatim}
 
-Dieser Algorithmus selbst ist relativ aufwändig, und schwer zu optimieren. 
+% \todo{Den Algorithmus mal richtig schreiben}
 
-Aber eine einfache Art und Weise die Generierung insgesamt schneller zu machen ist diese Suche nicht jeden Schritt auf dem ganzen Dungeon durchzuführen. Stattdessen wird nur im ersten Schritt das gesamte Dungeon-Pattern durchsucht, gefundene Matches werden in einer Liste gespeichert. Wird in darauf folgenden Schritten eine Ersetzung durchgeführt wird nur die Gegend um das eben ersetzte Stück als „schmutzig“ angesehen. Matches die mit dieser Gegend überschneiden werden aus der Liste gelöscht und die Gegend wird erneut nach Matches durchsucht. 
+% Dieser Algorithmus selbst ist relativ aufwändig, und schwer zu optimieren. 
 
-Die Liste der momentan gefundenen Matches kann so schön visualisiert werden, wie in Abbildung \ref{img.screenshotReplacementVisualisation} zu erkennen.
+Eine Art und Weise die Generierung insgesamt schneller zu machen ist diese Suche nicht jeden Schritt auf dem ganzen Dungeon durchzuführen. Stattdessen wird nur im ersten Schritt das gesamte Dungeon-Pattern durchsucht, gefundene Matches werden in einer Liste gespeichert. Wird in darauf folgenden Schritten eine Ersetzung durchgeführt wird nur die Gegend um das eben ersetzte Stück als „schmutzig“ angesehen. Matches die mit dieser Gegend überschneiden werden aus der Liste gelöscht und die Gegend wird erneut nach Matches durchsucht. 
+
+Die Liste der momentan gefundenen Matches kann außerdem gut visualisiert werden, wie in Abbildung \ref{img.screenshotReplacementVisualisation} zu erkennen.
 
 \bild{screenshotReplacementVisualisation}{16cm}{Visualisierung aller momentan gespeicherten Matches als gelbe Boxen mit zugehöriger Regel.}{Visualisierung gefundener Matches}
 
+% TODO Suffixbaum
+
 \section{Editor UI}\label{s.editorUI}
 
-Zur einfacheren Konfiguration und zum schnelleren iterieren wurde der Generator so geschrieben, dass er im Editor ausgeführt werden kann und der Unity-Editor wurde mit zusätzlicher UI ausgestattet.
+Zur einfacheren Konfiguration und zum schnelleren iterieren wurde der Unity-Editor mit zusätzlicher UI ausgestattet und der Generator so geschrieben, dass er im Editor ausgeführt werden kann. 
 
 Die einfachste Art und Weise dies zu ermöglichen ist das Open Source Package EasyButtons. Es ermöglicht Buttons über ein Attribut zu Funktionen hinzuzufügen.
 
@@ -381,32 +386,31 @@ public void InitializeGeneration()
 }
 \end{lstlisting}
 
-Diese Buttons werden dann am Anfang des Inspectors eingefügt (siehe Abb. \ref{img.screenshotRecipeReplacer}). Dies ist eine einfache Variante einen Inspektor auszubauen, ohne eine zusätzliche Klasse zu definieren.
+Diese Buttons werden automatisch am Anfang des Inspektors eingefügt (siehe Abb. \ref{img.screenshotRecipeReplacer}). Dies ist eine einfache Variante einen Inspektor auszubauen, ohne eine zusätzliche Klasse zu definieren.
 
 \bild{screenshotRecipeReplacer}{8cm}{Screenshot des RecipeReplacer Components. Am Anfang des Inspektors sind die mit EasyButtons generierten Buttons zu sehen}{Screenshot des RecipeReplacer Components}
 
-Für andere Editor-Funktionalität musste der Inspektor weiter ausgebaut werden. In diesem Fall schreibt man einen Custom Editor und implementiert die Methode OnInspectorGUI
-\footnote{Benutzerdefinierte Editoren in Unity: \cite[Seite: editor-CustomEditors]{unityManual}}.
+Für andere Editor-Funktionalität musste der Inspektor weiter ausgebaut werden. In diesem Fall schreibt man einen Custom Editor und implementiert die Methode OnInspectorGUI\footnote{Benutzerdefinierte Editoren in Unity: \cite[Seite: editor-CustomEditors]{unityManual}}.
 
 Die drei Komponenten PatternView, RuleEditor und RuleSet haben benutzerdefinierte Inspektoren. PatternView hat einen simplen benutzerdefinierten Inspektor zum ändern der Größe des Patterns, da der normale Vector3Int Property Drawer hierfür nicht verwendet werden konnte. 
 
-Für das RuleSet wurde eine Editor geschrieben um die Unity-Klasse ReorderableList zu nutzen. Mit dieser Klasse kann eine Listenansicht erzeugt werden, die hinzufügen, entfernen und umordnen von Einträgen einer Liste möglich macht. Hiermit wird das hinzufügen von neuen Regeln und das umordnen von Regeln einfacher gemacht (Listenansicht zu sehen in Abb. \ref{img.screenshotGenerator}). Außerdem kann der Benutzer eine Regel auswählen. Die ausgewählte Regel kann dann im RuleEditor-Component editiert werden.
+Für das RuleSet wurde eine Editor geschrieben um die Unity-Klasse ReorderableList zu nutzen. Mit dieser Klasse kann eine Listenansicht erzeugt werden, die hinzufügen, entfernen und umordnen von Einträgen einer Liste möglich macht. Diese Ansicht wird für die Produktionsregeln verwendet (Listenansicht zu sehen in Abb. \ref{img.screenshotGenerator}). Außerdem kann der Benutzer eine Regel auswählen. Die ausgewählte Regel kann dann im RuleEditor-Component editiert werden.
 
-Der RuleEditor hat auch einen Custom Editor, da hier die Eigenschaften der aktuell ausgewählten Regel angezeigt werden. Ein Custom Editor ist notwendig um die Regel zu editieren, die keinen eigenen Editor hat. Außerdem werden hier die in \ref{ss.ruleEditor} bereits erklärten String-Darstellungen der linken und rechten Seite der Regel in Arrays umgewandelt. \todo{bloß schöner schreiben}
+Der RuleEditor hat auch einen Custom Editor, da hier die Eigenschaften der aktuell ausgewählten Regel angezeigt werden. Da sich die momentan ausgewählte Regel ständig ändern kann, musste diese UI manuell geschrieben werden. Außerdem werden hier die in \ref{ss.ruleEditor} bereits erklärten String-Darstellungen der linken und rechten Seite der Regel in Arrays umgewandelt. \todo{bloß schöner schreiben}
 
-Des weiteren implementieren einige Components die OnGizmosDraw Methode (siehe \cite[Seite: MonoBehaviour.OnDrawGizmos]{unitySciptingReference}) um ihre eigenen Grafiken im SceneView zu zeichnen. 
+Des weiteren implementieren einige Components die OnDrawGizmos Methode (siehe \cite[Seite: MonoBehaviour.OnDrawGizmos]{unitySciptingReference}) um ihre eigenen Grafiken im SceneView zu zeichnen. 
 
 \bild{screenshotGizmos}{16cm}{Beispiel von benutzerdefinierter Visualisierung im Scene View: Pfeile, die die Raumdurchquerungsrichtung angeben, Schlösser- und Schlüssel-Indikatoren, Boxen die die Positionen von bestimmten Patterns anzeigen und Labels, die Matches und Räume bezeichnen.}{Beispiele für benutzerdefinierte Gizmos}
 
 \section{Regelsystem für einen zyklischen Dungeon-Generator}\label{s.regelsystem}
 
-
+\todo{Write this x\_x}
 
 \section{Rezept-Datei}\label{s.rezeptDatei}
 
 Wie bereits in \ref{ss.replacers} erwähnt verwendet der RecipeReplacer eine Text-Datei in der die Reihenfolge der Regelanwendungen definiert werden kann. Will man eine stärkere Kontrolle über den Generierungsprozess haben, ist dies notwendig. So kann man z.B. einschränken, dass erst ein grober Aufbau des Dungeons mit einer eingeschränkten Anzahl an Regeln erzeugt wird, bevor der Dungeon im Detail ausgearbeitet wird.
 
-In der Rezept-Datei ist jede Zeile genau eine Anweisung, es existieren die in Tabelle \ref{t.anweisungen} aufgelisteten Anweisungen.
+In der Rezept-Datei ist jede Zeile genau eine Anweisung, es existieren die in Tabelle \ref{t.anweisungen} aufgelisteten Anweisungen (<> sind Indikatoren für einen Platzhalter).
 
 \begin{table}[h]
     \begin{tabular}{@{}llll@{}}
@@ -414,8 +418,8 @@ In der Rezept-Datei ist jede Zeile genau eine Anweisung, es existieren die in Ta
         <Name> & Einmalige Anwendung einer Regel oder Funktion \\ \midrule
         <Name> <n> & n-malige Anwendung \\ \midrule
         <Name> <n> <m> & Zufällige Zahl an Anwendungen zwischen n und m \\ \midrule
-        <Name> ! & Alle Vorkommen der Regel werden „gleichzeitig“ angewendet \\ \midrule
-        subdivide <x> <y> <z> & Unterteilung des Dungeons \\ \midrule
+        <Name> ! & Globale Anwendung / „Rule Sweep“ \\ \midrule
+        subdivide <x> <y> <z> & Unterteilung / Vergrößerung \\ \midrule
         def <Funktionsname> & Beginn einer Funktionsdefinition \\ \midrule
         end & Ende einer Funktionsdefinition \\ \midrule
         \# <beliebiger Text> & Kommentar \\ \bottomrule
@@ -424,32 +428,44 @@ In der Rezept-Datei ist jede Zeile genau eine Anweisung, es existieren die in Ta
     \label{t.anweisungen}
 \end{table}
 
-Die Namen der Regeln sind als Filter implementiert, haben mehrere Regeln den gleichen Namen wird eine zufällige ausgewählt. Dies ist nützlich wenn zwei Regeln konzeptionell identisch sind, aber als unterschiedliche Regeln aufgeschrieben werden müssen. Im Bezug auf die in \ref{s.optimierungen} beschriebene Implementierung bedeutet das, dass die vorhandene Liste an möglichen Matches bezüglich des Regelnamens gefiltert wird und alle andersnamigen Matches ignoriert werden. 
+Die Namen der Regeln sind als Filter zu verstehen, da verschiedene Regeln den gleichen Namen haben können; haben mehrere Regeln den gleichen Namen so wird eine zufällige ausgewählt. Dies ist nützlich wenn zwei Regeln konzeptionell identisch sind, aber als unterschiedliche Regeln aufgeschrieben werden müssen. Im Bezug auf die in \ref{s.optimierungen} beschriebene Implementierung bedeutet das, dass die vorhandene Liste an möglichen Matches bezüglich des Regelnamens gefiltert wird und alle andersnamigen Matches ignoriert werden. 
 
-In einer Anweisung kann der Name einer Regel auch das Format \texttt{<Regelanfang>*} haben. In diesem Fall muss eine Regel nur mit \texttt{<Regelanfang>} anfangen um angewendet werden zu können. So kann z.B. die Anweisung \texttt{feature\_*} sowohl die Regel \texttt{feature\_alternative} als auch die Regel \texttt{feature\_shortcut} anwenden.
+In einer Anweisung kann der Name einer Regel auch das Format \textit{<Regelanfang>*} haben. In diesem Fall muss eine Regel nur mit \textit{<Regelanfang>} anfangen um angewendet werden zu können. So kann z.B. die Anweisung \textit{feature\_*} sowohl die Regel \textit{feature\_alternative} als auch die Regel \textit{feature\_shortcut} anwenden.
 
-Die beiden Anweisungen \texttt{<Name> !} und \texttt{subdivide <x> <y> <z>} widersprechen dem in \ref{s.speziellerAlgorithmus} beschriebenen Algorithmus, und sind deswegen nur behutsam anzuwenden.
+Die Anweisungen der Form \textit{<Name> !} und \textit{subdivide <x> <y> <z>} sind nicht teil des zugrunde liegenden Algorithmus (siehe \ref{s.speziellerAlgorithmus}), sondern sind pragmatische Erweiterungen die in bestimmten Anwendungsfällen nützlich sind.
 
-Die Anweisung \texttt{<Name> !} wird verwendet um eine Regel massenhaft anzuwenden. Die definierte Regel wird für alle momentan bekannten Matches angewendet, ohne die Liste der Matches zwischenzeitlich neu zu berechnen. Das heißt wenn sich Matches überschneiden wird der Dungeon unter Umständen in einen Zustand transformiert, der so durch die Produktionsregeln nicht definiert wurde. 
+Ein „Rule Sweep“ der Form \textit{<Name> !} wird verwendet um eine Regel global anzuwenden. Die definierte Regel wird für alle momentan bekannten Matches angewendet, ohne die Liste der Matches zwischenzeitlich neu zu berechnen. Das heißt wenn sich Matches überschneiden wird der Dungeon unter Umständen in einen Zustand transformiert, der so durch die Produktionsregeln nicht definiert wurde. 
 
-Dies ist ein Kompromiss, der eingegangen wurde, da diese Anweisung sehr viel performanter ist als eine widerholte sequenzielle Anwendung mit ständiger Neuberechnung. Außerdem gibt es bestimmte Anwendungsszenarien für diese Regel:...
-\todo{Spezialfall Cellular Automaton, P-System} 
+Dies ist ein Kompromiss der eingegangen wurde, da diese Anweisung sehr viel performanter ist als eine widerholte sequenzielle Anwendung mit ständiger Neuberechnung. 
 
-Die Anweisung \texttt{subdivide <x> <y> <z>} wird verwendet um das Gitter zu vergrößern. Ist z.B. der Parameter <x> 1 so wird für jedes Tile im Dungeon genau ein Tile in x-Richtung eingeschoben, was effektiv die Größe des Gitters in diese Richtung verdoppelt. Diese Anweisung kann verwendet werden um erst die Makro-Struktur des Dungeons mit wenigen Tiles zu generieren, und anschließend den Dungeon zu strecken bevor weiter-generiert wird. Diese Anweisung muss üblicherweise mit einer \texttt{<Name> !} Anweisung kombiniert werden, die die entstandenen Lücken füllt. Dieser Prozess ist in \todo{in... ?}
+% TODO low priority - Finish this: Außerdem ähnelt diese Art der Ersetzung, wie sie in einem L-System durchgeführt wird. In L-Systemen werden 
+% don't forget C.A.
+
+Die Unterteilungs-Anweisung der Form \textit{subdivide <x> <y> <z>} wird verwendet um das Gitter zu vergrößern. Hierzu wird für jedes Tile im Dungeon genau <x>, <y>, <z> Tiles in x-, y-, z-Richtung eingeschoben (bildlich veranschaulicht in Abbildung \ref{img.subdivisionProcess}). Diese Anweisung kann verwendet werden um erst die Makro-Struktur des Dungeons mit wenigen Tiles zu generieren, und anschließend den Dungeon zu strecken bevor weiter-generiert wird. 
+Diese Anweisung muss üblicherweise mit einer globalen Anwendung kombiniert werden, die die entstandenen Lücken füllt. Um das zu tun erstellt man eine Anzahl an Lückenfüller-Regeln, die gleich anfangen (z.B. \textit{subdiv\_\dots}) und führt diese global aus (z.B. \textit{subdiv\_* !}). \\
+\begin{lstlisting}[label=l.recipeFunction, caption={Beispiel einer Funktionsdefinition in der Rezept-Datei}] 
+def subdivideFill
+    subdivide 1 0 1
+    subdiv_* !
+end
+
+subdivideFill 2
+\end{lstlisting} 
+Ein weiteres Feature der Rezept-Datei ist das definieren von Funktionen (siehe Programmausdruck \ref{l.recipeFunction}). Ist eine Funktion definiert kann sie wie eine normale Regel angewandt werden, allerdings sind Funktionen nicht durch Anweisungen der Form \textit{<Regelanfang>*} ausführbar.
 
 \bild{subdivisionProcess}{16cm}{Anwendungsbeispiel von Unterteilung und Füllen von Lücken.}{Dungeonunterteilungs-Beispiel}
 
 \section{Spielmechaniken}\label{s.spielmechaniken}
 
-Um den Dungeon-Generator zu demonstrieren wurden ein paar rudimentäre Spielmechaniken implementiert. Startet man das Spiel wird ein Dungeon generiert und der Spieler erscheint im Start-Raum des Dungeons.
+Um den Dungeon-Generator zu demonstrieren wurden ein paar rudimentäre Spielmechaniken implementiert. Startet man das Spiel wird ein Dungeon generiert und der/die Spieler/in erscheint im Start-Raum.
 
-Der Spieler kann sich in einer First-Person-Perspektive mit der Maus umschauen und mit dem WASD-Tasten herumlaufen. Mit der Leertaste kann gesprungen werden (auch in der Luft, was nur zu Testzwecken getan werden sollte).
+Der/die Spieler/in kann sich in einer First-Person-Perspektive mit der Maus umschauen und mit dem WASD-Tasten herumlaufen. Mit der Leertaste kann gesprungen werden (auch in der Luft, was nur zu Testzwecken getan werden sollte).
 
 Mit der rechten Maustaste kann mit Objekten interagiert werden, interaktive Objekte werden mit einem Text auf dem Bildschirm gekennzeichnet. Mit der linken Maustaste können Würfel geschossen werden, die nur zum Austesten von Kollision oder zum hinterlassen von Markierungen gedacht sind, aber keine Spiel-Funktion besitzen. Der Spieler kann so den Dungeon durchsuchen und die Geometrie von innen beurteilen. 
 
 Es wurde ein Schlüssel-Schloss-System implementiert. Der Spieler kann im Dungeon Schlüssel finden und aufheben, die Anzahl der Schlüssel wird auf dem Bildschirm abgebildet. Hat der Spieler einen Schlüssel, so kann er diesen benutzen um eine Tür zu öffnen. Dieses System kann verwendet werden um zu testen, ob die Schlüssel-Schloss-Regeln richtig geschrieben worden, und keine Tür erzeugt wird ohne das davor im Dungeon auch ein Schlüssel erzeugt wurde.
 
-Ein weiteres interaktives Objekt ist eine schwarze Box, die über einer Tür erzeugt und nur von einer Seite entfernt werden kann. 
+Ein weiteres interaktives Objekt ist eine schwarze Box, die über einer Tür erzeugt und nur von einer Seite entfernt werden kann. Diese Box wird in einem Durchgang platziert um diesen Durchgang nur in eine Richtung zu versperren.
 
 Diese Spielmechaniken bilden natürlich kein richtiges Spiel ab, reichen aber aus um die Idee der erzeugten Dungeon-Struktur zu erkunden. Würde man den Generator für ein tatsächliches Spiel verwenden würde man die Dungeons mit diesem Spiel testen.
 
@@ -457,9 +473,9 @@ Diese Spielmechaniken bilden natürlich kein richtiges Spiel ab, reichen aber au
 
 Ähnlich wie die Spielmechaniken sind auch die Modelle der einzelnen Räume zur Veranschaulichung gedacht und enthalten keine Monster, Fallen oder ähnliches. Diese Räume müssten für jedes Spiel individuell modelliert und gestaltet werden. 
 
-Da die Räume als Prefabs vorliegen sollte es einem mit Unity vertrauten Level-Designer kein Problem sein die einzelnen Räume zu erstellen. Es muss lediglich darauf geachtet werden, dass die Räume and den Kanten perfekt zusammenpassen. Für diese Arbeit wurde das Programm AssetForge verwendet um die Räume zu erstellen, aber die Räume hätten auch mit einem herkömmlichen 3D-Editor oder in Unity erstellt werden können. Die Raumteile für Decken, Wände und Türbögen sowie die Modelle für Schlüssel und Schloss wurden in Blender modelliert. Das Modell der Tür ist ein öffentlich verfügbares Modell. (siehe \ref{m.tuer})
+Die Räume liegen als Prefabs vor, was heißt, dass eine mit Unity vertraute Person kein Problem haben sollte diese Räume zu erstellen, es muss lediglich darauf geachtet werden, dass die Räume and den Übergängen perfekt zusammenpassen. Für diese Arbeit wurde das Programm AssetForge verwendet um die Räume zu erstellen, aber die Räume hätten auch mit einem herkömmlichen 3D-Editor oder in Unity erstellt werden können. Die Raumteile für Decken, Wände und Türbögen sowie die Modelle für Schlüssel und Schloss wurden in Blender modelliert. Es wurden vereinzelt Modelle aus einem öffentlich verfügbaren Modell-Set verwendet (siehe \ref{m.tuer}).
 
-\bild{screenshotRoomPrefabs}{16cm}{Screenshot der Raum-Prefabs und des dazugehörigen PrefabDictionary im Project-Window}{Raum-Prefabs im Project-Window}
+\bild{screenshotRoomPrefabs}{16cm}{Screenshot der Raum-Prefabs im Project-Window}{Raum-Prefabs im Project-Window}
 
 \chapter{Auswertung der generierten Dungeons}
 
@@ -529,7 +545,6 @@ EasyButtons von Mads Bang Hoffensetz
 \newblock \url{https://github.com/madsbangh/EasyButtons},
 \newblock letzter Zugriff: 01.02.2019
 
-\todo{Easybuttons}
 \todo{Dungeon-Tileset für Tür}\label{m.tuer}
 \todo{Asset Forge}
 
