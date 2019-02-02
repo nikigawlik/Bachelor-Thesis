@@ -212,16 +212,16 @@ Ein weiteres Ziel ist es die Features der Unity-Engine zu nutzen, insbesondere d
 
 \section{Wichtige Unity-Features}
 
-Unity verwendet eine Entity-Component-Architektur. So werden an ein GameObject beliebig viele Komponenten angehängt, die verschiedene Funktionen erfüllen und miteinander interagieren können. Dies ermöglicht einen modularen Aufbau von Objekten. 
+Unity verwendet eine Entity-Component-Architektur. So werden an ein GameObject beliebig viele Components angehängt, die verschiedene Funktionen erfüllen und miteinander interagieren können. Dies ermöglicht einen modularen Aufbau von Objekten. 
 \cite[Seite: GameObjects]{unityManual}
-Neue Komponenten können in Unity programmiert werden, indem man eine Klasse schreibt, die von der Klasse MonoBehaviour erbt.
+Neue Components können in Unity programmiert werden, indem man eine Klasse schreibt, die von der Klasse MonoBehaviour erbt.
 \cite[Seite: CreatingAndUsingScripts]{unityManual}
 
-Ein Beispiel hierfür kann man in Abbildung \ref{img.screenshotGenerator} sehen, nur durch das Zusammenspiel der einzelnen Komponenten ergibt sich ein Generator. Durch den modularen Aufbau verhindert man zum einen Code Duplication (Es wird z.B. der PatternView auch in anderen Objekten wiederverwendet), zum anderen ist es eine Anpassungsmöglichkeit: So lässt sich nach Belieben ein RandomReplacer oder ein RecipeReplacer verwenden um verschiedenes Verhalten zu erzeugen. 
+Ein Beispiel hierfür kann man in Abbildung \ref{img.screenshotGenerator} sehen, nur durch das Zusammenspiel der einzelnen Components ergibt sich ein Generator. Durch den modularen Aufbau verhindert man zum einen Code Duplication (Es wird z.B. der PatternView auch in anderen Objekten wiederverwendet), zum anderen ist es eine Anpassungsmöglichkeit: So lässt sich nach Belieben ein RandomReplacer oder ein RecipeReplacer verwenden um verschiedenes Verhalten zu erzeugen. 
 
-Manche Komponenten ließen sich prinzipiell zusammenfassen, wie z.B. PatternView und PatternToPrefabs, aber wurden trotzdem getrennt implementiert, da sie unterschiedliche Aufgaben erfüllen. Dies macht auch das Ausbauen der Software in der Zukunft einfacher, da einzelne Komponenten ausgetauscht oder umgeschrieben werden können, solange die öffentlichen Funktionen und Variablen dieser Komponenten gleich bleiben.
+Manche Components ließen sich prinzipiell zusammenfassen, wie z.B. PatternView und PatternToPrefabs, aber wurden trotzdem getrennt implementiert, da sie unterschiedliche Aufgaben erfüllen. Dies macht auch das Ausbauen der Software in der Zukunft einfacher, da einzelne Components ausgetauscht oder umgeschrieben werden können, solange die öffentlichen Funktionen und Variablen dieser Components gleich bleiben.
 
-In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wichtiges Unity-Feature, nämlich die Darstellung von öffentlichen Variablen im Inspektor. Ist ein Field public (oder private und mit dem SerializeField-Attribute gekennzeichnet) so kann der Wert dieses Fields im Inspektor gesetzt werden \cite[Seite: VariablesAndTheInspector]{unityManual} \cite[Seite: SerializeField]{unitySciptingReference}. Unity unterstützt hierbei die häufigsten Datentypen von Haus aus. Es wurde bei der Implementierung der Komponenten darauf geachtet möglichst viele Einstellungen so im Inspektor editierbar zu machen.
+In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wichtiges Unity-Feature, nämlich die Darstellung von öffentlichen Variablen im Inspektor. Ist ein Field public (oder private und mit dem SerializeField-Attribute gekennzeichnet) so kann der Wert dieses Fields im Inspektor gesetzt werden \cite[Seite: VariablesAndTheInspector]{unityManual} \cite[Seite: SerializeField]{unitySciptingReference}. Unity unterstützt hierbei die häufigsten Datentypen von Haus aus. Es wurde bei der Implementierung der Components darauf geachtet möglichst viele Einstellungen so im Inspektor editierbar zu machen.
 
 Außerdem wurde das User Interface über selbst geschriebene Editor-UI ausgebaut, mehr hierzu in Abschnitt \ref{s.editorUI}.
 
@@ -241,12 +241,12 @@ Weitere Unterordner wurden nach Bedarf erstellt, z.B. um die Modelle von zwei Ge
 
 \section{Aufbau des Generator-Objekts}
 
-Das wichtigste GameObject ist der „Generator“, dieser ist üblicherweise zusammengesetzt aus folgenden Komponenten: 
+Das wichtigste GameObject ist der „Generator“, dieser ist üblicherweise zusammengesetzt aus folgenden Components: 
 Transform (Bestandteil von jedem GameObject), PatternView, RandomReplacer oder RecipeReplacer, RuleSet, RuleEditor (optional), ReplacementEngine, PatternToPrefabs (siehe Abb. \ref{img.screenshotGenerator}). 
 
-\bild{screenshotGenerator}{12cm}{Screenshot des Inspektors eines Generator-GameObjects, man sieht alle vorhandenen Komponenten und deren Einstellungen}{Screenshot der Generator-Komponenten}
+\bild{screenshotGenerator}{12cm}{Screenshot des Inspektors eines Generator-GameObjects, man sieht alle vorhandenen Components und deren Einstellungen}{Screenshot der Generator-Components}
 
-Es folgt eine kurze Beschreibung der einzelnen Komponenten. Es wird dabei hauptsächlich auf die Funktion und Bedienung der Komponenten eingegangen, nicht auf Implementierungsdetails.
+Es folgt eine kurze Beschreibung der einzelnen Components. Es wird dabei hauptsächlich auf die Funktion und Bedienung der Components eingegangen, nicht auf Implementierungsdetails.
 
 \subsection{PatternView}\label{ss.patternView}
 
@@ -392,7 +392,7 @@ Diese Buttons werden automatisch am Anfang des Inspektors eingefügt (siehe Abb.
 
 Für andere Editor-Funktionalität musste der Inspektor weiter ausgebaut werden. In diesem Fall schreibt man einen Custom Editor und implementiert die Methode OnInspectorGUI\footnote{Benutzerdefinierte Editoren in Unity: \cite[Seite: editor-CustomEditors]{unityManual}}.
 
-Die drei Komponenten PatternView, RuleEditor und RuleSet haben benutzerdefinierte Inspektoren. PatternView hat einen simplen benutzerdefinierten Inspektor zum ändern der Größe des Patterns, da der normale Vector3Int Property Drawer hierfür nicht verwendet werden konnte. 
+Die drei Components PatternView, RuleEditor und RuleSet haben benutzerdefinierte Inspektoren. PatternView hat einen simplen benutzerdefinierten Inspektor zum ändern der Größe des Patterns, da der normale Vector3Int Property Drawer hierfür nicht verwendet werden konnte. 
 
 Für das RuleSet wurde eine Editor geschrieben um die Unity-Klasse ReorderableList zu nutzen. Mit dieser Klasse kann eine Listenansicht erzeugt werden, die hinzufügen, entfernen und umordnen von Einträgen einer Liste möglich macht. Diese Ansicht wird für die Produktionsregeln verwendet (Listenansicht zu sehen in Abb. \ref{img.screenshotGenerator}). Außerdem kann der Benutzer eine Regel auswählen. Die ausgewählte Regel kann dann im RuleEditor-Component editiert werden.
 
@@ -477,23 +477,25 @@ Die Räume liegen als Prefabs vor, was heißt, dass eine mit Unity vertraute Per
 
 \bild{screenshotRoomPrefabs}{16cm}{Screenshot der Raum-Prefabs im Project-Window}{Raum-Prefabs im Project-Window}
 
-\chapter{Auswertung der generierten Dungeons}
+\chapter{Auswertung}
+
+\section{Auswertung der generierten Dungeons}
 
 Die Qualität der generierten Dungeons soll im Folgenden bewertet werden um das Verfahren zu beurteilen. 
 
-\section{Einschränkungen}
+\subsection{Einschränkungen}
 
 Es ist zuerst zu sagen, dass eine objektive Bewertung der Dungeons schwer möglich ist. Dies hat mehrere Gründe.
 
 Ein direkter Test mit Spielern und eine Auswertung über Fragebögen ist nicht möglich, da der Dungeon-Generator nicht für ein bestimmtes Spiel konzipiert würde. Mit einem Test-Spiel wäre dies jedoch ein guter Ansatz, wenn auch etwas aufwändig und nicht im Rahmen dieser Arbeit machbar.
 
-Zweitens ist die Qualität von Dungeons prinzipiell subjektiv, was eine rein statistische Auswertung wenig aussagekräftig macht.
+Zweitens ist die Qualität von Dungeons prinzipiell subjektiv, was eine rein statistische Auswertung erschwert.
 
 Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, was einen Vergleich mit anderen Verfahren schwer macht. Eine Vergleich von verschiedenen Verfahren wäre natürlich interessant, aber auch nicht Inhalt dieser Arbeit \todo{Verweis auf Ausblick o.ä.}
 
-\section{qualitative Auswertung}
+%\subsection{qualitative Auswertung}
 
-\section{quantitative Auswertung}
+%\subsection{quantitative Auswertung}
 
 % evtl. Laufzeit betrachten. Evtl. statistische Metriken von Ähnlichkeit herausfinden
 
