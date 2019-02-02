@@ -141,9 +141,6 @@ In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstruktur
 
 Der Generator den ich diese Bachelorarbeit entwickelt habe, ist durch wiederholtes Iterieren und Experimentieren entstanden. Diese Implementierung wird später ausführlich in Kapitel \ref{c.implementierung} beschrieben.
 
-Aber zum klareren Verständnis will ich zunächst den implementierten Algorithmus beschreiben, und in 
-\ref{s.allgemeinerAlgorithmus} diesen verallgemeinern.
-
 Wie bereits erwähnt ähnelt das Verfahren einer Graphgrammatik. Es ist inspiriert von Joris Dormans Ansatz in 
 \cite{dormansAdventures},
 allerdings werden keine separaten Modelle für Missionsstruktur und Raum verwendet.
@@ -189,19 +186,59 @@ Ein großer Vorteil dieser Methode ist, dass das Alphabet aus beliebig vielen od
 
 \bild{roomRotationsLabeled}{8cm}{Das gleiche Raum-Modell in verschiedenen Rotationen, mit jeweils anderem Symbol.}{Raum-Rotationen mit Symbolen}
 
-\section{Allgemeiner Algorithmus}\label{s.allgemeinerAlgorithmus}
+\section{Andere Gitterformen}\label{s.allgemeinerAlgorithmus}
 
-In \ref{s.speziellerAlgorithmus} wurde der Algorithmus für eine kartesisches Gitter beschrieben. Im folgenden soll ein Überblick gegeben werden wie eine Verallgemeinerung auf beliebige Gitter möglich wäre.
+In \ref{s.speziellerAlgorithmus} wurde der Algorithmus für eine kartesisches Gitter beschrieben. Im folgenden soll ein Überblick gegeben werden wie eine Verallgemeinerung auf andere Gitter möglich wäre.
 
-Um den Algorithmus für alle Gitter verallgemeinern, muss eine allgemeine Definition für ein Teilstück des Gitters gefunden werden, dass die linke und rechte Seite einer Produktionsregel beschreibt. 
+Um den Algorithmus für alle Gitter verallgemeinern, muss eine allgemeine Definition für ein Muster gefunden werden. Diese Definition kann sowohl für den gesamten Dungeon als auch für die linken und rechten Seiten der Produktionsregeln verwendet werden. 
 
-Alle Gitter -- auch ungleichmäßige Gitter -- haben eine Nachbarschaftsdefinition. Strukturierte Gitter haben den Vorteil, dass sie über Indizes adressiert werden können, somit kann hier ein Teilstück als Abbildung relativer Positionen auf Symbole verstanden werden. Hierbei kann eine Position auch nicht definiert sein, wenn sie außerhalb des Teilstücks liegt.
+Definieren wir zuerst die Symbolmenge und ein Null-Symbol. Das Null-Symbol bedeutet, dass die Gitterzelle außerhalb des Musters liegt. 
 
 $ V $ ist die Symbolmenge \\
-$ n \in \N $ ist die Dimension \\
-$ p = (i_1, \dotsc , i_n) \quad i_1, \dotsc , i_n \in \mathbb{Z} $
+$ V_0 = V \cup \{0\} $ 
 
-\todo{Mache ich später, wenn platz und bock. :P}
+Nehmen wir die Zellen des Musters $ M $ sind über ein n-Tupel ganzer Zahlen $ p $ eindeutig adressierbar. Dies kann durch folgende Funktion ausgedrückt werden.
+
+$ M: \mathbb{Z}^n \rightarrow V_0 $
+
+So kann ein zu suchendes Teilstück $ T $ des Musters ebenfalls als Funktion gesehen werden.
+
+$ T: \mathbb{Z}^n \rightarrow V_0 $
+
+Ein Teilstück $ T $ ist dann ein Match im Muster $ M $ an Position $ p \in \mathbb{Z}^n $ wenn gilt:
+
+$ \forall \  x \in \mathbb{Z}^n: M(p + x) = T(x) \ \lor \  T(x) = 0 $
+
+Ein Array erfüllt die Definition, nimmt man an, dass alle Elemente außerhalb der Grenzen des Arrays das Null-Symbol sind. Elemente innerhalb des Arrays sind entweder das Null-Symbol oder ein Symbol der Symbolmenge.
+
+Um einen Strukturen zu platzieren, müssen wir der Position im Gitter eine Position im Raum zuweisen. Definieren wir hierzu eine Funktion $ G $.
+
+$ G: \mathbb{Z}^n \rightarrow \mathbb{R}^n $
+
+für ein dreidimensionales kartesisches Gitter mit der Gitterzellengröße $ d \in \mathbb{R}^3 $ sähe diese Funktion so aus:
+
+$ G_k: \mathbb{Z}^3 \rightarrow \mathbb{R}^3 $ \\
+$ G_k: G_k(x) = \left(\begin{array}{c} d_1 \cdot x_1 \\ d_2 \cdot x_2 \\ d_3 \cdot x_3 \end{array}\right) = 
+\left(\begin{array}{c} d_1 \\ 0 \\ 0 \end{array}\right) \cdot x_1 +
+\left(\begin{array}{c} 0 \\ d_2 \\ 0 \end{array}\right) \cdot x_2 +
+\left(\begin{array}{c} 0 \\ 0 \\ d_3 \end{array}\right) \cdot x_3 
+$
+
+% Zur Verallgemeinerung kann man drei achsenparallelen Vektoren durch beliebige Vektoren $ \vec{d}_1, \vec{d}_2, \vec{d}_3 $ ersetzen.
+
+% $ G_k: \mathbb{Z}^3 \rightarrow \mathbb{R}^3 $ \\
+% $ G_k: G_k(x) = 
+% \vec{d}_1 \cdot x_1 +
+% \vec{d}_2 \cdot x_2 +
+% \vec{d}_3 \cdot x_3 
+% $ 
+
+Man kann eine Verallgemeinerung vornehmen, wobei das Gitter durch die Vektoren $ \vec{d}_1, \dots , \vec{d}_n $ aufgespannt wird. Bei kartesischen Gittern sind diese Vektoren achsenparallel.
+
+$ G: \mathbb{Z}^n \rightarrow \mathbb{R}^n $ \\
+$ G: G(x) = \sum_{i=1}^{n} \vec{d}_i \cdot x_i $
+
+Der in \ref{s.speziellerAlgorithmus} beschriebene Algorithmus kann also für alle Gitter, die diese Form haben angewandt werden.
 
 \chapter{Implementierung}\label{c.implementierung}
 
@@ -412,10 +449,6 @@ Des weiteren implementieren einige Components die OnDrawGizmos Methode (siehe \c
 
 \bild{screenshotGizmos}{16cm}{Beispiel von benutzerdefinierter Visualisierung im Scene View: Pfeile, die die Raumdurchquerungsrichtung angeben, Schlösser- und Schlüssel-Indikatoren, Boxen die die Positionen von bestimmten Patterns anzeigen und Labels, die Matches und Räume bezeichnen.}{Beispiele für benutzerdefinierte Gizmos}
 
-\section{Regelsystem für einen zyklischen Dungeon-Generator}\label{s.regelsystem}
-
-\todo{Write this x\_x}
-
 \section{Rezept-Datei}\label{s.rezeptDatei}
 
 Wie bereits in \ref{ss.replacers} erwähnt verwendet der RecipeReplacer eine Text-Datei in der die Reihenfolge der Regelanwendungen definiert werden kann. Will man eine stärkere Kontrolle über den Generierungsprozess haben, ist dies notwendig. So kann man z.B. einschränken, dass erst ein grober Aufbau des Dungeons mit einer eingeschränkten Anzahl an Regeln erzeugt wird, bevor der Dungeon im Detail ausgearbeitet wird.
@@ -487,13 +520,49 @@ Diese Spielmechaniken bilden natürlich kein richtiges Spiel ab, reichen aber au
 
 Die Räume liegen als Prefabs vor, was heißt, dass eine mit Unity vertraute Person kein Problem haben sollte diese Räume zu erstellen, es muss lediglich darauf geachtet werden, dass die Räume and den Übergängen perfekt zusammenpassen. Für diese Arbeit wurde das Programm Asset Forge verwendet um die Räume zu erstellen, aber die Räume hätten auch mit einem herkömmlichen 3D-Editor oder in Unity erstellt werden können. Die Raumteile für Decken, Wände und Türbögen sowie die Modelle für Schlüssel und Schloss wurden in Blender modelliert. Es wurden vereinzelt Modelle aus einem öffentlich verfügbaren Modell-Set verwendet (siehe \ref{m.tuer}).
 
+\section{Regelsystem für einen zyklischen Dungeon-Generator}\label{s.regelsystem}
+
+Um das Ziel der Arbeit zu erfüllen einen zyklischen Generator zu entwickeln wurden die beschrieben Werkzeuge verwendet um einen Generator zusammenzustellen. Dieser ist in der Szene „SampleScene“ zu finden. Der Generator verwendet einen RecipeReplacer-Component um den Dungeon zu generieren und 29 Regeln (im Hintergrund erstellte Rotationen von Regeln nicht eingeschlossen).  Die Rezept-Datei ist cyclicRecipe.txt.
+
+Im folgenden wird kurz die Generation anhand der Rezept-Datei (\ref{l.cyclicRecipe}) aufgebrochen.
+
+\begin{lstlisting}[label=l.cyclicRecipe, caption={Rezept-Datei des Generators}] 
+basic_structure
+basic_transform_* 3 8
+add_floor_* 1
+basic_transform_* 3 7
+feature_* 3 6
+feature_lock
+
+subdivide 1 0 1
+subdiv_* !
+
+basic_transform_* 0 10
+move_key 0 10
+post_* 10 20
+\end{lstlisting}
+
+\bild{processComp1}{16cm}{Screenshots aus dem zyklischen Generationsprozess (erste Hälfte)}{Zyklischer Generationprozess 1}
+
+In Zeile 1 wird die Grundstruktur des Dungeons platziert. Die Regel \textit{basic\_structure} hat als linke Seite das Start-Label „start“ und als rechte Seite einen drei mal drei Tiles großen Zyklus mit einem „Einbahnstraßen“-Hindernis am Start. Mit \textit{basic\_transform\_*} wird eine zufällige Zahl an Transformationen angewandt, die das Aussehen des Dungeons interessanter machen, indem z.B. Ecken umgeknickt werden, wie in Abbildung \ref{img.processComp1}, Bild 2 zu sehen.
+
+Mit der Anweisung \textit{add\_floor\_* 1} wird an einer der Ecken ein Treppenaufgang mit zweitem Stockwerk hinzugefügt, das zweite Stockwerk hat die selbe Struktur wir das untere. Für mehr Stockwerke könnte man diese Regel häufiger anwenden. Anschließend wird erneut \textit{basic\_transform\_*} angewandt um das obere Stockwerk interessanter zu machen.
+
+In Zeilen 5 und 6 werden sogenannte Features hinzugefügt. Dies kann ein Zyklus mit verschlossener Tür, eine alternativer Weg oder eine abzweigende Sackgasse sein.
+
+\bild{processComp2}{16cm}{Screenshots aus dem zyklischen Generationsprozess (zweite Hälfte)}{Zyklischer Generationprozess 2}
+
+In Zeile 8 wird der Dungeon unterteilt um zusätzlichen Platz zu schaffen. In Zeile 9 wird eine Sammlung an Regeln global angewendet, die Zwischenstücke einfügt. Dieser Prozess ist in \ref{s.rezeptDatei} beschrieben (siehe Abb. \ref{img.processComp2} Bild 1 und 2).
+
+Anschließend wird ein weiterer \textit{basic\_transform\_*} durchgeführt und die Schlüssel werden mit der Regel \textit{move\_key} etwas bewegt (siehe Abb. \ref{img.processComp2} Bild 3).
+
+Die letzte Anwendung \textit{post\_* 10 20} wendet wiederholt Regeln der Form \textit{post\_\dots} an. Diese sind sogenannte Post-Processing-Regeln. Eine Post-Processing-Regel nimmt einen kleinen Teil des Dungeons, bestehend aus Grundbausteinen und ersetzt ihn durch einen interessanteren handgemachen großen Raum. Dies geschieht zum Schluss, denn diese Räume können nicht weiter transformiert werden, da es zu umständlich wäre für sie extra Regeln zu schreiben. Den Stand des Dungeons nach diesem Schritt sieht man in Abbildung \ref{img.processComp2} Bild 4.
+
+Ein interessantes Ergebnis erhält man auch, wenn man den Recipe-Replacer durch einen RandomReplacer austauscht. Die Dungeons sind kompakter, da keine Unterteilung stattfindet, aber sehr viel abwechslungsreicher, da weniger Struktur vorgegeben ist.
+
 \chapter{Auswertung}
 
 \section{Auswertung der generierten Dungeons}
-
-Die Qualität der generierten Dungeons soll im Folgenden bewertet werden um das Verfahren zu beurteilen. 
-
-\subsection{Einschränkungen}
 
 Es ist zuerst zu sagen, dass eine objektive Bewertung der Dungeons schwer möglich ist. Dies hat mehrere Gründe.
 
@@ -503,15 +572,29 @@ Zweitens ist die Qualität von Dungeons prinzipiell subjektiv, was eine rein sta
 
 Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, was einen Vergleich mit anderen Verfahren schwer macht. Eine Vergleich von verschiedenen Verfahren wäre natürlich interessant, aber auch nicht Inhalt dieser Arbeit.
 
-\subsection{Subjektive Einschätzung der Dungeons}
+Es entsteht allerdings der subjektive Eindruck, dass die Dungeons so wie sie in \ref{s.regelsystem} generiert werden, zueinander relativ ähnlich sind. Dies ist der Tatsache geschuldet, dass nur eine kleine Anzahl an Feature-Regeln erstellt wurden. Diese Strukturen kehren immer wieder, und es fällt einem Spieler/einer Spielerin auf, dass z.B. auf eine Tür häufig ein Treppenaufgang auf der linken Seite folgt.
+
+Davon abgesehen ist dennoch gezeigt, dass Dungeons aus Zyklen auf diese Art und Weise gebaut werden können, mögliche Verbesserungen, die die generierten Dungeons abwechslungsreicher gestalten werden in \ref{s.verbesserungen} betrachtet. 
+
+Das entstandene Array-Ersetzungs-System ist darüber hinaus äußerst flexibel. Es ist auch für nicht-zyklische Strukturen sehr effektiv, ein Beispiel hierfür ist im Projekt in der Szene CubeScene gezeigt (Abb. \ref{img.cubeExample}) und in der Szene DoorSpaceScene (Abb. \ref{img.doorSpaceExample})
+
+\bild{cubeExample}{8cm}{Nicht-zyklischer würfelbasierter Generator, der mit wenig Raumteilen und Regeln interessante Strukturen erzeugt.}{Würfelbasierter Generator}
+
+\bild{doorSpaceExample}{8cm}{Nicht-zyklischer Gewölbe-Generator, bei dem nicht die Räume, sondern stattdessen die Wände, Böden und Türen als Symbole verwendet werden.}{Gewölbe-Generator}
 
 % TODO - Objektiv: evtl. Laufzeit betrachten. Evtl. statistische Metriken von Ähnlichkeit herausfinden
 
-\section{Mögliche Verbesserungen}\label{s.verbesserungen}
+\section{Mögliche Verbesserungen des Systems, Ausblick}\label{s.verbesserungen}
 
+\subsection{Verbessern der Räume}
 % Richtige Templates
+
+\subsection{Modellierung der Muster}
 % Mögl. Verbesserung: Statt Array eine unendlich große Struktur verwenden -> Objekte + Gitter
+
+\subsection{Eingabe der Regeln}
 % intuitiveres Format für Patterns (linke rechte Seite)
+
 
 % \section{Mögliche Anwendungsszenarien}\label{s.anwendungsmoeglichkeiten}
 
@@ -541,6 +624,7 @@ Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, 
 
 \chapter{Fazit}\label{c.zusammenfassung}
 
+\todo{noch schreiben}
 
 
 % Anhang
