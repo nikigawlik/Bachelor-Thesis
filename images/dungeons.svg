@@ -27,8 +27,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.30213675"
-     inkscape:cx="734.88118"
-     inkscape:cy="-146.86267"
+     inkscape:cx="494.92361"
+     inkscape:cy="-113.76507"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -62,29 +62,29 @@
     <image
        sodipodi:absref="D:\projects\_WISE18_19\Bachelorarbeit\Arbeit\3dzdg\images\dungeon3.png"
        xlink:href="dungeon3.png"
-       width="151.97667"
-       height="140.33501"
-       preserveAspectRatio="none"
-       id="image823"
+       y="79.088448"
        x="-153.62971"
-       y="79.088448" />
+       id="image823"
+       preserveAspectRatio="none"
+       height="140.33501"
+       width="151.97667" />
     <image
        sodipodi:absref="D:\projects\_WISE18_19\Bachelorarbeit\Arbeit\3dzdg\images\dungeon1.png"
        xlink:href="dungeon1.png"
-       width="151.97667"
-       height="140.33501"
-       preserveAspectRatio="none"
-       id="image878"
+       y="79.088448"
        x="178.29387"
-       y="79.088448" />
+       id="image878"
+       preserveAspectRatio="none"
+       height="140.33501"
+       width="151.97667" />
     <image
        sodipodi:absref="D:\projects\_WISE18_19\Bachelorarbeit\Arbeit\3dzdg\images\dungeon2.png"
        xlink:href="dungeon2.png"
-       width="151.97667"
-       height="140.33501"
-       preserveAspectRatio="none"
-       id="image889"
+       y="79.088448"
        x="11.954105"
-       y="79.088448" />
+       id="image889"
+       preserveAspectRatio="none"
+       height="140.33501"
+       width="151.97667" />
   </g>
 </svg>

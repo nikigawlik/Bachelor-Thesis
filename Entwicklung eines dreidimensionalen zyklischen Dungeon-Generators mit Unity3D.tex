@@ -133,7 +133,7 @@ Eine Terminierung des Algorithmus ist hier nicht garantiert, da Regeln rekursiv 
 
 Eine Graphgrammatik verhält sich wie eine Formale Grammatik, allerdings sind die linken und rechten Seiten Mustergraphen. Hierbei ist es wichtig, dass die individuellen Knoten auf der linken Seite jeweils individuelle Knoten auf der rechten Seite zugewiesen werden können, damit die Ersetzung stattfinden kann. 
 \cite[Kap.~5.5.1, S.~80]{shaker2016procedural}
-Durch widerholte Ersetzung von Teilgraphen kann hier aus einem Start-Graph ein End-Graph erzeugt werden. Die Menge der produzierbaren Graphen bildet die durch die Graphgrammatik definierte Formale Sprache. 
+Durch wiederholte Ersetzung von Teilgraphen kann hier aus einem Start-Graph ein End-Graph erzeugt werden. Die Menge der produzierbaren Graphen bildet die durch die Graphgrammatik definierte Formale Sprache. 
 
 In \cite{dormansAdventures} benutzt Dormans Graphgrammatiken um Missionsstrukturen zu generieren und Figur-Grammatiken (engl. Shape Grammars) um den zugehörigen Raum zu generieren.
 
@@ -152,11 +152,11 @@ Der Generierung dieses Raumes würde ich mich gerne über das bereits bekannte K
 
 \bild{gridExample3D}{6cm}{Beispiel für einen dreidimensionalen Graph innerhalb der Restriktionen des Gitters}{Beispiel für Graph im Gitter}
 
-Zu Jedem Knoten und den mit ihm verbundenen Kanten kann man sich einen äquivalenten Raum vorstellen. Als Verbindung zwischen den Räumen dient ein Ausgang, die äquivalent zu einer halben Kante ist (siehe Abb. \ref{img.nodeToRoom}).
+Zu jedem Knoten und den mit ihm verbundenen Kanten kann man sich einen äquivalenten Raum vorstellen. Als Verbindung zwischen den Räumen dienen Ausgänge, die jeweils äquivalent zu einer halben Kante sind (siehe Abb. \ref{img.nodeToRoom}).
 
 \bild{nodeToRoom}{8cm}{Knoten mit Halb-Kanten und äquivalenter Raum}{Äquivalenz von Knoten und Raum}
 
-Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt, da es sechs Ausgänge pro Raum gibt, die jeweils zwei Zustände („Tür“ oder „keine Tür“) haben können. Durch Nutzen von Rotationssymmetrie könnte man diese Zahl verringern, dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen muss. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht alle in allen möglichen Raumvariationen bereitstellen. 
+Würde man einen solchen Raum, der genau eine Gitterzelle einnimmt für alle Ausrichtungen manuell entwerfen, etwa in einem 3D-Programm, so würden $ 2^6 = 64 $ verschiedene Raum-Vorlagen benötigt, da es sechs Ausgänge pro Raum gibt, die jeweils zwei Zustände („Tür“ oder „keine Tür“) haben können. Durch Nutzen von Rotationssymmetrie könnte man diese Zahl verringern, dennoch ist dies nicht ideal, da ein Level-Designer trotzdem eine Mindestzahl an Räumen entwerfen muss. Außerdem will man für einen abwechslungsreichen Dungeon verschiedene „Themes“ haben, verschiedene Arten von Raumübergängen und andere Arten von Variationen. Diese Variationen kann man nicht in allen möglichen Raumvariationen bereitstellen. 
 
 Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser Ansatz wurde ausgetestet, aber nicht weiter verfolgt, da die Räume dadurch zu gleich aussahen, wie man in Abbildung \ref{img.voxelRoomDungeon} sehen kann. Einen abwechslungsreichen Raum-Generator zu entwickeln ist ein interessantes Problem, aber nicht Inhalt dieser Arbeit.
 
@@ -164,21 +164,22 @@ Alternativ könnte man auch die einzelnen Räume prozedural generieren. Dieser A
 
 Die Lösung dieses Problems ist die Umformulierung des Modells. Anstatt einen Dungeon-Graphen zu generieren, und diesen in einem zweiten Schritt in Räume zu übersetzen, werden die Räume direkt produziert. 
 
-Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. Ein Eintrag im Array lässt sich über die Indizes einer Gitterzelle zuweisen, dies führt dazu, dass das Gitter räumlich durch die Größe des Arrays begrenzt ist.
+Dies bedeutet, dass keine Graphgrammatik im eigentlichen Sinne verwendet wird sondern stattdessen eine dreidimensionale Array-Grammatik. Ein Eintrag im dreidimensionalen Array steht für eine Gitterzelle, bzw. einen Raum mit Ausgängen wie in \ref{img.nodeToRoom} abgebildet. 
+%Dies führt dazu, dass das Gitter räumlich durch die Größe des Arrays begrenzt ist.
 
-Für diesen Algorithmus wird eine Array-Grammatik verwendet, deren Produktionsregeln als linke und rechte Seite dreidimensionale Arrays haben. Die Seiten sind zueinander identisch in Länge, Höhe und Breite, somit kann ein Vorkommen der linken Seite durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
+Für diesen Algorithmus wird eine Array-Grammatik verwendet deren Produktionsregeln als linke und rechte Seite dreidimensionale Arrays haben. Die Seiten sind zueinander identisch in Länge, Höhe und Breite, somit kann ein Vorkommen der linken Seite durch die zugehörige rechte Seite ersetzt werden. Im Folgenden wird außerdem nicht zwischen Terminal- und Nichtterminalsymbolen unterschieden. Dies hat den Zweck, dass man die Generierung zu jeder Zeit abbrechen kann, und trotzdem eine korrekte Dungeon-Darstellung hat. Eine Unterscheidung von Terminalen und Nichtterminalen wäre aber einfach vorstellbar.
 
 \bild{ruleExample1}{8cm}{Beispiel einer Produktionsregel\footnotemark}{Beispiel einer Produktionsregel}
 
 \footnotetext{Arrays werden im Folgenden in 2D dargestellt, um die Grafiken übersichtlicher zu gestalten, sämtliche Grafiken gelten im gleichen Maße für dreidimensionale Arrays}
 
-Anders als bei Zeichenketten-basierten Grammatiken wo sich die Länge des Wortes bei der Ersetzung ändern kann, ändert sich die Größe des Arrays dabei nicht, da linke und rechte Seite gleich groß sind, es wird nur das relevante Teilstück ersetzt.
+Anders als bei Zeichenketten-basierten Grammatiken wo sich die Länge des Wortes bei der Ersetzung ändern kann, ändert sich die Größe des Arrays hier nicht, da linke und rechte Seite gleich groß sind, es wird nur das relevante Teilstück ersetzt (siehe Abb. \ref{img.replaceExample1}).
 
 \bild{replaceExample1}{8cm}{Anwendung der Produktionsregel A (eine von drei möglichen Positionen der Anwendung)}{Beispiel einer Regelanwendung}
 
 Um mit dieser Array-Grammatik einen Dungeon zu erstellen müssen wir lediglich statt einem Alphabet aus Buchstaben ein Alphabet aus Raumteilen verwenden. Verwendet man ein solches Alphabet, so kann eine Graphgrammatik implizit in den Arrays enthalten sein, wie in Abbildung \ref{img.ruleExample2} illustriert. In der Praxis sind diese Raumteile 3D Modelle, die modular zusammenpassen und so kann ein ganzer Dungeon mit Regeln transformiert werden.
 
-Hierbei ist dem Autor/der Autorin der Regeln überlassen, dass die Regeln selbst einen korrekten Dungeon produzieren. Eine Regel, die z.B. eine Verbindung ins Nichts führen lässt, sollte nicht erstellt werden. 
+Hierbei ist dem Autor der Regeln überlassen, dass die Regeln selbst einen korrekten Dungeon produzieren. Eine Regel, die z.B. eine Verbindung ins Nichts führen lässt, sollte nicht erstellt werden. 
 
 \bild{ruleExample2}{10cm}{Alphabet $\Sigma$ mit Dungeon-Graph-Teilen und einer Produktionsregel $R$}{Beispiel einer Produktionsregel aus Levelteilen}
 
@@ -190,14 +191,14 @@ Ein großer Vorteil dieser Methode ist, dass das Alphabet aus beliebig vielen od
 
 In \ref{s.speziellerAlgorithmus} wurde der Algorithmus für eine kartesisches Gitter beschrieben. Im folgenden soll ein Überblick gegeben werden wie eine Verallgemeinerung auf andere Gitter möglich wäre.
 
-Um den Algorithmus für alle Gitter verallgemeinern, muss eine allgemeine Definition für ein Muster gefunden werden. Diese Definition kann sowohl für den gesamten Dungeon als auch für die linken und rechten Seiten der Produktionsregeln verwendet werden. 
+Um den Algorithmus für alle Gitter verallgemeinern, muss eine allgemeine Definition für ein Muster gefunden werden. Sowohl der gesamte Dungeon als auch die linken und rechten Seiten der Produktionsregeln sind Muster nach dieser Definition. 
 
-Definieren wir zuerst die Symbolmenge und ein Null-Symbol. Das Null-Symbol bedeutet, dass die Gitterzelle außerhalb des Musters liegt. 
+Definieren wir zuerst die Symbolmenge (Menge an Symbolen des Alphabets) und ein Null-Symbol. Das Null-Symbol bedeutet, dass die Gitterzelle außerhalb des Musters liegt. 
 
 $ V $ ist die Symbolmenge \\
 $ V_0 = V \cup \{0\} $ 
 
-Nehmen wir die Zellen des Musters $ M $ sind über ein n-Tupel ganzer Zahlen $ p $ eindeutig adressierbar. Dies kann durch folgende Funktion ausgedrückt werden.
+Nehmen wir an die Zellen des Musters $ M $ sind über ein n-Tupel ganzer Zahlen eindeutig adressierbar. Dies kann durch folgende Funktion ausgedrückt werden.
 
 $ M: \mathbb{Z}^n \rightarrow V_0 $
 
@@ -209,9 +210,9 @@ Ein Teilstück $ T $ ist dann ein Match im Muster $ M $ an Position $ p \in \mat
 
 $ \forall \  x \in \mathbb{Z}^n: M(p + x) = T(x) \ \lor \  T(x) = 0 $
 
-Ein Array erfüllt die Definition, nimmt man an, dass alle Elemente außerhalb der Grenzen des Arrays das Null-Symbol sind. Elemente innerhalb des Arrays sind entweder das Null-Symbol oder ein Symbol der Symbolmenge.
+Ein Array kann ein Muster darstellen, nimmt man an, dass alle Elemente außerhalb der Grenzen des Arrays das Null-Symbol sind. Elemente innerhalb des Arrays sind entweder das Null-Symbol oder ein Symbol der Symbolmenge.
 
-Um einen Strukturen zu platzieren, müssen wir der Position im Gitter eine Position im Raum zuweisen. Definieren wir hierzu eine Funktion $ G $.
+Um Strukturen im Raum zu platzieren, müssen wir der Position im Gitter eine Position im Raum zuweisen. Definieren wir hierzu eine Funktion $ G $.
 
 $ G: \mathbb{Z}^n \rightarrow \mathbb{R}^n $
 
@@ -236,9 +237,9 @@ $
 Man kann eine Verallgemeinerung vornehmen, wobei das Gitter durch die Vektoren $ \vec{d}_1, \dots , \vec{d}_n $ aufgespannt wird. Bei kartesischen Gittern sind diese Vektoren achsenparallel.
 
 $ G: \mathbb{Z}^n \rightarrow \mathbb{R}^n $ \\
-$ G: G(x) = \sum_{i=1}^{n} \vec{d}_i \cdot x_i $
+\[ G: G(x) = \sum_{i=1}^{n} \vec{d}_i \cdot x_i \]
 
-Der in \ref{s.speziellerAlgorithmus} beschriebene Algorithmus kann also für alle Gitter, die diese Form haben angewandt werden.
+Wir sind bei einer Form angelangt, die uns ermöglich eine Familie an Gittern durch eine Liste von Vektoren zu beschreiben. Der in \ref{s.speziellerAlgorithmus} beschriebene Algorithmus kann für alle Gitter, die diese Form haben angewendet werden. Die Geometrie der Räume und wie diese Räume miteinander verbunden sind, ist ein separates geometrisches Problem und kann vom Level-Designer gelöst werden.
 
 \chapter{Implementierung}\label{c.implementierung}
 
@@ -266,7 +267,7 @@ Neue Components können in Unity programmiert werden, indem man eine Klasse schr
 
 Ein Beispiel hierfür kann man in Abbildung \ref{img.screenshotGenerator} sehen, nur durch das Zusammenspiel der einzelnen Components ergibt sich ein Generator. Durch den modularen Aufbau verhindert man zum einen Code Duplication (Es wird z.B. der PatternView auch in anderen Objekten wiederverwendet), zum anderen ist es eine Anpassungsmöglichkeit: So lässt sich nach Belieben ein RandomReplacer oder ein RecipeReplacer verwenden um verschiedenes Verhalten zu erzeugen. 
 
-Manche Components ließen sich prinzipiell zusammenfassen, wie z.B. PatternView und PatternToPrefabs, aber wurden trotzdem getrennt implementiert, da sie unterschiedliche Aufgaben erfüllen. Dies macht auch das Ausbauen der Software in der Zukunft einfacher, da einzelne Components ausgetauscht oder umgeschrieben werden können, solange die öffentlichen Funktionen und Variablen dieser Components gleich bleiben.
+Manche Components ließen sich prinzipiell zusammenfassen, wie z.B. PatternView und PatternToPrefabs, aber wurden trotzdem getrennt implementiert, da sie unterschiedliche Aufgaben erfüllen. Dies macht auch das Ausbauen der Software in Zukunft einfacher, da einzelne Components ausgetauscht oder umgeschrieben werden können, solange die öffentlichen Funktionen und Variablen dieser Components gleich bleiben.
 
 In Abbildung \ref{img.screenshotGenerator} sieht man auch gut ein weiteres wichtiges Unity-Feature, nämlich die Darstellung von öffentlichen Variablen im Inspektor. Ist ein Field public (oder private und mit dem SerializeField-Attribute gekennzeichnet) so kann der Wert dieses Fields im Inspektor gesetzt werden \cite[Seite: VariablesAndTheInspector]{unityManual} \cite[Seite: SerializeField]{unitySciptingReference}. Unity unterstützt hierbei die häufigsten Datentypen von Haus aus. Es wurde bei der Implementierung der Components darauf geachtet möglichst viele Einstellungen so im Inspektor editierbar zu machen.
 
@@ -303,11 +304,11 @@ Das PatternView repräsentiert einen dreidimensionalen Array von Labels. Diese L
 
 \subsection{PatternToPrefabs}
 
-Der PatternToPrefabs Component ist ein Component, der für jedes Label im PatternView ein oder mehrere Prefabs in der Szene erstellt. Dies geschieht wenn eine Änderung im PatternView stattfindet und einmal bei Spielstart. In einem ScriptableObject\footnote{Scriptable Objects in Unity: \cite[Seite: class-ScriptableObject]{unityManual}} der Klasse PrefabDictionary wird jedem Raumnamen wie „st“ ein Prefab\footnote{Prefabs in Unity: \cite[Seite: LearningtheInterface]{unityManual}} zugeordnet. 
+Der PatternToPrefabs Component ist ein Component, der für jedes Label im PatternView ein oder mehrere Prefabs\footnote{Prefabs in Unity: \cite[Seite: LearningtheInterface]{unityManual}} in der Szene instanziiert. Dies geschieht wenn eine Änderung im PatternView stattfindet und einmal bei Spielstart. In einem ScriptableObject\footnote{Scriptable Objects in Unity: \cite[Seite: class-ScriptableObject]{unityManual}} der Klasse PrefabDictionary wird jedem Raumnamen wie „st“ ein Prefab zugeordnet. 
 
 Es können beliebig viele Raumnamen mit Unterstrichen getrennt in einem Label vorkommen, die zugehörigen Prefabs werden dann übereinander generiert. die Kette kann mit einer Zahl beendet werden, die die Rotation in $90^\circ$-Schritten um die y-Achse angibt. Ein Beispiel hierfür ist „it\_obstacle\_0“ in Abbildung \ref{img.sceneView1}. Es wird das Kreuzung-Prefab „it“ mit einem Hindernis-Prefab „obstacle“ generiert und um 0 mal $90^\circ$ gedreht.
 
-Der PatternToPrefabs Component verlangt ein PatternView Component mit RequireComponent\footnote{RequireComponent in Unity: \cite[Seite: RequireComponent]{unitySciptingReference}}.
+Der PatternToPrefabs Component verlangt ein PatternView Component mit RequireComponent \cite[Seite: RequireComponent]{unitySciptingReference}.
 
 \subsection{RuleSet}
 
@@ -317,17 +318,17 @@ Das RuleSet ist nur im Namen ein Set, nicht im informatischen Sinne. Ein Set wä
 
 \subsection{ReplacementEngine}
 
-Die ReplacementEngine ist verantwortlich für die im Hintergrund stattfindende Ersetzung. Sie findet im PatternView Matches für Regeln aus dem RuleSet. Erhält sie von einem anderen Component wie RandomReplacer das Signal, wendet sie eine Produktionsregel an. Dabei kann eingestellt werden ob an einer zufälligen Position, der zuerst gefundenen, oder zuletzt gefundenen Position ersetzt werden soll. Es kann außerdem ein Filter übergeben werden, sodass nur bestimmte Regeln ersetzt werden. Dieser Filter wird vom RecipeReplacer verwendet.
+Die ReplacementEngine ist verantwortlich für die im Hintergrund stattfindende Ersetzung. Sie findet im PatternView Matches für Regeln aus dem RuleSet. Erhält sie von einem anderen Component wie RandomReplacer das Signal, wendet sie eine Produktionsregel an. Dabei kann eingestellt werden ob an einer zufälligen Position, der zuerst gefundenen, oder zuletzt gefundenen Position ersetzt werden soll. Es kann außerdem ein Filter übergeben werden, sodass nur bestimmte Regeln angewendet werden. Dieser Filter wird vom RecipeReplacer verwendet.
 
 Der PatternToPrefabs Component verlangt die PatternView und RuleSet Components mit RequireComponent.
 
 \subsection{RandomReplacer und RecipeReplacer}\label{ss.replacers}
 
-Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Haupt-Schnittstelle des Generators. Von ihnen kann die Generation ausgelöst werden. Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Knopf drückt, oder zur Laufzeit indem man die Generate-Methode aufruft. Die Generate-Methode erzeugt einen ganzen Dungeon auf einmal. Alternativ kann man auch einmal die InitializeGeneration-Methode aufrufen und im Anschluss die GenerateStep-Methode um einzelne Ersetzungen Schritt für Schritt vorzunehmen.
+Es gibt zwei verschiedene Replacer: Den RandomReplacer und den RecipeReplacer. Beide Replacer erfüllen die selbe Funktion, sie dienen als Haupt-Schnittstelle des Generators und von ihnen kann die Generation ausgelöst werden. Dies ist zu Testzwecken im Unity Editor möglich, indem man auf den Generate-Knopf drückt, oder zur Laufzeit indem man die Generate-Methode aufruft. Die Generate-Methode erzeugt einen ganzen Dungeon auf einmal. Alternativ kann man auch einmal die InitializeGeneration-Methode aufrufen und im Anschluss die GenerateStep-Methode um einzelne Ersetzungen Schritt für Schritt vorzunehmen.
 
 Der RandomReplacer ist die simplere Variante der beiden Replacer. Er wählt immer eine zufällige Ersetzung für den nächsten Produktionsschritt. Dabei gewichtet er die einzelnen möglichen Ersetzungen gemäß der Gewichtung der zugehörigen Regel im RuleSet.
 
-Der RecipeReplacer verwendet eine Rezept-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewandt werden. Das genaue Format der Rezept-Datei ist in \ref{s.rezeptDatei} beschrieben.
+Der RecipeReplacer verwendet eine Rezept-Datei des Datentypen TextAsset\footnote{Text Assets in Unity: \cite[Seite: class-TextAsset]{unityManual}}. In der Text-Datei ist festgelegt in welcher Reihenfolge die Regeln aus RuleSet angewendet werden. Das genaue Format der Rezept-Datei ist in \ref{s.rezeptDatei} beschrieben.
 
 \subsection{RuleEditor}\label{ss.ruleEditor}
 
@@ -339,13 +340,13 @@ Ist im RuleSet eine Regel ausgewählt, enthält der RuleEditor-Inspektor die Ein
 
 Ist der Toggle „Obey rule orientation“ aktiv, werden für diese Regel intern vier Regeln generiert, eine für jede Himmelsrichtung. Dieses Feature existiert, da Menschen instinktiv nicht zwischen Himmelsrichtungen unterscheiden, und somit die meisten Regeln um die y-Achse rotiert auch angewendet werden können. Ist der Toggle angeschaltet kann die Rotation auch per Knopfdruck geändert werden. 
 
-Ist der Toggle „Reversible“ aktiv, so kann die Regel nicht nur angewendet, sondern auch rückgängig gemacht werden. Hierfür wird im Hintergrund eine inverse Regel erstellt, bei der die linke und rechte Seite vertauscht sind. Dies kann schnell zu Fluktuationen im Generator führen, wobei eine Regel in aufeinanderfolgenden Schritten widerholt angewandt und rückgängig gemacht wird. Deshalb sollte dieses Feature bewusst verwendet werden.
+Ist der Toggle „Reversible“ aktiv, so kann die Regel nicht nur angewendet, sondern auch rückgängig gemacht werden. Hierfür wird im Hintergrund eine inverse Regel erstellt, bei der die linke und rechte Seite vertauscht sind. Dies kann schnell zu Fluktuationen im Generator führen, wobei eine Regel in aufeinanderfolgenden Schritten widerholt angewendet und rückgängig gemacht wird. Deshalb sollte dieses Feature bewusst verwendet werden.
 
-Die linke und rechte Seite der Regeln werden hier in Textfeldern angegeben. Da diese Seiten dreidimensionale Arrays sind, ist die Frage der Eingabemethode für diese Arrays nicht trivial. Es wird hier eine eindimensionale Darstellung des dreidimensionalen Arrays gewählt; die Symbole Semikolon, Komma und Leerzeichen brechen jeweils in die nächste Dimension um. Die in Abbildung \ref{img.ruleEditorExample} abgebildete Regel liegt z.B. in der xz-Ebene, da Semikolon in x-Richtung trennt und Leerzeichen in z-Richtung. Die Regeln lesen sich auf dem Screenshot von unten nach oben (z) und von links nach rechts (x).
+Die linke und rechte Seite der ausgewählten Regel werden hier in Textfeldern angegeben. Da diese Seiten dreidimensionale Arrays sind, ist die Frage der Eingabemethode für diese Arrays nicht trivial. Es wird hier eine eindimensionale Darstellung des dreidimensionalen Arrays gewählt; die Symbole Semikolon, Komma und Leerzeichen brechen jeweils in die nächste Dimension um. Die in Abbildung \ref{img.ruleEditorExample} abgebildete Regel liegt z.B. in der xz-Ebene, da Semikolon in x-Richtung trennt und Leerzeichen in z-Richtung. Die Regeln lesen sich auf dem Screenshot von unten nach oben (z) und von links nach rechts (x).
 
 \bild{ruleEditorExample}{16cm}{Beispiel einer Produktionsregel in Unity mit linker und rechter Seite und den dazugehörigen String-Darstellungen. Die verwendeten Symbole sind „st“ (straight), „tl“ (turn left), „tr“ (turn right) und „.“ (kein Raum). Die Pfeile bezeichnen die vorgesehene Begehungsrichtung und sind nur im Scene View sichtbar. }{Beispiel einer Produktionsregel in Unity}
 
-Dieses Format ist nicht wirklich intuitiv, wurde aber so belassen, um den Programmieraufwand akzeptabel zu belassen. Eine mögliche Verbesserung findet sich in \ref{s.verbesserungen}. 
+Dieses Format ist nicht wirklich intuitiv, wurde aber so belassen, da es verhältnismäßig einfach zu implementieren ist. Eine mögliche Verbesserung findet sich in \ref{s.verbesserungen}. 
 
 % TODO - Löschen, falls keine Verbesserung
 
@@ -363,7 +364,7 @@ Das Pattern stellt einen dreidimensionalen Array von Tiles dar. Diese Wrapper-Kl
 
 Außerdem hat die Klasse die Methode RotatePattern90Y, die eine um $ 90^\circ $ um die y-Achse rotierte Kopie des Patterns zurückgibt. Diese Methode wird benutzt um die in \ref{ss.ruleEditor} erwähnte „obey rule orientation“ Funktionalität des RuleEditors zu ermöglichen. Diese Methode könnte auch für andere Permutationen ausgebaut werden, aber für den Großteil der Anwendungsszenarien ist dies ausreichend, da Gravitation üblicherweise in y-Richtung wirkt, was bedeutet, dass Räume häufig um die y-Achse drehbar sein müssen, jedoch nicht in andere Richtungen.
 
-Des weiteren stellt das Pattern die Methoden GetTile und SetTile zur Verfügung um Tiles an gegebenen Positionen im Gitter erhalten und zu modifizieren. Diese Methoden führen einen Bounds-Check durch, um IndexOutOfRangeExceptions zu vermeiden, ein Bounds-Check in anderen Teilen des Programms wird damit überflüssig. Wird eine Position außerhalb des Patterns abgefragt wird stattdessen das spezielle OutOfBounds-Tile zurückgegeben.
+Des weiteren stellt das Pattern die Methoden GetTile und SetTile zur Verfügung um Tiles an gegebenen Positionen im Gitter abzufragen und zu modifizieren. Diese Methoden führen einen Bounds-Check durch, um IndexOutOfRangeExceptions zu vermeiden, ein Bounds-Check in anderen Teilen des Programms wird damit überflüssig. Wird eine Position außerhalb des Patterns abgefragt wird stattdessen das spezielle OutOfBounds-Tile zurückgegeben.
 
 Patterns finden sowohl als Datenstruktur des gesamten Dungeons Verwendung, als auch als auch als Datenstruktur der linken und rechten Seiten in Regeln. Sie werden auch zur puren Visualisierung verwendet z.B. um im Editor die linke und rechte Seite einer Regel zu visualisieren, die geschieht dann mit Hilfe eines PatternViews (siehe \ref{ss.patternView}).
 
@@ -371,7 +372,7 @@ Patterns finden sowohl als Datenstruktur des gesamten Dungeons Verwendung, als a
 
 Die Klasse Rule modelliert eine einzelne Produktionsregel. Wie schon im theoretischen Teil beschrieben besteht eine Produktionsregel aus einer linken und rechten Seite, diese Seiten sind jeweils ein Objekt der bereits beschriebenen Pattern-Klasse.
 
-Des weiteren enthält sie ein Field für den Namen der Regel und folgende Felder für Einstellungsmöglichkeiten: weight, strictRotation, maximumApplications.
+Des weiteren enthält sie ein Field für den Namen der Regel und weitere für Einstellungsmöglichkeiten (weight, strictRotation, maximumApplications).
 
 Die Klasse ist Serializable, dennoch gibt es außerdem die Klasse SerializedRule; diese wird verwendet, wenn die Klasse für Menschen lesbar serialisiert werden soll, insbesondere für das Speichern eines RuleSets im JSON-Format. 
 
@@ -419,12 +420,13 @@ Die Liste der momentan gefundenen Matches kann außerdem gut visualisiert werden
 
 \section{Editor UI}\label{s.editorUI}
 
-Zur einfacheren Konfiguration und zum schnelleren iterieren wurde der Unity-Editor mit zusätzlicher UI ausgestattet und der Generator so geschrieben, dass er im Editor ausgeführt werden kann. 
+Zur einfacheren Konfiguration und zum schnelleren Austesten von Einstellungen wurde der Unity-Editor mit zusätzlicher UI ausgestattet und der Generator so geschrieben, dass er im Editor ausgeführt werden kann. 
 
 Die einfachste Art und Weise dies zu ermöglichen ist das Open Source Package EasyButtons. Es ermöglicht Buttons über ein Attribut zu Funktionen hinzuzufügen.
 
+Diese Buttons werden automatisch am Anfang des Inspektors eingefügt (siehe Abb. \ref{img.screenshotRecipeReplacer}). Dies ist eine einfache Variante einen Inspektor auszubauen, ohne eine zusätzliche Klasse zu definieren.
+
 % check float in the end here
-% if necessary add caption here with caption=...
 \begin{lstlisting}[label=l.buttonAttribute, caption={Beispiel eines EasyButtons-Attributs}] 
 [EasyButtons.Button]
 public void InitializeGeneration()
@@ -433,13 +435,11 @@ public void InitializeGeneration()
 }
 \end{lstlisting}
 
-Diese Buttons werden automatisch am Anfang des Inspektors eingefügt (siehe Abb. \ref{img.screenshotRecipeReplacer}). Dies ist eine einfache Variante einen Inspektor auszubauen, ohne eine zusätzliche Klasse zu definieren.
-
 \bild{screenshotRecipeReplacer}{8cm}{Screenshot des RecipeReplacer Components. Am Anfang des Inspektors sind die mit EasyButtons generierten Buttons zu sehen}{Screenshot des RecipeReplacer Components}
 
 Für andere Editor-Funktionalität musste der Inspektor weiter ausgebaut werden. In diesem Fall schreibt man einen Custom Editor und implementiert die Methode OnInspectorGUI\footnote{Benutzerdefinierte Editoren in Unity: \cite[Seite: editor-CustomEditors]{unityManual}}.
 
-Die drei Components PatternView, RuleEditor und RuleSet haben benutzerdefinierte Inspektoren. PatternView hat einen simplen benutzerdefinierten Inspektor zum ändern der Größe des Patterns, da der normale Vector3Int Property Drawer hierfür nicht verwendet werden konnte. 
+Die drei Components PatternView, RuleEditor und RuleSet haben benutzerdefinierte Inspektoren. PatternView hat einen simplen benutzerdefinierten Inspektor zum Ändern der Größe des Patterns, da der normale Vector3Int Property Drawer hierfür nicht verwendet werden konnte. 
 
 Für das RuleSet wurde eine Editor geschrieben um die Unity-Klasse ReorderableList zu nutzen. Mit dieser Klasse kann eine Listenansicht erzeugt werden, die hinzufügen, entfernen und umordnen von Einträgen einer Liste möglich macht. Diese Ansicht wird für die Produktionsregeln verwendet (Listenansicht zu sehen in Abb. \ref{img.screenshotGenerator}). Außerdem kann der Benutzer eine Regel auswählen. Die ausgewählte Regel kann dann im RuleEditor-Component editiert werden.
 
@@ -473,7 +473,7 @@ In der Rezept-Datei ist jede Zeile genau eine Anweisung, es existieren die in Ta
 
 Die Namen der Regeln sind als Filter zu verstehen, da verschiedene Regeln den gleichen Namen haben können; haben mehrere Regeln den gleichen Namen so wird eine zufällige ausgewählt. Dies ist nützlich wenn zwei Regeln konzeptionell identisch sind, aber als unterschiedliche Regeln aufgeschrieben werden müssen. Im Bezug auf die in \ref{s.optimierungen} beschriebene Implementierung bedeutet das, dass die vorhandene Liste an möglichen Matches bezüglich des Regelnamens gefiltert wird und alle andersnamigen Matches ignoriert werden. 
 
-In einer Anweisung kann der Name einer Regel auch das Format \textit{<Regelanfang>*} haben. In diesem Fall muss eine Regel nur mit \textit{<Regelanfang>} anfangen um angewendet werden zu können. So kann z.B. die Anweisung \textit{feature\_*} sowohl die Regel \textit{feature\_alternative} als auch die Regel \textit{feature\_shortcut} anwenden.
+In einer Anweisung kann der Name einer Regel auch das Format \textit{<Regelanfang>*} haben. In diesem Fall muss eine Regel nur mit \textit{<Regelanfang>} beginnen um angewendet werden zu können. So kann z.B. die Anweisung \textit{feature\_*} sowohl die Regel \textit{feature\_alternative} als auch die Regel \textit{feature\_shortcut} anwenden.
 
 Die Anweisungen der Form \textit{<Name> !} und \textit{subdivide <x> <y> <z>} sind nicht teil des zugrunde liegenden Algorithmus (siehe \ref{s.speziellerAlgorithmus}), sondern sind pragmatische Erweiterungen die in bestimmten Anwendungsfällen nützlich sind.
 
@@ -484,8 +484,9 @@ Dies ist ein Kompromiss der eingegangen wurde, da diese Anweisung sehr viel perf
 % TODO low priority - Finish this: Außerdem ähnelt diese Art der Ersetzung, wie sie in einem L-System durchgeführt wird. In L-Systemen werden 
 % don't forget C.A.
 
-Die Unterteilungs-Anweisung der Form \textit{subdivide <x> <y> <z>} wird verwendet um das Gitter zu vergrößern. Hierzu wird für jedes Tile im Dungeon genau <x>, <y>, <z> Tiles in x-, y-, z-Richtung eingeschoben (bildlich veranschaulicht in Abbildung \ref{img.subdivisionProcess}). Diese Anweisung kann verwendet werden um erst die Makro-Struktur des Dungeons mit wenigen Tiles zu generieren, und anschließend den Dungeon zu strecken bevor weiter-generiert wird. 
-Diese Anweisung muss üblicherweise mit einer globalen Anwendung kombiniert werden, die die entstandenen Lücken füllt. Um das zu tun erstellt man eine Anzahl an Lückenfüller-Regeln, die gleich anfangen (z.B. \textit{subdiv\_\dots}) und führt diese global aus (z.B. \textit{subdiv\_* !}). \\
+Die Unterteilungs-Anweisung der Form \textit{subdivide <x> <y> <z>} wird verwendet um das Gitter zu vergrößern. Hierzu werden für jedes Tile im Dungeon genau <x>, <y>, <z> Tiles in x-, y-, z-Richtung eingeschoben (bildlich veranschaulicht in Abbildung \ref{img.subdivisionProcess}). Diese Anweisung kann verwendet werden um erst die Makro-Struktur des Dungeons mit wenigen Tiles zu generieren, und anschließend den Dungeon zu strecken bevor weiter-generiert wird. 
+Diese Anweisung muss üblicherweise mit einer globalen Anwendung kombiniert werden, die die entstandenen Lücken füllt. Um das zu tun erstellt man eine Anzahl an Lückenfüller-Regeln, die gleich anfangen (z.B. \textit{subdiv\_\dots}) und führt diese global aus (z.B. \textit{subdiv\_* !}, siehe  Abb. \ref{img.subdivisionProcess}). 
+
 \begin{lstlisting}[label=l.recipeFunction, caption={Beispiel einer Funktionsdefinition in der Rezept-Datei}] 
 def subdivideFill
     subdivide 1 0 1
@@ -494,19 +495,19 @@ end
 
 subdivideFill 2
 \end{lstlisting} 
-Ein weiteres Feature der Rezept-Datei ist das definieren von Funktionen (siehe Programmausdruck \ref{l.recipeFunction}). Ist eine Funktion definiert kann sie wie eine normale Regel angewandt werden, allerdings sind Funktionen nicht durch Anweisungen der Form \textit{<Regelanfang>*} ausführbar.
+Ein weiteres Feature der Rezept-Datei ist das definieren von Funktionen (siehe Programmausdruck \ref{l.recipeFunction}). Ist eine Funktion definiert kann sie wie eine normale Regel angewendet werden, allerdings sind Funktionen nicht durch Anweisungen der Form \textit{<Regelanfang>*} ausführbar.
 
 \bild{subdivisionProcess}{16cm}{Anwendungsbeispiel von Unterteilung und Füllen von Lücken.}{Dungeonunterteilungs-Beispiel}
 
 \section{Spielmechaniken}\label{s.spielmechaniken}
 
-Um den Dungeon-Generator zu demonstrieren wurden ein paar rudimentäre Spielmechaniken implementiert. Startet man das Spiel wird ein Dungeon generiert und der/die Spieler/in erscheint im Start-Raum.
+Um den Dungeon-Generator zu demonstrieren wurden ein paar rudimentäre Spielmechaniken implementiert. Startet man das Spiel wird ein Dungeon generiert und der Spieler erscheint im Start-Raum.
 
-Der/die Spieler/in kann sich in einer First-Person-Perspektive mit der Maus umschauen und mit dem WASD-Tasten herumlaufen. Mit der Leertaste kann gesprungen werden (auch in der Luft, was nur zu Testzwecken getan werden sollte).
+Der Spieler kann sich in einer First-Person-Perspektive mit der Maus umschauen und mit dem WASD-Tasten herumlaufen. Mit der Leertaste kann gesprungen werden (auch in der Luft, was nur zu Testzwecken getan werden sollte).
 
 Mit der rechten Maustaste kann mit Objekten interagiert werden, interaktive Objekte werden mit einem Text auf dem Bildschirm gekennzeichnet. Mit der linken Maustaste können Würfel geschossen werden, die nur zum Austesten von Kollision oder zum hinterlassen von Markierungen gedacht sind, aber keine Spiel-Funktion besitzen. Der Spieler kann so den Dungeon durchsuchen und die Geometrie von innen beurteilen. 
 
-Es wurde ein Schlüssel-Schloss-System implementiert. Der Spieler kann im Dungeon Schlüssel finden und aufheben, die Anzahl der Schlüssel wird auf dem Bildschirm abgebildet. Hat der Spieler einen Schlüssel, so kann er diesen benutzen um eine Tür zu öffnen. Dieses System kann verwendet werden um zu testen, ob die Schlüssel-Schloss-Regeln richtig geschrieben worden, und keine Tür erzeugt wird ohne das davor im Dungeon auch ein Schlüssel erzeugt wurde.
+Es wurde ein Schlüssel-Schloss-System implementiert. Der Spieler kann im Dungeon Schlüssel finden und aufheben, die Anzahl der Schlüssel wird auf dem Bildschirm abgebildet. Hat der Spieler einen Schlüssel, so kann er diesen benutzen um eine Tür zu öffnen. Dieses System kann verwendet werden um zu testen, ob die Schlüssel-Schloss-Regeln richtig geschrieben wurden, und keine Tür erzeugt wird ohne das davor im Dungeon auch ein Schlüssel erzeugt wurde.
 
 Ein weiteres interaktives Objekt ist eine schwarze Box, die über einer Tür erzeugt und nur von einer Seite entfernt werden kann. Diese Box wird in einem Durchgang platziert um diesen Durchgang nur in eine Richtung zu versperren.
 
@@ -522,9 +523,9 @@ Die Räume liegen als Prefabs vor, was heißt, dass eine mit Unity vertraute Per
 
 \section{Regelsystem für einen zyklischen Dungeon-Generator}\label{s.regelsystem}
 
-Um das Ziel der Arbeit zu erfüllen einen zyklischen Generator zu entwickeln wurden die beschrieben Werkzeuge verwendet um einen Generator zusammenzustellen. Dieser ist in der Szene „SampleScene“ zu finden. Der Generator verwendet einen RecipeReplacer-Component um den Dungeon zu generieren und 29 Regeln (im Hintergrund erstellte Rotationen von Regeln nicht eingeschlossen).  Die Rezept-Datei ist cyclicRecipe.txt.
+Um das Ziel der Arbeit zu erfüllen einen zyklischen Generator zu entwickeln wurden die beschrieben Components verwendet um einen Generator zusammenzustellen. Dieser ist in der Szene SampleScene zu finden. Der Generator verwendet einen RecipeReplacer-Component um den Dungeon zu generieren und enthält 29 Regeln (im Hintergrund erstellte Rotationen von Regeln nicht eingeschlossen).  Die Rezept-Datei ist cyclicRecipe.txt.
 
-Im folgenden wird kurz die Generation anhand der Rezept-Datei (\ref{l.cyclicRecipe}) aufgebrochen.
+Im folgenden wird kurz die Generation anhand der Rezept-Datei (Programmausdruck \ref{l.cyclicRecipe}) aufgebrochen.
 
 \begin{lstlisting}[label=l.cyclicRecipe, caption={Rezept-Datei des Generators}] 
 basic_structure
@@ -544,9 +545,9 @@ post_* 10 20
 
 \bild{processComp1}{16cm}{Screenshots aus dem zyklischen Generationsprozess (erste Hälfte)}{Zyklischer Generationprozess 1}
 
-In Zeile 1 wird die Grundstruktur des Dungeons platziert. Die Regel \textit{basic\_structure} hat als linke Seite das Start-Label „start“ und als rechte Seite einen drei mal drei Tiles großen Zyklus mit einem „Einbahnstraßen“-Hindernis am Start. Mit \textit{basic\_transform\_*} wird eine zufällige Zahl an Transformationen angewandt, die das Aussehen des Dungeons interessanter machen, indem z.B. Ecken umgeknickt werden, wie in Abbildung \ref{img.processComp1}, Bild 2 zu sehen.
+In Zeile 1 wird die Grundstruktur des Dungeons platziert. Die Regel \textit{basic\_structure} hat als linke Seite das Start-Label „start“ und als rechte Seite einen drei mal drei Tiles großen Zyklus mit einem „Einbahnstraßen“-Hindernis am Start. Mit \textit{basic\_transform\_*} wird eine zufällige Zahl an Transformationen angewendet, die das Aussehen des Dungeons interessanter machen, indem z.B. Ecken umgeknickt werden, wie in Abbildung \ref{img.processComp1}, Bild 2 zu sehen.
 
-Mit der Anweisung \textit{add\_floor\_* 1} wird an einer der Ecken ein Treppenaufgang mit zweitem Stockwerk hinzugefügt, das zweite Stockwerk hat die selbe Struktur wir das untere. Für mehr Stockwerke könnte man diese Regel häufiger anwenden. Anschließend wird erneut \textit{basic\_transform\_*} angewandt um das obere Stockwerk interessanter zu machen.
+Mit der Anweisung \textit{add\_floor\_* 1} wird an einer der Ecken ein Treppenaufgang mit zweitem Stockwerk hinzugefügt, das zweite Stockwerk hat die selbe Struktur wir das untere. Für mehr Stockwerke könnte man diese Regel häufiger anwenden. Anschließend wird erneut \textit{basic\_transform\_*} angewendet um das obere Stockwerk interessanter zu machen.
 
 In Zeilen 5 und 6 werden sogenannte Features hinzugefügt. Dies kann ein Zyklus mit verschlossener Tür, eine alternativer Weg oder eine abzweigende Sackgasse sein.
 
@@ -556,9 +557,9 @@ In Zeile 8 wird der Dungeon unterteilt um zusätzlichen Platz zu schaffen. In Ze
 
 Anschließend wird ein weiterer \textit{basic\_transform\_*} durchgeführt und die Schlüssel werden mit der Regel \textit{move\_key} etwas bewegt (siehe Abb. \ref{img.processComp2} Bild 3).
 
-Die letzte Anwendung \textit{post\_* 10 20} wendet wiederholt Regeln der Form \textit{post\_\dots} an. Diese sind sogenannte Post-Processing-Regeln. Eine Post-Processing-Regel nimmt einen kleinen Teil des Dungeons, bestehend aus Grundbausteinen und ersetzt ihn durch einen interessanteren handgemachen großen Raum. Dies geschieht zum Schluss, denn diese Räume können nicht weiter transformiert werden, da es zu umständlich wäre für sie extra Regeln zu schreiben. Den Stand des Dungeons nach diesem Schritt sieht man in Abbildung \ref{img.processComp2} Bild 4.
+Die letzte Anwendung \textit{post\_* 10 20} wendet wiederholt Regeln der Form \textit{post\_\dots} an. Diese sind sogenannte Post-Processing-Regeln. Eine Post-Processing-Regel nimmt einen kleinen Teil des Dungeons, bestehend aus Grundbausteinen und ersetzt ihn durch einen interessanteren handgemachten großen Raum. Dies geschieht zum Schluss, denn diese Räume können nicht weiter transformiert werden, da es zu umständlich wäre für sie extra Regeln zu schreiben. Den Stand des Dungeons nach diesem Schritt sieht man in Abbildung \ref{img.processComp2} Bild 4.
 
-Ein interessantes Ergebnis erhält man auch, wenn man den Recipe-Replacer durch einen RandomReplacer austauscht. Die Dungeons sind kompakter, da keine Unterteilung stattfindet, aber sehr viel abwechslungsreicher, da weniger Struktur vorgegeben ist.
+Ein interessantes Ergebnis erhält man auch, wenn man den RecipeReplacer durch einen RandomReplacer austauscht. Die Dungeons sind kompakter, da keine Unterteilung stattfindet, aber sehr viel abwechslungsreicher, da weniger Struktur vorgegeben ist. Man hat aber allerdings auch weniger Kontrolle über den Aufbau des Dungeons. Variablen wie die Anzahl der Stockwerke sind nicht mehr einstellbar.
 
 % todo - evtl. Bilder von fertigen Dungeons einfügen
 
@@ -568,15 +569,15 @@ Ein interessantes Ergebnis erhält man auch, wenn man den Recipe-Replacer durch 
 
 Es ist zuerst zu sagen, dass eine objektive Bewertung der Dungeons schwer möglich ist. Dies hat mehrere Gründe.
 
-Ein direkter Test mit Spielern und eine Auswertung über Fragebögen ist nicht möglich, da der Dungeon-Generator nicht für ein bestimmtes Spiel konzipiert würde. Mit einem Test-Spiel wäre dies jedoch ein guter Ansatz, wenn auch etwas aufwändig und nicht im Rahmen dieser Arbeit machbar.
+Ein direkter Test mit Spielern und eine Auswertung über Fragebögen ist wenig sinnvoll, da der Dungeon-Generator nicht für ein bestimmtes Spiel konzipiert wurde. Mit einem Test-Spiel wäre dies jedoch ein guter Ansatz, wenn auch etwas aufwändig und nicht im Rahmen dieser Arbeit machbar.
 
 Zweitens ist die Qualität von Dungeons prinzipiell subjektiv, was eine rein statistische Auswertung erschwert.
 
 Drittens gibt es keine akzeptierten Standards für die Auswertung von Dungeons, was einen Vergleich mit anderen Verfahren schwer macht. Eine Vergleich von verschiedenen Verfahren wäre natürlich interessant, aber auch nicht Inhalt dieser Arbeit.
 
-Es entsteht allerdings der subjektive Eindruck, dass die Dungeons so wie sie in \ref{s.regelsystem} generiert werden, zueinander relativ ähnlich sind. Dies ist der Tatsache geschuldet, dass nur eine kleine Anzahl an Feature-Regeln erstellt wurden. Diese Strukturen kehren immer wieder, und es fällt einem Spieler/einer Spielerin auf, dass z.B. auf eine Tür häufig ein Treppenaufgang auf der linken Seite folgt. 
+Es entsteht allerdings der subjektive Eindruck, dass die Dungeons so wie sie in \ref{s.regelsystem} generiert werden, zueinander relativ ähnlich sind. Dies ist der Tatsache geschuldet, dass nur eine kleine Anzahl an Feature-Regeln erstellt wurden. Diese Strukturen kehren immer wieder, und es fällt einem Spieler auf, dass z.B. auf eine Tür häufig ein Treppenaufgang auf der linken Seite folgt. 
 
-Davon abgesehen ist dennoch gezeigt, dass Dungeons aus Zyklen auf diese Art und Weise gebaut werden können und es ist denkbar, dass mit einem komplexeren Regelsystem noch bessere Ergebnisse erzielt werden können. Mögliche Verbesserungen, die die generierten Dungeons abwechslungsreicher gestalten werden in \ref{s.verbesserungen} betrachtet. 
+Davon abgesehen ist dennoch gezeigt, dass Dungeons aus Zyklen auf diese Art und Weise gebaut werden können und es ist denkbar, dass mit einem komplexeren Regelsystem noch bessere Ergebnisse erzielt werden können. Mögliche Verbesserungen, um die generierten Dungeons abwechslungsreicher zu gestalten werden in \ref{s.verbesserungen} betrachtet. 
 
 Das entstandene Array-Ersetzungs-System ist darüber hinaus äußerst flexibel. Es ist auch für nicht-zyklische Strukturen sehr effektiv, ein Beispiel hierfür ist im Projekt in der Szene CubeScene gezeigt (Abb. \ref{img.cubeExample}) und in der Szene DoorSpaceScene (Abb. \ref{img.doorSpaceExample})
 
@@ -586,29 +587,31 @@ Das entstandene Array-Ersetzungs-System ist darüber hinaus äußerst flexibel. 
 
 % TODO - Objektiv: evtl. Laufzeit betrachten. Evtl. statistische Metriken von Ähnlichkeit herausfinden
 
-\section{Mögliche Verbesserungen des Systems, Ausblick}\label{s.verbesserungen}
+\section{Mögliche Verbesserungen des Systems}\label{s.verbesserungen}
+
+Im folgenden wird ein kurzer Überblick über mögliche Verbesserungen des Systems gegeben.
 
 \subsection{Ausbauen des Regel- und Rezept-Systems}
 
-Damit die Dungeons abwechslungsreicher ausfallen könnte das Regel- und Rezept-System weiter ausgebaut werden. Eine Möglichkeit wäre Regeln nicht nur automatisch zu rotieren, sonder auch zu spiegeln. Hierzu müsste für die Räume allerdings Symmetrieinformation existieren (z.B. Raumteil \textit{tl} ist spiegelverkehrt zu Raumteil \textit{tr}).
+Damit die Dungeons abwechslungsreicher ausfallen könnte das Regel- und Rezept-System weiter ausgebaut werden. Eine Möglichkeit wäre Regeln nicht nur automatisch zu rotieren, sondern auch zu spiegeln. Hierzu müsste allerdings Symmetrieinformation für die Räume existieren (z.B. Raumteil \textit{tl} ist spiegelverkehrt zu Raumteil \textit{tr}).
 
-Eine nützliche Erweiterung des Rezept-Systems wäre das Definieren von Mengen an Regeln. Man könnte Regeln bestimmten Mengen zuweisen und dann zufällige Regeln einer Menge ausführen. Dies wäre ein Kompromiss zwischen RandomReplacer und RecipeReplacer, da sich innerhalb einer Menge der RecipeReplacer wie ein RandomReplacer verhält -- er sucht aus einer Menge an Regeln komplett zufällig aus. Anstatt Mengen in der Rezept-Datei zu definieren wäre auch eine Lösung mit mehreren RuleSets denkbar.
+Eine nützliche Erweiterung des Rezept-Systems wäre die Definition von Regel-Mengen. Man könnte Regeln bestimmten Mengen zuweisen und dann zufällige Regeln einer Menge ausführen. Dies wäre ein Kompromiss zwischen RandomReplacer und RecipeReplacer, da sich innerhalb einer Menge der RecipeReplacer wie ein RandomReplacer verhält -- er sucht aus einer Menge an Regeln komplett zufällig aus. Man könnte diese Mengen in der Rezept-Datei definieren, aber es wäre auch eine Lösung innerhalb des RuleSet-Components denkbar.
 
 \subsection{Verbessern der Räume}
 % Richtige Templates
 
-Die Räume, die die Bausteine des Dungeons sind, sind uninteressant und sehen immer gleich aus. Eine einfache Möglichkeit dies zu verbessern wäre einen einfachen Raum-Generator zu schreiben, der Räume mit Objekten dekoriert. Man könnte in den Räumen Spawnpoint-Objekte platzieren, die zufällig Möbel, Fallen oder Monster erzeugen.
+Die Räume, die die Bausteine des Dungeons darstellen, sind relativ uninteressant und sehen immer gleich aus. Eine einfache Möglichkeit dies zu verbessern wäre einen einfachen Raum-Generator zu schreiben, der Räume mit Objekten dekoriert. Man könnte in den Räumen Spawnpoint-Objekte platzieren, die zufällig Möbel, Fallen oder Monster erzeugen.
 
-Ein weiterer wichtiger Schritt wäre eine große Anzahl an Räumen zu erzeugen, die alle mit Post-Processing-Regeln (siehe \ref{s.regelsystem}) platziert werden und Abwechslung für häufig auftauchende Strukturen erzeugen ohne die Komplexität des Regelwerks zu beeinträchtigen. Anstatt von Post-Processing-Regeln könnte man diesen Schritt auch in das PrefabDictionary integrieren und dort mehrere Varianten für ein Raum-Symbol einstellbar machen, aus denen zufällig ausgewählt wird.
+Ein weiterer wichtiger Schritt wäre eine große Anzahl an Räumen zu entwerfen, die alle mit Post-Processing-Regeln (siehe \ref{s.regelsystem}) platziert werden und Abwechslung für häufig auftauchende Strukturen erzeugen ohne die Komplexität des Regelwerks zu beeinträchtigen. Anstatt von Post-Processing-Regeln könnte man diesen Schritt auch in das PrefabDictionary integrieren und dort mehrere Varianten für ein Raum-Symbol einstellbar machen, aus denen zufällig ausgewählt wird.
 
 \subsection{Modellierung der Muster}
 % Mögl. Verbesserung: Statt Array eine unendlich große Struktur verwenden -> Objekte + Gitter
 
 Da die Generierung auf einem Array stattfindet ist die Größe des Dungeons durch den Array begrenzt. Häufig sind dennoch große Teile des Arrays nicht gefüllt. Des weiteren wäre es interessant den Generator für beliebige Gitter-Strukturen wie in \ref{s.allgemeinerAlgorithmus} beschrieben auszubauen.
 
-Es ist unter Umständen sinnvoll die Datenstruktur eines Arrays aufzugeben und eine flexiblere zu wählen. Diese Datenstruktur müsste eine Abbildung von ganzzahligen Tupeln auf Symbole ermöglichen. Eine offensichtliche Wahl wäre ein HashSet, dass Integer-Vektoren auf Tiles abbildet. Die Hash-Funktion der Integer-Vector-Klasse müsste einzigartig im Bezug auf die Koordinaten sein, damit an der selben Position nicht zwei Tiles liegen können. Das HashSet würde nur die Positionen abbilden, an denen nicht-leere Tiles liegen, der Rest des Raumes wird als leere Tiles angenommen. 
+Es ist unter Umständen sinnvoll die Datenstruktur eines Arrays aufzugeben und eine flexiblere zu wählen. Diese Datenstruktur müsste eine Abbildung von ganzzahligen Tupeln auf Symbole ermöglichen. Eine offensichtliche Wahl wäre ein Dictionary, dass Integer-Vektoren auf Tiles abbildet. Die Hash-Funktion der Integer-Vector-Klasse müsste einzigartig im Bezug auf die Koordinaten sein, damit an der selben Position nicht zwei Tiles liegen können. Das Dictionary würde nur die Positionen abbilden, an denen nicht-leere Tiles liegen, der Rest des Raumes wird als leere Tiles angenommen. 
 
-Nach dieser Änderung könnte der Dungeon beliebig groß wachsen. Es ist außerdem eine Performance-Verbesserung denkbar, da nun in keinem Fall das ganze Array durchsucht werden muss.
+Nach dieser Änderung könnte der Dungeon beliebig groß wachsen. Es ist außerdem eine Performance-Verbesserung denkbar, da nun in keinem Fall das ganze Array durchsucht werden muss, dies hängt aber stark davon ab wie das Dictionary implementiert ist.
 
 \subsection{Eingabe der Regeln}
 % intuitiveres Format für Patterns (linke rechte Seite)
@@ -645,8 +648,11 @@ Es ist schwer zu sagen wie ein solches System aussehen sollte, da es das editier
 
 \chapter{Fazit}\label{c.zusammenfassung}
 
-\todo{noch schreiben}
+Alles in allem kann man den Schluss ziehen, dass die in dieser Arbeit beschriebene Ersetzungsgrammatik ein gutes Verfahren darstellt Dungeons zyklisch zu generieren. Allerdings erschwert die Verwendung des Gitter-basiertes Verfahrens das Einbauen von Zyklen gegenüber einem komplett Graph-basierten Ansatz vermutlich. Der Gitter-basierte Ansatz hat dabei den großen Vorteil, dass sehr einfach manuell entworfene Räume als Bausteine verwendet werden können.
 
+Es hat sich außerdem herausgestellt, dass eine große Herausforderung prozeduraler Generierung ist abwechslungsreiche Strukturen zu erhalten ohne die Kontrolle über die Ergebnisse zu verlieren -- ein Problem, dass sich direkt in der Gegenüberstellung der beiden Components RandomReplacer und RecipeReplacer widerspiegelt. 
+
+Durch die Verwendung von manuell erstellten Raumteilen und einen Fokus auf viele Konfigurationsmöglichkeiten wurde ein sehr flexibler Generator erstellt, der allerdings auch eine gute Kenntnis des Systems zur Benutzung voraussetzt. Durch das erstellen einer weiteren Abstraktionsebene mit intuitiver UI könnte der Generator auch ohne Einarbeitung genutzt werden und als Tool zur Generierung von Gitter-basierten Strukturen verwendet werden. Für weitere Erkenntnisse wäre es nützlich das implementierte System in echten Spielen eingebaut zu sehen. 
 
 % Anhang
 \chapter{Verwendete Materialien}
@@ -663,7 +669,7 @@ EasyButtons von Mads Bang Hoffensetz
 Asset Forge von Kenney
 \newblock \url{https://assetforge.io/}
 
-Modular Dungeon 2 - 3D Models von Keith at Fertile Soil Productions \label{m.tuer}
+Modular Dungeon 2 -- 3D Models von Keith at Fertile Soil Productions \label{m.tuer}
 \newblock \url{https://opengameart.org/content/modular-dungeon-2-3d-models}
 
 \LaTeX -Vorlage von Martin Bretschneider 
